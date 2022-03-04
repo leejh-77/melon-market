@@ -3,11 +3,21 @@ USE `melon_market`;
 
 CREATE TABLE IF NOT EXISTS `melon_market`.`user` (
     `id` INT NOT NULL AUTO_INCREMENT,
-    `emailAddress` VARCHAR(128) NOT NULL,
+    `email_address` VARCHAR(128) NOT NULL,
     `username` VARCHAR(64) NOT NULL,
     `password` VARCHAR(255) NOT NULL,
-    `createdDate` DATETIME NOT NULL,
+    `created_date` DATETIME NOT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `email_address_idx` (`emailAddress` ASC),
+    UNIQUE INDEX `email_address_idx` (`email_address` ASC),
     UNIQUE INDEX `username_idx` (`username` ASC)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `melon_market`.`post` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `user` INT NOT NULL,
+    `title` VARCHAR(128) NOT NULL,
+    `body` TEXT,
+    `created_time` DATETIME NOT NULL,
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (user) REFERENCES user(id)
 ) ENGINE=InnoDB;

@@ -11,4 +11,8 @@ public class UserRepository extends HibernateRepository<User> {
     public UserRepository(EntityManager entityManager) {
         super(entityManager);
     }
+
+    public User findByEmailAddress(String emailAddress) {
+        return super.find("emailAddress = ?0", emailAddress);
+    }
 }

@@ -1,6 +1,8 @@
 package app.melon.web.controllers;
 
+import app.melon.domain.errors.ApiException;
 import app.melon.web.payloads.RegisterRequest;
+import app.melon.web.results.ApiResult;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,8 +21,12 @@ public class AuthController {
     }
 
     @PostMapping("/api/register")
-    public ResponseEntity<String> register(@RequestBody @Valid RegisterRequest request) {
-        service.createUser(request);
-        return ResponseEntity.status(200).build();
+    public ResponseEntity<ApiResult<?>> register(@RequestBody @Valid RegisterRequest request) {
+        try {
+            service.createUser(request);
+            return ApiResult.created();
+        } catch (ApiException e) {
+            return ApiResult.failure(e.getErrorMessage());
+        }
     }
 }

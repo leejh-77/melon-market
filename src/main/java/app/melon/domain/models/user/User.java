@@ -14,23 +14,22 @@ public class User {
     @Column(name = "username", nullable = false, length = 50, unique = true)
     private String username;
 
-    @Column(name = "emailAddress", nullable = false, length = 100, unique = true)
+    @Column(name = "email_address", nullable = false, length = 100, unique = true)
     private String emailAddress;
 
     @Column(name = "password", nullable = false, length = 30)
     private String password;
 
-    @Column(name = "createdDate", nullable = false)
+    @Column(name = "created_date", nullable = false)
     private LocalDate createdDate;
 
-    public User() {
-
-    }
+    public User() {}
 
     public User(String username, String emailAddress, String password) {
         this.username = username;
         this.emailAddress = emailAddress;
         this.password = password;
+        this.createdDate = LocalDate.now();
     }
 
     public long getId() {
@@ -47,5 +46,9 @@ public class User {
 
     public String getPassword() {
         return password;
+    }
+
+    public LocalDate getCreatedDate() {
+        return createdDate;
     }
 }
