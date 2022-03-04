@@ -14,19 +14,19 @@ import javax.validation.Valid;
 @Controller
 public class AuthController {
 
-    private UserService service;
+    private final UserService service;
 
     public AuthController(UserService service) {
         this.service = service;
     }
 
     @PostMapping("/api/register")
-    public ResponseEntity<ApiResult<?>> register(@RequestBody @Valid RegisterRequest request) {
+    public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest request) {
         try {
             service.createUser(request);
-            return ApiResult.created();
+            return ApiResult.created().toResponse();
         } catch (ApiException e) {
-            return ApiResult.failure(e.getErrorMessage());
+            return ApiResult.failure(e.getErrorMessage()).toResponse();
         }
     }
 }

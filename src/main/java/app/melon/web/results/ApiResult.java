@@ -1,25 +1,60 @@
 package app.melon.web.results;
 
-import app.melon.base.JsonUtils;
-import org.aspectj.bridge.Message;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 
 import java.util.HashMap;
 
 public class ApiResult<T> {
 
-    private String message;
-    private T body;
+    private final T body;
+    private final int status;
 
-    private ApiResult() {}
-
-    public static ResponseEntity<ApiResult<?>> created() {
-        return ResponseEntity.status(201).build();
+    private ApiResult(int status) {
+        this(status, null);
     }
 
-    public static ResponseEntity<ApiResult<?>> failure(String errorMessage) {
-        return null;
+    private ApiResult(int status, T body) {
+        this.status = status;
+        this.body = body;
+    }
+
+    public static ApiResult<?> created() {
+        return new ApiResult<>(201);
+    }
+
+    public static ApiResult<MessageResult> failure(String message) {
+        return message(403, message);
+    }
+
+    public static ApiResult<MessageResult> message(int status, String message) {
+        return new ApiResult<>(status, new MessageResult(message));
+    }
+
+    public static <T> ApiResult<T> ok(T body) {
+        return new ApiResult<>(200, body);
+    }
+
+    public static ApiResult<MessageResult> notFound() {
+        return message(404, "Page not found");
+    }
+
+    public static ApiResult<MessageResult> serverError() {
+        return serverError("Server error");
+    }
+
+    public static ApiResult<MessageResult> serverError(String message) {
+        return message(500, message);
+    }
+
+    public ResponseEntity<T> toResponse() {
+        return ResponseEntity.status(this.status).body(this.body);
+    }
+
+    private static class MessageResult {
+        private String message;
+
+        private MessageResult(String message) {
+            this.message = message;
+        }
     }
 }
