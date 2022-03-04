@@ -2,6 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.6.4'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+	id "com.github.node-gradle.node" version "3.1.1"
 }
 
 group = 'app.hoon'
@@ -15,6 +16,7 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	runtimeOnly 'mysql:mysql-connector-java'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
@@ -22,3 +24,39 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+node {
+	workDir = file("front")
+	npmWorkDir = file("front")
+	nodeModulesDir = file("front")
+}
+
+task frontClean(type: Delete) {
+	delete "front/node_modules", "src/main/resources/static", "src/main/resources/templates"
+}
+
+task frontInstall(type: NpmTask) {
+	args = ['install']
+}
+
+task frontTest(type: NpmTask) {
+	args = ['test']
+}
+
+task frontCopyStatic(type: Copy) {
+	from 'front/dist'
+	into 'src/main/resources/static'
+	exclude 'index.html'
+}
+
+task frontCopyTemplates(type: Copy) {
+	from 'front/dist/index.html'
+	into 'src/main/resources/templates'
+}
+
+task frontBuild(type: NpmTask, dependsOn:
+		['frontClean', 'frontInstall', 'frontCopyStatic', 'frontCopyTemplates']) {
+	args = ['run', 'build']
+}
+
+processResources.dependsOn 'frontBuild'
