@@ -1,4 +1,4 @@
-package app.hoon.melon.pages;
+package app.melon.web.pages;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

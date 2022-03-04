@@ -1,4 +1,4 @@
-package app.hoon.melon;
+package app.melon;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
