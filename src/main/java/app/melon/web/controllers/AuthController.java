@@ -19,7 +19,8 @@ public class AuthController {
     }
 
     @PostMapping("/api/register")
-    public ResponseEntity<String> register(@RequestBody @Valid RegisterRequest payload) {
+    public ResponseEntity<String> register(@RequestBody @Valid RegisterRequest request) {
+        service.createUser(request);
         return ResponseEntity.status(200).build();
     }
 }

@@ -1,0 +1,13 @@
+CREATE SCHEMA IF NOT EXISTS `melon_market` DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
+USE `melon_market`;
+
+CREATE TABLE IF NOT EXISTS `melon_market`.`user` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `emailAddress` VARCHAR(128) NOT NULL,
+    `username` VARCHAR(64) NOT NULL,
+    `password` VARCHAR(255) NOT NULL,
+    `createdDate` DATETIME NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `email_address_idx` (`emailAddress` ASC),
+    UNIQUE INDEX `username_idx` (`username` ASC)
+) ENGINE=InnoDB;
