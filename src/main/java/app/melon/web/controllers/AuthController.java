@@ -1,6 +1,6 @@
 package app.melon.web.controllers;
 
-import app.melon.web.payloads.RegisterPayload;
+import app.melon.web.payloads.RegisterRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +19,7 @@ public class AuthController {
     }
 
     @PostMapping("/api/register")
-    public ResponseEntity<String> register(@RequestBody @Valid RegisterPayload payload) {
+    public ResponseEntity<String> register(@RequestBody @Valid RegisterRequest payload) {
         return ResponseEntity.status(200).build();
     }
 }
