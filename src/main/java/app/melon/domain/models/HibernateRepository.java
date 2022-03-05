@@ -38,6 +38,10 @@ public abstract class HibernateRepository<T> {
         this.entityManager.flush();
     }
 
+    public T findById(long id) {
+        return this.find("id = ?0", id);
+    }
+
     protected T find(String query, Object... params) {
         return this.createQuery(query, params).uniqueResult();
     }

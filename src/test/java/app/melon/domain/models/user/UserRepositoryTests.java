@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DataJpaTest
 @ActiveProfiles("test")
-public class UserRepositoryTest {
+public class UserRepositoryTests {
 
     @TestConfiguration
     public static class UserRepositoryTestConfiguration {
