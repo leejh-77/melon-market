@@ -31,6 +31,10 @@ public class ApiResult<T> {
         return new ApiResult<>(status, new MessageResult(message));
     }
 
+    public static ApiResult<?> ok() {
+        return ok(null);
+    }
+
     public static <T> ApiResult<T> ok(T body) {
         return new ApiResult<>(200, body);
     }

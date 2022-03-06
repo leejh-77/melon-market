@@ -37,11 +37,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .csrf().disable();
     }
 
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/static/**", "/js/**", "/css/**", "/images/**", "/favicon.ico");
-    }
-
     @Bean
     public LogoutSuccessHandler logoutSuccessHandler() {
         return new LogoutSuccessHandlerImpl();

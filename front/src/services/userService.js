@@ -13,5 +13,8 @@ export default {
       username: username,
       password: password
     })
+  },
+  getMyData() {
+    return axios.get('/api/users/me')
   }
 }

@@ -67,4 +67,4 @@ task frontBuild(type: NpmTask, dependsOn:
 	args = ['run', 'build']
 }
 
-processResources.dependsOn 'frontBuild'
+//processResources.dependsOn 'frontBuild'

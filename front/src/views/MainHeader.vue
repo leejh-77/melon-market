@@ -13,6 +13,7 @@
 
 <script>
 import SearchBar from '../components/SearchBar.vue'
+import userService from '@/services/userService'
 
 export default {
   name: 'MainHeader',
@@ -28,13 +29,20 @@ export default {
     }
   },
   data() {
-    return {
-    }
+    return {}
   },
   methods: {
     actionGoToHome() {
       this.$router.push('/')
     }
+  },
+  mounted() {
+    userService.getMyData()
+      .then(res => {
+        if (res.status === 200) {
+          this.$store.dispatch('setAuthenticated', true)
+        }
+      })
   }
 }
 </script>

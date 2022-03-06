@@ -1,5 +1,6 @@
 package app.melon.domain.services;
 
+import app.melon.domain.commands.RegisterCommand;
 import app.melon.domain.commands.UpdateUserImageCommand;
 import app.melon.domain.errors.ApiException;
 import app.melon.domain.errors.Errors;
@@ -7,14 +8,12 @@ import app.melon.domain.files.UserImageStorage;
 import app.melon.domain.models.user.SimpleUser;
 import app.melon.domain.models.user.User;
 import app.melon.domain.models.user.UserRepository;
-import app.melon.domain.commands.RegisterCommand;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 
@@ -64,5 +63,9 @@ public class UserService implements UserDetailsService {
             throw new UsernameNotFoundException("No user found");
         }
         return new SimpleUser(user);
+    }
+
+    public User getMe(long userId) {
+        return this.repository.findById(userId);
     }
 }
