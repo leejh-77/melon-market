@@ -10,8 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-
 @Service
 public class UserService {
 
@@ -40,11 +38,7 @@ public class UserService {
         if (user == null) {
             throw ApiException.of(Errors.UserNotFound);
         }
-        try {
-            this.imageStorage.saveImage(userId, file);
-        } catch (IOException e) {
-            throw ApiException.of(Errors.ServerError);
-        }
+        this.imageStorage.saveImage(file);
     }
 
     public byte[] getUserImage(long userId) throws ApiException {
@@ -52,6 +46,6 @@ public class UserService {
         if (user == null) {
             throw ApiException.of(Errors.UserNotFound);
         }
-        return this.imageStorage.loadImage(userId);
+        return this.imageStorage.loadImage(user.getImagePath());
     }
 }

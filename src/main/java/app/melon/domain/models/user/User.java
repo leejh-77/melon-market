@@ -23,6 +23,9 @@ public class User {
     @Column(name = "created_date", nullable = false)
     private LocalDate createdDate;
 
+    @Column(name = "image_path")
+    private String imagePath;
+
     public User() {}
 
     public User(String username, String emailAddress, String password) {
@@ -50,5 +53,9 @@ public class User {
 
     public LocalDate getCreatedDate() {
         return createdDate;
+    }
+
+    public String getImagePath() {
+        return imagePath;
     }
 }
