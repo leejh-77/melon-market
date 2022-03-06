@@ -1,9 +1,15 @@
 package app.melon.web.payloads;
 
+import app.melon.domain.commands.RegisterCommand;
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+@Getter
+@Setter
 public class RegisterRequest {
 
     @Size(min = 2, max = 50, message = "Username must be between 2 and 50")
@@ -19,27 +25,7 @@ public class RegisterRequest {
     @NotNull
     private String password;
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getEmailAddress() {
-        return emailAddress;
-    }
-
-    public void setEmailAddress(String emailAddress) {
-        this.emailAddress = emailAddress;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public RegisterCommand toCommand() {
+        return new RegisterCommand(username, emailAddress, password);
     }
 }

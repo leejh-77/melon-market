@@ -1,1 +1,19 @@
+### login
+POST http://localhost:8080/api/login
+Content-Type: application/json
+
+{
+  "username": "jonghoon.lee@email.com",
+  "password": "123456777"
+}
+
+### register
 POST http://localhost:8080/api/register
+Content-Type: application/json
+
+{
+  "emailAddress": "jonghoon.lee@email.com",
+  "username": "Jonghoon Lee",
+  "password": "123456777"
+}
+

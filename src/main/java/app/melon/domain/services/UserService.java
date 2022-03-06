@@ -1,17 +1,26 @@
 package app.melon.domain.services;
 
+import app.melon.domain.commands.UpdateUserImageCommand;
 import app.melon.domain.errors.ApiException;
 import app.melon.domain.errors.Errors;
 import app.melon.domain.files.UserImageStorage;
+import app.melon.domain.models.user.SimpleUser;
 import app.melon.domain.models.user.User;
 import app.melon.domain.models.user.UserRepository;
-import app.melon.web.payloads.RegisterRequest;
+import app.melon.domain.commands.RegisterCommand;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
+
 @Service
-public class UserService {
+@Transactional
+public class UserService implements UserDetailsService {
 
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
@@ -23,29 +32,37 @@ public class UserService {
         this.imageStorage = imageStorage;
     }
 
-    public void createUser(RegisterRequest request) throws ApiException {
-        User user = this.repository.findByEmailAddress(request.getEmailAddress());
+    public User createUser(RegisterCommand command) throws ApiException {
+        User user = this.repository.findByEmailAddress(command.getEmailAddress());
         if (user != null) {
             throw ApiException.of(Errors.UsernameExists);
         }
-        String password = this.passwordEncoder.encode(request.getPassword());
-        user = new User(request.getUsername(), request.getEmailAddress(), password);
+        String password = this.passwordEncoder.encode(command.getPassword());
+        user = new User(command.getUsername(), command.getEmailAddress(), password);
         repository.save(user);
+        return user;
     }
 
-    public void updateUserImage(long userId, MultipartFile file) throws ApiException {
-        User user = this.repository.findById(userId);
+    public void updateUserImage(UpdateUserImageCommand command) throws ApiException {
+        User user = this.repository.findById(command.getUserId());
         if (user == null) {
             throw ApiException.of(Errors.UserNotFound);
         }
-        this.imageStorage.saveImage(file);
+        String imagePath = this.imageStorage.saveImage(command.getFile());
+        user.setImagePath(imagePath);
+        this.repository.save(user);
     }
 
-    public byte[] getUserImage(long userId) throws ApiException {
-        User user = this.repository.findById(userId);
-        if (user == null) {
-            throw ApiException.of(Errors.UserNotFound);
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        if (!StringUtils.hasText(username)) {
+            throw new UsernameNotFoundException("No user found");
         }
-        return this.imageStorage.loadImage(user.getImagePath());
+
+        User user = this.repository.findByEmailAddress(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("No user found");
+        }
+        return new SimpleUser(user);
     }
 }

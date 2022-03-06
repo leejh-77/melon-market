@@ -8,7 +8,7 @@ import java.time.LocalDate;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(name = "username", nullable = false, length = 50, unique = true)
@@ -26,7 +26,8 @@ public class User {
     @Column(name = "image_path")
     private String imagePath;
 
-    public User() {}
+    public User() {
+    }
 
     public User(String username, String emailAddress, String password) {
         this.username = username;
@@ -53,6 +54,26 @@ public class User {
 
     public LocalDate getCreatedDate() {
         return createdDate;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setCreatedDate(LocalDate createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public String getImagePath() {

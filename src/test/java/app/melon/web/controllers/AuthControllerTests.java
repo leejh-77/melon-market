@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ContextConfiguration(classes = {SecurityConfiguration.class, AuthController.class})
-public class AuthControllerTest {
+public class AuthControllerTests {
 
     @Autowired
     private MockMvc mvc;
@@ -57,6 +57,5 @@ public class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(JsonUtils.toJson(req)))
                 .andExpect(status().is(200));
-
     }
 }

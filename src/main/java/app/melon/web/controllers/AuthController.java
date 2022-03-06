@@ -25,7 +25,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest request) throws ApiException {
-        service.createUser(request);
+        service.createUser(request.toCommand());
         return ApiResult.created().toResponse();
     }
 
