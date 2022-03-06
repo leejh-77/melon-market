@@ -15,12 +15,12 @@ export default {
   components: {
     ProductCard
   },
-  data () {
+  data() {
     return {
       products: []
     }
   },
-  created () {
+  created() {
     const product = new Product()
     product.name = 'Melon'
     product.price = 30_000
@@ -34,6 +34,7 @@ export default {
     }
   }
 }
+
 </script>
 <style lang="scss" scoped>
 .main {

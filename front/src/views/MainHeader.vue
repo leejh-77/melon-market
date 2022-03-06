@@ -19,18 +19,18 @@ export default {
   components: {
     SearchBar
   },
-  data () {
+  data() {
     return {
       isLoginPage: false
     }
   },
   methods: {
-    actionGoToHome () {
+    actionGoToHome() {
       this.isLoginPage = false
       this.$router.push('/')
     }
   },
-  mounted () {
+  mounted() {
     this.isLoginPage = window.location.pathname === '/login'
   }
 }
