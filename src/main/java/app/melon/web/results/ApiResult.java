@@ -1,5 +1,6 @@
 package app.melon.web.results;
 
+import lombok.Getter;
 import org.springframework.http.ResponseEntity;
 
 import java.util.HashMap;
@@ -50,8 +51,9 @@ public class ApiResult<T> {
         return ResponseEntity.status(this.status).body(this.body);
     }
 
+    @Getter
     private static class MessageResult {
-        private String message;
+        private final String message;
 
         private MessageResult(String message) {
             this.message = message;

@@ -1,13 +1,13 @@
 <template>
   <div class="main">
-      <div class="left-items">
-        <img src="../assets/logo.png" alt="logo" @click="actionGoToHome"/>
-        <SearchBar class="search-bar" v-if="!isLoginPage"/>
-      </div>
-      <nav v-if="!isLoginPage">
-          <a href="#">About</a>
-          <a href="login">Login</a>
-      </nav>
+    <div class="left-items">
+      <img src="../assets/logo.png" alt="logo" @click="actionGoToHome"/>
+      <SearchBar class="search-bar" v-show="!showOnlyHomeButton"/>
+    </div>
+    <nav v-if="!showOnlyHomeButton">
+      <a href="#">About</a>
+      <a href="login" v-show="!isAuthenticated">Login</a>
+    </nav>
   </div>
 </template>
 
@@ -19,19 +19,22 @@ export default {
   components: {
     SearchBar
   },
+  computed: {
+    isAuthenticated() {
+      return this.$store.getters.isAuthenticated
+    },
+    showOnlyHomeButton() {
+      return window.location.pathname === '/login' || window.location.pathname === '/signup'
+    }
+  },
   data() {
     return {
-      isLoginPage: false
     }
   },
   methods: {
     actionGoToHome() {
-      this.isLoginPage = false
       this.$router.push('/')
     }
-  },
-  mounted() {
-    this.isLoginPage = window.location.pathname === '/login'
   }
 }
 </script>
@@ -39,38 +42,38 @@ export default {
 <style lang="scss" scoped>
 
 .main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+
+  .left-items {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    background-color: #ffffff;
 
-    .left-items {
-        display: flex;
-        align-items: center;
-
-        img {
-            object-fit: cover;
-            height: 40px;
-            margin-right: 10px;
-        }
-
-        img:hover {
-            cursor: pointer;
-        }
-
-        .search-bar {
-            width: 250px;
-        }
+    img {
+      object-fit: cover;
+      height: 40px;
+      margin-right: 10px;
     }
 
-    nav {
-        a {
-            font-size: 18px;
-            text-decoration: none;
-            color: black;
-            margin-right: 15px;
-        }
+    img:hover {
+      cursor: pointer;
     }
+
+    .search-bar {
+      width: 250px;
+    }
+  }
+
+  nav {
+    a {
+      font-size: 18px;
+      text-decoration: none;
+      color: black;
+      margin-right: 15px;
+    }
+  }
 }
 
 </style>

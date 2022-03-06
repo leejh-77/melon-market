@@ -3,23 +3,26 @@
     <form class="main-form" @submit.prevent="actionLogin">
       <span class="main-title">Melon market</span>
       <input v-model="emailAddress" type="email" placeholder="EmailAddress">
+      <input v-model="username" type="text" placeholder="Username">
       <input v-model="password" type="password" placeholder="Password">
+      <input v-model="confirmPassword" type="password" placeholder="Confirm Password">
       <div class="main-buttons">
-        <button class="btn-login">Login</button>
+        <button class="btn-signup">Signup</button>
       </div>
     </form>
-    <button class="btn-signup" @click="actionMoveToSignup">Signup</button>
   </div>
 </template>
 <script>
 import userService from '@/services/userService'
 
 export default {
-  name: 'LoginView',
+  name: 'SignupView',
   data() {
     return {
       emailAddress: '',
-      password: ''
+      username: '',
+      password: '',
+      confirmPassword: ''
     }
   },
   methods: {
@@ -27,17 +30,13 @@ export default {
       if (!this.validateInputs()) {
         return
       }
-      userService.login(this.emailAddress, this.password)
+      userService.signup(this.emailAddress, this.username, this.password)
         .then(res => {
-          this.$router.push('/')
-          this.$store.dispatch('setAuthenticated', true)
+          this.$router.push('/login')
         })
         .catch(e => {
-          alert('Failed to login. Check your emailAddress and password')
+          alert('Failed to signup.')
         })
-    },
-    actionMoveToSignup() {
-      this.$router.push('/signup')
     },
     validateInputs() {
       const regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
@@ -47,6 +46,10 @@ export default {
       }
       if (this.password.length < 6) {
         alert('Password must be longer than 5 characters')
+        return false
+      }
+      if (this.confirmPassword !== this.password) {
+        alert('Config password is different from password')
         return false
       }
       return true
@@ -86,17 +89,6 @@ export default {
       border-radius: 7px;
     }
   }
-}
-
-.btn-login {
-  width: 250px;
-  align-self: center;
-  height: 40px;
-  margin: 5px;
-  color: white;
-  border: 1px solid cornflowerblue;
-  border-radius: 7px;
-  background-color: cornflowerblue;
 }
 
 button:hover {
