@@ -33,7 +33,7 @@ export default {
 }
 
 .main-header {
-  padding: 15px 25%;
+  padding: 15px 20%;
 }
 
 </style>

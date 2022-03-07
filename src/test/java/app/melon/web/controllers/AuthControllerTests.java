@@ -3,7 +3,7 @@ package app.melon.web.controllers;
 import app.melon.base.JsonUtils;
 import app.melon.domain.services.UserService;
 import app.melon.web.configs.SecurityConfiguration;
-import app.melon.web.payloads.RegisterRequest;
+import app.melon.web.requests.RegisterRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

@@ -6,6 +6,7 @@ import app.melon.domain.models.user.SimpleUser;
 import app.melon.domain.models.user.User;
 import app.melon.domain.services.UserService;
 import app.melon.web.results.ApiResult;
+import app.melon.web.results.GetMeResult;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -14,8 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.annotation.security.RolesAllowed;
 
 @Controller
 @RequestMapping("/api/users")
@@ -34,8 +33,9 @@ public class UserController {
             return ApiResult.failure("failed to get user").toResponse();
         }
         SimpleUser simpleUser = (SimpleUser) principal;
-        User user = this.service.getMe(simpleUser.getUserId());
-        return ApiResult.ok(user).toResponse();
+        User user = this.service.getUser(simpleUser.getUserId());
+        GetMeResult result = GetMeResult.from(user);
+        return ApiResult.ok(result).toResponse();
     }
 
     @PutMapping("/me/images")

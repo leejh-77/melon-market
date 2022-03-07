@@ -1,24 +1,39 @@
 import { createStore } from 'vuex'
+import userService from '@/services/userService'
 
 export default createStore({
   state: {
-    authenticated: false
+    user: {
+      authenticated: false,
+      username: null,
+      imagePath: null
+    }
   },
   getters: {
-    isAuthenticated(state) {
-      return state.authenticated
+    getUser(state) {
+      return state.user
     }
   },
   mutations: {
-    setAuthenticated(state, value) {
-      state.authenticated = value
+    setUser(state, value) {
+      state.user = value
     }
   },
   actions: {
-    setAuthenticated({ commit }, authenticated) {
-      commit('setAuthenticated', authenticated)
+    getMyData({ commit }) {
+      userService.getMyData()
+        .then(res => {
+          res.data.authenticated = true
+          commit('setUser', res.data)
+        })
+        .catch(e => {
+          commit('setUser', {
+            authenticated: false,
+            username: null,
+            imagePath: null
+          })
+        })
     }
   },
-  modules: {
-  }
+  modules: {}
 })

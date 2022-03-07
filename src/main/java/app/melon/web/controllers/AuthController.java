@@ -1,7 +1,7 @@
 package app.melon.web.controllers;
 
 import app.melon.domain.errors.ApiException;
-import app.melon.web.payloads.RegisterRequest;
+import app.melon.web.requests.RegisterRequest;
 import app.melon.web.results.ApiResult;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;

@@ -2,30 +2,37 @@
   <div class="main">
     <div class="left-items">
       <img src="../assets/logo.png" alt="logo" @click="actionGoToHome"/>
-      <SearchBar class="search-bar" v-show="!showOnlyHomeButton"/>
+      <SearchBar class="search-bar"/>
     </div>
-    <nav v-if="!showOnlyHomeButton">
-      <a href="#">About</a>
-      <a href="login" v-show="!isAuthenticated">Login</a>
-    </nav>
+    <div class="right-items">
+      <div class="upper-items">
+        <nav>
+          <a href="#">About</a>
+          <a href="login" v-show="!isAuthenticated">Login</a>
+        </nav>
+        <img ref="user-image" class="user-image" v-show="isAuthenticated"
+             @click="actionShowSettingModal" src="../assets/user.png"/>
+      </div>
+      <UserSettingModal ref="user-setting-modal"
+                        v-on:changePicture="actionChangePicture"
+                        v-on:writePost="actionGoToWritePost"/>
+    </div>
   </div>
 </template>
 
 <script>
 import SearchBar from '../components/SearchBar.vue'
-import userService from '@/services/userService'
+import UserSettingModal from '@/components/UserSettingModal'
 
 export default {
   name: 'MainHeader',
   components: {
+    UserSettingModal,
     SearchBar
   },
   computed: {
     isAuthenticated() {
-      return this.$store.getters.isAuthenticated
-    },
-    showOnlyHomeButton() {
-      return window.location.pathname === '/login' || window.location.pathname === '/signup'
+      return this.$store.getters.getUser.authenticated
     }
   },
   data() {
@@ -34,15 +41,31 @@ export default {
   methods: {
     actionGoToHome() {
       this.$router.push('/')
+    },
+    actionShowSettingModal() {
+      this.$refs['user-setting-modal'].show()
+    },
+    actionGoToWritePost() {
+      console.log('write post')
+    },
+    actionChangePicture() {
+      console.log('change picture')
+    }
+  },
+  watch: {
+    isAuthenticated(value) {
+      if (value) {
+        const img = this.$store.state.user.imagePath
+        if (img != null) {
+          this.$refs['user-image'].src = img
+        }
+      }
     }
   },
   mounted() {
-    userService.getMyData()
-      .then(res => {
-        if (res.status === 200) {
-          this.$store.dispatch('setAuthenticated', true)
-        }
-      })
+    if (!this.$store.state.user.authenticated) {
+      this.$store.dispatch('getMyData')
+    }
   }
 }
 </script>
@@ -74,12 +97,29 @@ export default {
     }
   }
 
-  nav {
-    a {
-      font-size: 18px;
-      text-decoration: none;
-      color: black;
-      margin-right: 15px;
+  .right-items {
+    .upper-items {
+      display: flex;
+      align-items: center;
+
+      nav {
+        a {
+          font-size: 18px;
+          text-decoration: none;
+          color: black;
+          margin-right: 15px;
+        }
+      }
+
+      .user-image {
+        width: 35px;
+        margin-left: 50px;
+        border-radius: 45px;
+      }
+
+      :hover {
+        cursor: pointer;
+      }
     }
   }
 }

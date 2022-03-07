@@ -65,7 +65,7 @@ public class UserService implements UserDetailsService {
         return new SimpleUser(user);
     }
 
-    public User getMe(long userId) {
+    public User getUser(long userId) {
         return this.repository.findById(userId);
     }
 }

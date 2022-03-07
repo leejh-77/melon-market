@@ -1,4 +1,4 @@
-package app.melon.web.payloads;
+package app.melon.web.requests;
 
 import app.melon.domain.commands.RegisterCommand;
 import lombok.Getter;

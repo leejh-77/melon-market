@@ -30,7 +30,6 @@ export default {
       userService.login(this.emailAddress, this.password)
         .then(res => {
           this.$router.push('/')
-          this.$store.dispatch('setAuthenticated', true)
         })
         .catch(e => {
           alert('Failed to login. Check your emailAddress and password')
