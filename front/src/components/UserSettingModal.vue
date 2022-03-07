@@ -1,7 +1,8 @@
 <template>
   <div class="modal" v-show="isShowing">
+    <span>{{ $store.state.user.username }}</span>
     <button @click="$emit('writePost'); close()">Write Post</button>
-    <button @click="$emit('changePicture'); close()">Change Picture</button>
+    <button @click="$emit('changeInfo'); close()">Edit Info</button>
     <button class="close-button" @click="close">Close</button>
   </div>
 </template>
@@ -36,6 +37,11 @@ export default {
   background: white;
   border-radius: 10px;
   padding: 20px;
+
+  span {
+    margin-bottom: 20px;
+    font-weight: bold;
+  }
 
   button {
     width: 100%;

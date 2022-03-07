@@ -14,19 +14,23 @@
              @click="actionShowSettingModal" src="../assets/user.png"/>
       </div>
       <UserSettingModal ref="user-setting-modal"
-                        v-on:changePicture="actionChangePicture"
+                        v-on:changeInfo="actionChangeInfo"
                         v-on:writePost="actionGoToWritePost"/>
+
     </div>
+    <UserInfoModal ref="user-info-modal"/>
   </div>
 </template>
 
 <script>
 import SearchBar from '../components/SearchBar.vue'
 import UserSettingModal from '@/components/UserSettingModal'
+import UserInfoModal from '@/components/UserInfoModal'
 
 export default {
   name: 'MainHeader',
   components: {
+    UserInfoModal,
     UserSettingModal,
     SearchBar
   },
@@ -46,10 +50,10 @@ export default {
       this.$refs['user-setting-modal'].show()
     },
     actionGoToWritePost() {
-      console.log('write post')
+      this.$router.push('/post')
     },
-    actionChangePicture() {
-      console.log('change picture')
+    actionChangeInfo() {
+      this.$refs['user-info-modal'].show()
     }
   },
   watch: {
