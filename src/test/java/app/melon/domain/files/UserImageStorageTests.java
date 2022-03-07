@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 public class UserImageStorageTests {
 
     @Autowired
-    private UserImageStorage storage;
+    private ImageStorage storage;
 
     @Test
     public void saveImage() throws IOException {

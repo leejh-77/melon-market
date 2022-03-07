@@ -1,12 +1,13 @@
 <template>
   <div class="main">
     <form class="main-form" @submit.prevent="actionDone">
-      <span class="description">Sell your product!</span>
+      <span class="description">Sell your stuffs!</span>
       <ImageContainer :files="images" @deleteImage="deleteImage(idx)" ref="image-container" class="image-container"/>
       <label class="add-button" for="upload-photo">Add Picture</label>
-      <input type="file" ref="picture-input" id="upload-photo" @change="updateImageContainer" accept=".png, .jpg, .jpeg" multiple/>
-      <input class="title" type="text" placeholder="title"/>
-      <textarea class="body"/>
+      <input type="file" ref="picture-input" id="upload-photo" @change="updateImageContainer" accept=".png, .jpg, .jpeg"
+             multiple/>
+      <input class="title" type="text" placeholder="title" v-model="title"/>
+      <textarea class="body" v-model="body"/>
       <button class="done-button">Done</button>
     </form>
   </div>
@@ -14,6 +15,7 @@
 
 <script>
 import ImageContainer from '@/components/ImageContainer'
+import postService from '@/services/postService'
 
 export default {
   name: 'WritePostView',
@@ -23,6 +25,7 @@ export default {
   data() {
     return {
       images: [],
+      rawFiles: [],
       title: '',
       body: ''
     }
@@ -30,11 +33,34 @@ export default {
   methods: {
     actionDone() {
       if (this.title.length === 0) {
-        alert('')
+        alert('Title must be long than 0 character')
+        return
       }
+      if (this.rawFiles.length === 0) {
+        alert('At least one picture has to be attached')
+        return
+      }
+
+      const formData = new FormData()
+      formData.append('title', this.title)
+      formData.append('body', this.body)
+      formData.append('price', '12000')
+
+      for (let i = 0; i < this.rawFiles.length; i++) {
+        formData.append('images', this.rawFiles[i])
+      }
+
+      postService.addPost(formData)
+        .then(res => {
+          this.$router.push('/')
+        })
+        .catch(e => {
+          alert('Failed to create post')
+        })
     },
     updateImageContainer() {
       const files = this.$refs['picture-input'].files
+      this.rawFiles.push(...files)
 
       for (let i = 0; i < files.length; i++) {
         const reader = new FileReader()
@@ -46,6 +72,7 @@ export default {
     },
     deleteImage(idx) {
       this.images.splice(idx, 1)
+      this.rawFiles.splice(idx, 1)
     }
   }
 }

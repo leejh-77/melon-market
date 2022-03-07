@@ -4,7 +4,8 @@ import app.melon.domain.commands.RegisterCommand;
 import app.melon.domain.commands.UpdateUserImageCommand;
 import app.melon.domain.errors.ApiException;
 import app.melon.domain.errors.Errors;
-import app.melon.domain.files.UserImageStorage;
+import app.melon.domain.files.ImageStorage;
+import app.melon.domain.files.StorageProvider;
 import app.melon.domain.models.user.SimpleUser;
 import app.melon.domain.models.user.User;
 import app.melon.domain.models.user.UserRepository;
@@ -23,12 +24,11 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
-    private final UserImageStorage imageStorage;
+    private final ImageStorage imageStorage = new ImageStorage(() -> System.getProperty("user.dir") + "/data/user/images");
 
-    public UserService(UserRepository repository, PasswordEncoder passwordEncoder, UserImageStorage imageStorage) {
+    public UserService(UserRepository repository, PasswordEncoder passwordEncoder) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
-        this.imageStorage = imageStorage;
     }
 
     public User createUser(RegisterCommand command) throws ApiException {

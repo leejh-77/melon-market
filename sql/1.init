@@ -1,36 +1,51 @@
-SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
-SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
-SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
+SET @OLD_UNIQUE_CHECKS = @@UNIQUE_CHECKS, UNIQUE_CHECKS = 0;
+SET @OLD_FOREIGN_KEY_CHECKS = @@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS = 0;
+SET @OLD_SQL_MODE = @@SQL_MODE, SQL_MODE = 'TRADITIONAL,ALLOW_INVALID_DATES';
 
 CREATE SCHEMA IF NOT EXISTS `melon_market` DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
 USE `melon_market`;
 
 DROP TABLE IF EXISTS `melon_market`.`user`;
 
-CREATE TABLE IF NOT EXISTS `melon_market`.`user` (
-    `id` INT NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `melon_market`.`user`
+(
+    `id`            INT          NOT NULL AUTO_INCREMENT,
     `email_address` VARCHAR(128) NOT NULL,
-    `username` VARCHAR(64) NOT NULL,
-    `image_path` VARCHAR(128),
-    `password` VARCHAR(255) NOT NULL,
-    `created_date` DATETIME NOT NULL,
+    `username`      VARCHAR(64)  NOT NULL,
+    `image_name`    VARCHAR(128),
+    `password`      VARCHAR(255) NOT NULL,
+    `created_date`  DATETIME     NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE INDEX `email_address_idx` (`email_address` ASC),
     UNIQUE INDEX `username_idx` (`username` ASC)
-) ENGINE=InnoDB;
+) ENGINE = InnoDB;
 
 DROP TABLE IF EXISTS `melon_market`.`post`;
 
-CREATE TABLE IF NOT EXISTS `melon_market`.`post` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `user` INT NOT NULL,
-    `title` VARCHAR(128) NOT NULL,
-    `body` TEXT,
-    `created_time` DATETIME NOT NULL,
+CREATE TABLE IF NOT EXISTS `melon_market`.`post`
+(
+    `id`           INT          NOT NULL AUTO_INCREMENT,
+    `user_id`      INT          NOT NULL,
+    `price`        INT          NOT NULL,
+    `title`        VARCHAR(128) NOT NULL,
+    `body`         TEXT,
+    `created_time` DATETIME     NOT NULL,
     PRIMARY KEY (`id`),
-    FOREIGN KEY (user) REFERENCES user(id)
-) ENGINE=InnoDB;
+    FOREIGN KEY (user_id) REFERENCES user (id)
+) ENGINE = InnoDB;
 
-SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
-SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
-SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
+DROP TABLE IF EXISTS `melon_market`.`post_image`;
+
+CREATE TABLE IF NOT EXISTS `melon_market`.`post_image`
+(
+    `id`           INT          NOT NULL AUTO_INCREMENT,
+    `image_name`   VARCHAR(128) NOT NULL,
+    `post_id`      INT          NOT NULL,
+    `created_time` DATETIME     NOT NULL,
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (`post_id`) REFERENCES post (id)
+) ENGINE = InnoDB;
+
+SET @OLD_UNIQUE_CHECKS = @@UNIQUE_CHECKS, UNIQUE_CHECKS = 0;
+SET @OLD_FOREIGN_KEY_CHECKS = @@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS = 0;
+SET @OLD_SQL_MODE = @@SQL_MODE, SQL_MODE = 'TRADITIONAL,ALLOW_INVALID_DATES';

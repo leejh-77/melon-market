@@ -5,6 +5,8 @@ public enum Errors {
     EmailAddressExists("Email address already exists"),
     UserNotFound("Requested user not found"),
     ItemNotFound("Requested item not found"),
+    InvalidRequest("Invalid request"),
+    ImageNotFound("At least one image has to be attached"),
     ServerError("Server Error");
 
     private String message;

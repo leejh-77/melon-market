@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import ProductsView from '../views/ProductsView.vue'
+import PostsBoard from '../views/PostsBoard.vue'
 import LoginView from '../views/LoginView.vue'
 import SignupView from '@/views/SignupView'
 import WritePostView from '@/views/WritePostView'
@@ -8,7 +8,7 @@ import WritePostView from '@/views/WritePostView'
 const routes = [
   {
     path: '/',
-    component: ProductsView
+    component: PostsBoard
   },
   {
     path: '/login',

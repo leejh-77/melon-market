@@ -13,13 +13,16 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
-@Component
-public class UserImageStorage {
+public class ImageStorage {
 
-    private static final String DIRECTORY = System.getProperty("user.dir") + "/data/user/images";
+    private final StorageProvider provider;
+
+    public ImageStorage(StorageProvider provider) {
+        this.provider = provider;
+    }
 
     public String saveImage(MultipartFile file) {
-        Path path = Paths.get(DIRECTORY).toAbsolutePath().normalize();
+        Path path = Paths.get(this.provider.getDirectory()).toAbsolutePath().normalize();
         try {
             Files.createDirectories(path);
         } catch (IOException e) {
@@ -39,12 +42,12 @@ public class UserImageStorage {
     private String makeFilename(MultipartFile file) {
         String timestamp = String.valueOf(System.currentTimeMillis());
         String uuid = UUID.randomUUID().toString();
-        String ext = FilenameUtils.getExtension(file.getName());
+        String ext = FilenameUtils.getExtension(file.getOriginalFilename());
         return timestamp + "." + uuid + (StringUtils.hasText(ext) ? "." + ext : "");
     }
 
     public byte[] loadImage(String filename) {
-        Path path = Paths.get(DIRECTORY).toAbsolutePath().normalize();
+        Path path = Paths.get(this.provider.getDirectory()).toAbsolutePath().normalize();
         Path location = path.resolve(filename);
         if (!location.toFile().exists()) {
             return null;

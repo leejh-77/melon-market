@@ -117,7 +117,7 @@ export default {
 
       .user-image {
         width: 35px;
-        margin-left: 50px;
+        margin-left: 20px;
         border-radius: 45px;
       }
 

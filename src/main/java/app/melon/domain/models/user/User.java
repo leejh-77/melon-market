@@ -1,7 +1,10 @@
 package app.melon.domain.models.user;
 
+import app.melon.domain.models.post.Post;
+
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -23,8 +26,11 @@ public class User {
     @Column(name = "created_date", nullable = false)
     private LocalDate createdDate;
 
-    @Column(name = "image_path")
+    @Column(name = "image_name")
     private String imagePath;
+
+    @OneToMany
+    private List<Post> posts;
 
     public User() {
     }

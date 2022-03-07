@@ -24,7 +24,7 @@ public class ApiResult<T> {
     }
 
     public static ApiResult<MessageResult> failure(String message) {
-        return message(403, message);
+        return message(401, message);
     }
 
     public static ApiResult<MessageResult> message(int status, String message) {

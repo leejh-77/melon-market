@@ -38,6 +38,12 @@ export default {
       height: 100%;
     }
 
+    span {
+      padding: 2px;
+      position: absolute;
+      background-color: lightgray;
+    }
+
     span:hover {
       cursor: pointer;
     }

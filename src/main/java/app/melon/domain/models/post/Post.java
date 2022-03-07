@@ -1,10 +1,11 @@
 package app.melon.domain.models.post;
 
-import app.melon.domain.models.user.User;
+import lombok.Getter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@Getter
 @Entity
 @Table(name = "post")
 public class Post {
@@ -13,35 +14,28 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @ManyToOne
-    private User user;
-
-    @Column(name = "created_time", nullable = false)
-    private LocalDateTime createdDate;
-
     @Column(name = "title", nullable = false)
     private String title;
 
     @Column(name = "body")
     private String body;
 
-    public long getId() {
-        return id;
-    }
+    @Column(name = "price",  nullable = false)
+    private int price;
 
-    public User getUser() {
-        return user;
-    }
+    @Column(name = "created_time", nullable = false)
+    private LocalDateTime createdDate;
 
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
+    @Column(name = "user_id")
+    private long userId;
 
-    public String getTitle() {
-        return title;
-    }
+    public Post(){}
 
-    public String getBody() {
-        return body;
+    public Post(String title, String body, int price, long userId) {
+        this.title = title;
+        this.body = body;
+        this.price = price;
+        this.userId = userId;
+        this.createdDate = LocalDateTime.now();
     }
 }
