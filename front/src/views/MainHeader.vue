@@ -36,7 +36,7 @@ export default {
   },
   computed: {
     isAuthenticated() {
-      return this.$store.getters.getUser.authenticated
+      return this.$store.getters.authenticated
     }
   },
   data() {
@@ -54,16 +54,6 @@ export default {
     },
     actionChangeInfo() {
       this.$refs['user-info-modal'].show()
-    }
-  },
-  watch: {
-    isAuthenticated(value) {
-      if (value) {
-        const img = this.$store.state.user.imagePath
-        if (img != null) {
-          this.$refs['user-image'].src = img
-        }
-      }
     }
   },
   mounted() {

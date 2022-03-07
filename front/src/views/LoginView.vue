@@ -29,6 +29,7 @@ export default {
       }
       userService.login(this.emailAddress, this.password)
         .then(res => {
+          this.$store.state.authenticated = true
           this.$router.push('/')
         })
         .catch(e => {

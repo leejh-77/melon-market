@@ -3,15 +3,15 @@ import userService from '@/services/userService'
 
 export default createStore({
   state: {
+    authenticated: false,
     user: {
-      authenticated: false,
       username: null,
       imagePath: null
     }
   },
   getters: {
-    getUser(state) {
-      return state.user
+    authenticated(state) {
+      return state.authenticated
     }
   },
   mutations: {
@@ -23,12 +23,10 @@ export default createStore({
     getMyData({ commit }) {
       userService.getMyData()
         .then(res => {
-          res.data.authenticated = true
           commit('setUser', res.data)
         })
         .catch(e => {
           commit('setUser', {
-            authenticated: false,
             username: null,
             imagePath: null
           })

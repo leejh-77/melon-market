@@ -6,7 +6,11 @@
       <label class="add-button" for="upload-photo">Add Picture</label>
       <input type="file" ref="picture-input" id="upload-photo" @change="updateImageContainer" accept=".png, .jpg, .jpeg"
              multiple/>
-      <input class="title" type="text" placeholder="title" v-model="title"/>
+      <label>Title</label>
+      <input class="title" type="text" v-model="title"/>
+      <label>Price</label>
+      <input class="price" type="number" v-model="price"/>
+      <label>Description</label>
       <textarea class="body" v-model="body"/>
       <button class="done-button">Done</button>
     </form>
@@ -27,6 +31,7 @@ export default {
       images: [],
       rawFiles: [],
       title: '',
+      price: 0,
       body: ''
     }
   },
@@ -44,7 +49,7 @@ export default {
       const formData = new FormData()
       formData.append('title', this.title)
       formData.append('body', this.body)
-      formData.append('price', '12000')
+      formData.append('price', this.price)
 
       for (let i = 0; i < this.rawFiles.length; i++) {
         formData.append('images', this.rawFiles[i])
@@ -85,6 +90,7 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding: 20px 0;
 
     .description {
       font-size: 30px;
@@ -108,6 +114,7 @@ export default {
       color: black;
       border-radius: 10px;
       font-weight: bold;
+      background-color: lightgray;
     }
 
     .add-button:hover {
@@ -154,6 +161,21 @@ export default {
 
     .done-button:hover {
       cursor: pointer;
+    }
+
+    label {
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .price {
+      width: 40%;
+      height: 25px;
+      font-size: 18px;
+      border-radius: 10px;
+      border: 1px solid lightgray;
+      padding: 8px;
+      margin-bottom: 20px;
     }
   }
 }

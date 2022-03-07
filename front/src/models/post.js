@@ -4,6 +4,6 @@ export default class Post {
   imageUrl
   price
   location
-  interestCount
+  likeCount
   chatCount
 }

@@ -5,7 +5,7 @@
     <p class="price">{{ post.price }} won</p>
     <p class="location">{{ post.location }}</p>
     <div class="extra">
-      <p class="interests">interests {{ post.interestCount }}</p>
+      <p class="likes">likes {{ post.likeCount }}</p>
       <p>*</p>
       <p class="chats">chats {{ post.chatCount }}</p>
     </div>
@@ -47,7 +47,8 @@ export default {
   }
 
   .name {
-    font-size: 20px;
+    margin-top: 8px;
+    font-size: 18px;
     color: black;
   }
 
