@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <img ref="post-image" class="picture" alt="image"/>
+    <img ref="post-image" class="picture" alt="image" @click="$emit('onClickImage')"/>
     <p class="name">{{ post.title }}</p>
     <p class="price">{{ post.price }} won</p>
     <p class="location">{{ post.location }}</p>
@@ -44,6 +44,10 @@ export default {
     height: 220px;
     background: white;
     border-radius: 20px;
+  }
+
+  .picture:hover {
+    cursor: pointer;
   }
 
   .name {

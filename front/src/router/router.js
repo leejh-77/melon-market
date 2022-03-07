@@ -3,7 +3,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import PostsBoard from '../views/PostsBoard.vue'
 import LoginView from '../views/LoginView.vue'
 import SignupView from '@/views/SignupView'
-import WritePostView from '@/views/WritePostView'
+import PostDetailView from '@/views/PostDetailView'
+import PostEditView from '@/views/PostEditView'
 
 const routes = [
   {
@@ -19,12 +20,12 @@ const routes = [
     component: SignupView
   },
   {
-    path: '/post',
-    component: WritePostView
+    path: '/post-edit/:postId',
+    component: PostEditView
   },
   {
-    path: '/post/:postId',
-    component: WritePostView
+    path: '/post-detail/:postId',
+    component: PostDetailView
   }
 ]
 

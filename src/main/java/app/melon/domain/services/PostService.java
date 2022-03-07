@@ -9,14 +9,12 @@ import app.melon.domain.models.post.PostImage;
 import app.melon.domain.models.post.PostImageRepository;
 import app.melon.domain.models.post.PostRepository;
 import app.melon.domain.models.user.SimpleUser;
-import app.melon.web.results.ApiResult;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -67,4 +65,11 @@ public class PostService {
         return image;
     }
 
+    public Post getPost(long postId) {
+        return this.postRepository.findById(postId);
+    }
+
+    public List<PostImage> getPostImages(long postId) {
+        return this.postImageRepository.findImagesByPostId(postId);
+    }
 }

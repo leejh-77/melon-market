@@ -4,6 +4,7 @@ import app.melon.domain.models.HibernateRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 
 @Repository
 public class PostImageRepository extends HibernateRepository<PostImage> {
@@ -14,5 +15,9 @@ public class PostImageRepository extends HibernateRepository<PostImage> {
 
     public PostImage findImageByPostId(long id) {
         return super.find("post_id = ?0", id);
+    }
+
+    public List<PostImage> findImagesByPostId(long id) {
+        return super.findAll("post_id = ?0", id);
     }
 }

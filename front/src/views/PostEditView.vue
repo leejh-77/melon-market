@@ -22,7 +22,7 @@ import ImageContainer from '@/components/ImageContainer'
 import postService from '@/services/postService'
 
 export default {
-  name: 'WritePostView',
+  name: 'PostEditView',
   components: {
     ImageContainer
   },

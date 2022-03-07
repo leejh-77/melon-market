@@ -2,7 +2,7 @@
   <div class="main">
     <h1 class="description">중고 매물</h1>
     <div class="board">
-      <PostCard class="post-card" v-for="post in posts" :key="post.id" :post="post"/>
+      <PostCard v-on:onClickImage="onClickImage(post.id)" class="post-card" v-for="post in posts" :key="post.id" :post="post"/>
     </div>
   </div>
 </template>
@@ -18,6 +18,11 @@ export default {
   data() {
     return {
       posts: []
+    }
+  },
+  methods: {
+    onClickImage(id) {
+      this.$router.push('/post-detail/' + id)
     }
   },
   mounted() {

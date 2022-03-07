@@ -15,5 +15,8 @@ export default {
     return axios.get('/api/posts/images/' + url, {
       responseType: 'arraybuffer'
     })
+  },
+  getPost(id) {
+    return axios.get('/api/posts/' + id)
   }
 }

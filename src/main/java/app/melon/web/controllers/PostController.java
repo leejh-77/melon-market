@@ -6,6 +6,7 @@ import app.melon.domain.models.post.Post;
 import app.melon.domain.models.post.PostImage;
 import app.melon.domain.services.PostService;
 import app.melon.web.results.ApiResult;
+import app.melon.web.results.PostDetailResult;
 import app.melon.web.results.PostResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,8 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import javax.annotation.security.RolesAllowed;
-import javax.websocket.server.PathParam;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,6 +60,13 @@ public class PostController {
 
         this.service.addPost(new AddPostCommand(title, body, price, files));
         return ApiResult.created().toResponse();
+    }
+
+    @GetMapping("/{postId}")
+    public ResponseEntity<?> getPost(@PathVariable long postId) {
+        Post post = this.service.getPost(postId);
+        List<PostImage> images = this.service.getPostImages(postId);
+        return ApiResult.ok(PostDetailResult.from(post, images)).toResponse();
     }
 
     @PutMapping("/{postId}")
