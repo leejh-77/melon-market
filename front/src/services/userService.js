@@ -7,6 +7,9 @@ export default {
       password: password
     })
   },
+  logout() {
+    return axios.post('/api/logout')
+  },
   signup(emailAddress, username, password) {
     return axios.post('/api/register', {
       emailAddress: emailAddress,

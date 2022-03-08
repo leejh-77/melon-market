@@ -1,9 +1,9 @@
 <template>
   <div class="main">
     <form class="main-form" @submit.prevent="actionLogin">
-      <span class="main-title">Melon market</span>
-      <input v-model="emailAddress" type="email" placeholder="EmailAddress">
-      <input v-model="password" type="password" placeholder="Password">
+      <span class="main-title">멜론마켓</span>
+      <input v-model="emailAddress" type="email" placeholder="이메일">
+      <input v-model="password" type="password" placeholder="비밀번호">
       <div class="main-buttons">
         <button class="btn-login">Login</button>
       </div>

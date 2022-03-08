@@ -15,20 +15,43 @@ public class PostImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "post_id")
-    private long postId;
-
     @Column(name = "image_name")
     private String imageName;
 
     @Column(name = "created_time")
     private LocalDateTime createdTime;
 
+    @ManyToOne(targetEntity = Post.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    private Post post;
+
     public PostImage(){}
 
-    public PostImage(long postId, String imageName) {
-        this.postId = postId;
+    public long getId() {
+        return id;
+    }
+
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
         this.imageName = imageName;
-        this.createdTime = LocalDateTime.now();
+    }
+
+    public LocalDateTime getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(LocalDateTime createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    public Post getPost() {
+        return post;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
     }
 }

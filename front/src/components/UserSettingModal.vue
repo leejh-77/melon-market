@@ -3,8 +3,8 @@
     <span>{{ $store.state.user.username }}</span>
     <button @click="$emit('writePost'); close()">글 작성하기</button>
     <button @click="$emit('changeInfo'); close()">정보 변경</button>
-    <button @click="$emit(''); close()">좋아요 보기</button>
-    <button class="white-button" @click="$emit(''); close()">로그아웃</button>
+    <button @click="$emit('showLikes'); close()">좋아요 보기</button>
+    <button class="white-button" @click="$emit('logout'); close()">로그아웃</button>
     <button class="white-button" @click="close">닫기</button>
   </div>
 </template>

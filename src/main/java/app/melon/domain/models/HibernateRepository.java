@@ -33,12 +33,10 @@ public abstract class HibernateRepository<T> {
 
     public void save(T obj) {
         this.entityManager.persist(obj);
-        this.entityManager.flush();
     }
 
     public void delete(T obj) {
         this.entityManager.remove(obj);
-        this.entityManager.flush();
     }
 
     public T findById(long id) {

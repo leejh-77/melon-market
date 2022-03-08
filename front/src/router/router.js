@@ -5,32 +5,23 @@ import LoginView from '../views/LoginView.vue'
 import SignupView from '@/views/SignupView'
 import PostDetailView from '@/views/PostDetailView'
 import PostEditView from '@/views/PostEditView'
+import LikesView from '@/views/LikesView'
 
 const routes = [
-  {
-    path: '/',
-    component: PostsBoard
-  },
-  {
-    path: '/login',
-    component: LoginView
-  },
-  {
-    path: '/signup',
-    component: SignupView
-  },
-  {
-    path: '/post-edit/:postId',
-    component: PostEditView
-  },
-  {
-    path: '/post-edit',
-    component: PostEditView
-  },
-  {
-    path: '/post-detail/:postId',
-    component: PostDetailView
-  }
+  // home
+  { path: '/', component: PostsBoard },
+
+  // auth
+  { path: '/login', component: LoginView },
+  { path: '/signup', component: SignupView },
+
+  // post
+  { path: '/post-edit/:postId', component: PostEditView },
+  { path: '/post-edit', component: PostEditView },
+  { path: '/post-detail/:postId', component: PostDetailView },
+
+  // like
+  { path: '/likes', component: LikesView }
 ]
 
 const router = createRouter({

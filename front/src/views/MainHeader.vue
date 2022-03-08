@@ -14,7 +14,9 @@
       </div>
       <UserSettingModal ref="user-setting-modal"
                         v-on:changeInfo="actionChangeInfo"
-                        v-on:writePost="actionGoToWritePost"/>
+                        v-on:writePost="actionGoToWritePost"
+                        v-on:showLikes="actionGoToLikes"
+                        v-on:logout="actionLogout"/>
 
     </div>
     <UserInfoModal ref="user-info-modal"/>
@@ -25,6 +27,7 @@
 import SearchBar from '../components/SearchBar.vue'
 import UserSettingModal from '@/components/UserSettingModal'
 import UserInfoModal from '@/components/UserInfoModal'
+import userService from '@/services/userService'
 
 export default {
   name: 'MainHeader',
@@ -51,11 +54,24 @@ export default {
     actionGoToWritePost() {
       this.$router.push('/post-edit')
     },
+    actionGoToLikes() {
+      this.$router.push('/likes')
+    },
     actionShowSettingModal() {
       this.$refs['user-setting-modal'].show()
     },
     actionChangeInfo() {
       this.$refs['user-info-modal'].show()
+    },
+    actionLogout() {
+      userService.logout()
+        .then(res => {
+          console.log('[Logout]', res)
+          this.$router.push('/')
+        })
+        .catch(e => {
+          console.log('[Logout]', e)
+        })
     }
   },
   mounted() {

@@ -4,6 +4,7 @@ import app.melon.domain.models.post.Post;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -29,8 +30,9 @@ public class User {
     @Column(name = "image_name")
     private String imagePath;
 
-    @OneToMany
-    private List<Post> posts;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private List<Post> posts = new ArrayList<>();
 
     public User() {
     }

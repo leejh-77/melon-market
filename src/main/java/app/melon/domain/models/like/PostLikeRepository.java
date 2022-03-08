@@ -8,13 +8,13 @@ import javax.persistence.EntityManager;
 import java.math.BigInteger;
 
 @Repository
-public class LikeRepository extends HibernateRepository<Like> {
+public class PostLikeRepository extends HibernateRepository<PostLike> {
 
-    public LikeRepository(EntityManager entityManager) {
+    public PostLikeRepository(EntityManager entityManager) {
         super(entityManager);
     }
 
-    public Like findByUserIdAndPostId(long userId, long postId) {
+    public PostLike findByUserIdAndPostId(long userId, long postId) {
         return super.findOne("userId = ?0 AND postId = ?1", userId, postId);
     }
 

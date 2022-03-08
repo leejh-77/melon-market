@@ -7,20 +7,16 @@ import app.melon.domain.models.post.PostImage;
 import app.melon.domain.models.user.SimpleUser;
 import app.melon.domain.models.user.User;
 import app.melon.domain.services.PostService;
-import app.melon.domain.services.UserService;
 import app.melon.web.results.ApiResult;
 import app.melon.web.results.PostDetailResult;
 import app.melon.web.results.PostResult;
 import app.melon.web.security.AuthenticationUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,14 +24,10 @@ import java.util.List;
 @RequestMapping("/api/posts")
 public class PostController {
 
-    private static final Logger logger = LoggerFactory.getLogger(PostController.class);
-
     private final PostService postService;
-    private final UserService userService;
 
-    public PostController(PostService postService, UserService userService) {
+    public PostController(PostService postService) {
         this.postService = postService;
-        this.userService = userService;
     }
 
     @GetMapping
@@ -43,7 +35,7 @@ public class PostController {
         List<Post> posts = this.postService.findPostList();
         List<PostResult> results = new ArrayList<>();
         for (Post post : posts) {
-            PostImage image = this.postService.findCoverImage(post.getId());
+            PostImage image = post.getImages().get(0);
             int likeCount = this.postService.findLikeCount(post.getId());
             results.add(PostResult.from(post, image, likeCount));
         }
@@ -71,13 +63,14 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<?> getPost(@PathVariable long postId, Principal principal) {
+    public ResponseEntity<?> getPost(@PathVariable long postId) {
         Post post = this.postService.findPost(postId);
-        User user = this.userService.getUser(post.getUserId());
-        List<PostImage> images = this.postService.findPostImages(postId);
+        User user = post.getUser();
+        List<PostImage> images = post.getImages();
+
         int likeCount = this.postService.findLikeCount(postId);
         boolean likedByMe = false;
-        SimpleUser simpleUser = AuthenticationUtils.extractSimpleUserFromPrincipal(principal);
+        SimpleUser simpleUser = AuthenticationUtils.peekSimpleUser();
         if (simpleUser != null) {
             likedByMe = this.postService.isLikedPost(postId, simpleUser.getUserId());
         }
@@ -96,16 +89,22 @@ public class PostController {
 
     @Secured(value = {"ROLE_USER"})
     @PostMapping("/{postId}/likes")
-    public ResponseEntity<?> likePost(@PathVariable long postId, Principal principal) {
-        SimpleUser user = AuthenticationUtils.extractSimpleUserFromPrincipal(principal);
+    public ResponseEntity<?> likePost(@PathVariable long postId) {
+        SimpleUser user = AuthenticationUtils.peekSimpleUser();
+        if (user == null) {
+            return ApiResult.unauthorized();
+        }
         this.postService.likePost(postId, user.getUserId());
         return ApiResult.ok();
     }
 
     @Secured(value = {"ROLE_USER"})
     @DeleteMapping("/{postId}/likes")
-    public ResponseEntity<?> dislikePost(@PathVariable long postId, Principal principal) {
-        SimpleUser user = AuthenticationUtils.extractSimpleUserFromPrincipal(principal);
+    public ResponseEntity<?> dislikePost(@PathVariable long postId) {
+        SimpleUser user = AuthenticationUtils.peekSimpleUser();
+        if (user == null) {
+            return ApiResult.unauthorized();
+        }
         this.postService.dislikePost(postId, user.getUserId());
         return ApiResult.ok();
     }

@@ -4,23 +4,21 @@ import app.melon.domain.commands.AddPostCommand;
 import app.melon.domain.errors.ApiException;
 import app.melon.domain.errors.Errors;
 import app.melon.domain.files.ImageStorage;
-import app.melon.domain.models.like.Like;
-import app.melon.domain.models.like.LikeRepository;
+import app.melon.domain.models.like.PostLike;
+import app.melon.domain.models.like.PostLikeRepository;
 import app.melon.domain.models.post.Post;
 import app.melon.domain.models.post.PostImage;
 import app.melon.domain.models.post.PostImageRepository;
 import app.melon.domain.models.post.PostRepository;
 import app.melon.domain.models.user.SimpleUser;
-import app.melon.domain.models.user.User;
+import app.melon.domain.models.user.UserRepository;
+import app.melon.web.security.AuthenticationUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -28,15 +26,18 @@ import java.util.List;
 @Transactional
 public class PostService {
 
+    private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final PostImageRepository postImageRepository;
+    private final PostLikeRepository likeRepository;
     private final ImageStorage imageStorage;
-    private final LikeRepository likeRepository;
 
-    public PostService(PostRepository postRepository,
+    public PostService(UserRepository userRepository,
+                       PostRepository postRepository,
                        PostImageRepository postImageRepository,
-                       LikeRepository likeRepository,
+                       PostLikeRepository likeRepository,
                        @Qualifier("PostImageStorage") ImageStorage imageStorage) {
+        this.userRepository = userRepository;
         this.postRepository = postRepository;
         this.postImageRepository = postImageRepository;
         this.likeRepository = likeRepository;
@@ -52,21 +53,27 @@ public class PostService {
             throw ApiException.of(Errors.InvalidRequest);
         }
 
-        SimpleUser simpleUser = (SimpleUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        SimpleUser simpleUser = AuthenticationUtils.peekSimpleUser();
+        if (simpleUser == null) {
+            throw ApiException.of(Errors.UserNotFound);
+        }
 
-        Post post = Post.builder()
-                .title(command.getTitle())
-                .body(command.getBody())
-                .price(command.getPrice())
-                .userId(simpleUser.getUserId())
-                .createdTime(LocalDateTime.now()).build();
+        Post post = new Post();
+        post.setTitle(command.getTitle());
+        post.setBody(command.getBody());
+        post.setPrice(command.getPrice());
+        post.setUser(this.userRepository.findById(simpleUser.getUserId()));
+        post.setCreatedTime(LocalDateTime.now());
 
-        this.postRepository.save(post);
-
+        List<PostImage> images = post.getImages();
         for (MultipartFile file : files) {
             String filename = imageStorage.saveImage(file);
-            this.postImageRepository.save(new PostImage(post.getId(), filename));
+            PostImage image = new PostImage();
+            image.setPost(post);
+            image.setImageName(filename);
+            images.add(image);
         }
+        this.postRepository.save(post);
     }
 
     public List<Post> findPostList() {
@@ -93,27 +100,26 @@ public class PostService {
         return this.postRepository.findById(postId);
     }
 
-    public List<PostImage> findPostImages(long postId) {
-        return this.postImageRepository.findImagesByPostId(postId);
-    }
-
     public boolean isLikedPost(long postId, long userId) {
         return this.likeRepository.findByUserIdAndPostId(userId, postId) != null;
     }
 
     public void likePost(long postId, long userId) {
-        Like like = this.likeRepository.findByUserIdAndPostId(userId, postId);
+        PostLike like = this.likeRepository.findByUserIdAndPostId(userId, postId);
         if (like != null) {
             return;
         }
-        like = Like.builder()
-                .userId(userId)
-                .postId(postId).build();
+
+        Post post = this.postRepository.findById(postId);
+        like = new PostLike();
+        like.setPost(post);
+        like.setUser(post.getUser());
+
         this.likeRepository.save(like);
     }
 
     public void dislikePost(long postId, long userId) {
-        Like like = this.likeRepository.findByUserIdAndPostId(userId, postId);
+        PostLike like = this.likeRepository.findByUserIdAndPostId(userId, postId);
         if (like == null) {
             return;
         }

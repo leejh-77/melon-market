@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <form class="main-form" @submit.prevent="actionLogin">
-      <span class="main-title">Melon market</span>
+      <span class="main-title">멜론마켓</span>
       <input v-model="emailAddress" type="email" placeholder="이메일">
       <input v-model="username" type="text" placeholder="이름">
       <input v-model="password" type="password" placeholder="비밀번호">
