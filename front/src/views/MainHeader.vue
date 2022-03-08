@@ -7,7 +7,6 @@
     <div class="right-items">
       <div class="upper-items">
         <nav>
-          <a href="#">About</a>
           <a href="login" v-show="!isAuthenticated">Login</a>
         </nav>
         <img ref="user-image" class="user-image" v-show="isAuthenticated"

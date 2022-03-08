@@ -28,6 +28,7 @@ export default {
   width: 60%;
   height: 180px;
   overflow: auto;
+  overflow-y: hidden;
   white-space: nowrap;
 
   .container {

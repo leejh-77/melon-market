@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS `melon_market`.`post`
     `price`        INT          NOT NULL,
     `title`        VARCHAR(128) NOT NULL,
     `body`         TEXT,
+    `view_count`   INT DEFAULT 0,
     `created_time` DATETIME     NOT NULL,
     PRIMARY KEY (`id`),
     FOREIGN KEY (user_id) REFERENCES user (id)

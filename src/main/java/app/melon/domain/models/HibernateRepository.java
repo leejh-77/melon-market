@@ -43,7 +43,7 @@ public abstract class HibernateRepository<T> {
     protected T findOne(String query, Object... params) {
         Query<T> q = this.createQuery(query, params);
         q.setMaxResults(1);
-        return q.getSingleResult();
+        return q.uniqueResult();
     }
 
     protected List<T> findAll(String query, Object... params) {

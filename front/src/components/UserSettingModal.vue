@@ -1,11 +1,11 @@
 <template>
   <div class="modal" v-show="isShowing">
     <span>{{ $store.state.user.username }}</span>
-    <button @click="$emit('writePost'); close()">Write Post</button>
-    <button @click="$emit('changeInfo'); close()">Edit Info</button>
-    <button @click="$emit(''); close()">See likes</button>
-    <button class="white-button" @click="$emit(''); close()">Logout</button>
-    <button class="white-button" @click="close">Close</button>
+    <button @click="$emit('writePost'); close()">글 작성하기</button>
+    <button @click="$emit('changeInfo'); close()">정보 변경</button>
+    <button @click="$emit(''); close()">좋아요 보기</button>
+    <button class="white-button" @click="$emit(''); close()">로그아웃</button>
+    <button class="white-button" @click="close">닫기</button>
   </div>
 </template>
 

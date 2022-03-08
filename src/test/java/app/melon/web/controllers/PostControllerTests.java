@@ -4,6 +4,7 @@ import app.melon.domain.models.post.Post;
 import app.melon.domain.models.post.PostImage;
 import app.melon.domain.models.user.User;
 import app.melon.domain.services.PostService;
+import app.melon.domain.services.UserService;
 import app.melon.web.configs.SecurityConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,19 +31,28 @@ public class PostControllerTests {
     private MockMvc mvc;
 
     @MockBean
-    private PostService serviceMock;
+    private PostService postServiceMock;
+
+    @MockBean
+    private UserService userServiceMock;
 
     @Test
     public void getPost_shouldSuccess() throws Exception {
         LocalDateTime time = LocalDateTime.of(2000, 10, 1, 0, 0);
 
         User user = new User("Jonghoon Lee", "jonghoon@email.com", "111111");
-        Post post = new Post("Title", "Body", 12000, 0, time);
+        Post post = Post.builder()
+                .title("Title")
+                .body("Body")
+                .price(12000)
+                .userId(0)
+                .createdTime(time)
+                .build();
         PostImage image = new PostImage(0, "image");
 
-        doReturn(user).when(serviceMock).getUserByPost(any());
-        doReturn(post).when(serviceMock).getPost(anyLong());
-        doReturn(List.of(image)).when(serviceMock).getPostImages(anyLong());
+        doReturn(user).when(userServiceMock).getUser(anyLong());
+        doReturn(post).when(postServiceMock).getPost(anyLong());
+        doReturn(List.of(image)).when(postServiceMock).getPostImages(anyLong());
 
         String expected = "{\"user\":{\"id\":0,\"imageUrl\":null,\"username\":\"Jonghoon Lee\"},\"post\":{\"id\":0,\"title\":\"Title\",\"body\":\"Body\",\"price\":12000,\"likeCount\":0,\"chatCount\":0,\"viewCount\":0,\"imageUrls\":[\"image\"],\"createdTime\":\"2000-10-01T00:00:00\"}}";
 

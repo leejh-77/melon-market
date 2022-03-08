@@ -1,12 +1,14 @@
 package app.melon.domain.models.post;
 
-import lombok.Getter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Getter
+@lombok.Builder(builderClassName = "Builder", toBuilder = true)
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 @Table(name = "post")
 public class Post {
 
@@ -29,13 +31,16 @@ public class Post {
     @Column(name = "user_id")
     private long userId;
 
-    public Post(){}
+    @Column(name = "view_count")
+    private long viewCount;
 
-    public Post(String title, String body, int price, long userId, LocalDateTime createdTime) {
+    public Post(long id, String title, String body, int price, LocalDateTime createdTime, long userId, long viewCount) {
+        this.id = id;
         this.title = title;
         this.body = body;
         this.price = price;
-        this.userId = userId;
         this.createdTime = createdTime;
+        this.userId = userId;
+        this.viewCount = viewCount;
     }
 }

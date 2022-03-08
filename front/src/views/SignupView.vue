@@ -63,6 +63,7 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-height: 500px;
   background: #f8f8f8;
   padding: 30px 0;
 

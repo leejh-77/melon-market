@@ -34,8 +34,7 @@ public class UserController {
         }
         SimpleUser simpleUser = (SimpleUser) principal;
         User user = this.service.getUser(simpleUser.getUserId());
-        GetMeResult result = GetMeResult.from(user);
-        return ApiResult.ok(result);
+        return GetMeResult.from(user);
     }
 
     @PutMapping("/me/images")

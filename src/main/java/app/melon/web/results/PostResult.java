@@ -1,6 +1,5 @@
 package app.melon.web.results;
 
-import app.melon.domain.files.ImageStorage;
 import app.melon.domain.models.post.Post;
 import app.melon.domain.models.post.PostImage;
 import lombok.Getter;

@@ -27,16 +27,13 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostImageRepository postImageRepository;
     private final ImageStorage imageStorage;
-    private final UserService userService;
 
     public PostService(PostRepository postRepository,
                        PostImageRepository postImageRepository,
-                       @Qualifier("PostImageStorage") ImageStorage imageStorage,
-                       UserService userService) {
+                       @Qualifier("PostImageStorage") ImageStorage imageStorage) {
         this.postRepository = postRepository;
         this.postImageRepository = postImageRepository;
         this.imageStorage = imageStorage;
-        this.userService = userService;
     }
 
     public void addPost(AddPostCommand command) throws ApiException {
@@ -49,9 +46,13 @@ public class PostService {
         }
 
         SimpleUser simpleUser = (SimpleUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Post post = new Post(command.getTitle(),
-                command.getBody(), command.getPrice(),
-                simpleUser.getUserId(), LocalDateTime.now());
+
+        Post post = Post.builder()
+                .title(command.getTitle())
+                .body(command.getBody())
+                .price(command.getPrice())
+                .userId(simpleUser.getUserId())
+                .createdTime(LocalDateTime.now()).build();
 
         this.postRepository.save(post);
 
@@ -61,7 +62,7 @@ public class PostService {
         }
     }
 
-    public List<Post> getPosts() {
+    public List<Post> getPostList() {
         return this.postRepository.findTopPosts(30);
     }
 
@@ -79,10 +80,6 @@ public class PostService {
 
     public Post getPost(long postId) {
         return this.postRepository.findById(postId);
-    }
-
-    public User getUserByPost(Post post) {
-        return this.userService.getUser(post.getUserId());
     }
 
     public List<PostImage> getPostImages(long postId) {

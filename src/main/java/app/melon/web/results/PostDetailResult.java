@@ -4,6 +4,7 @@ import app.melon.domain.models.post.Post;
 import app.melon.domain.models.post.PostImage;
 import app.melon.domain.models.user.User;
 import lombok.Getter;
+import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,11 +16,11 @@ public class PostDetailResult {
     private UserData user;
     private PostData post;
 
-    public static PostDetailResult from(User user, Post post, List<PostImage> images) {
+    public static ResponseEntity<PostDetailResult> from(User user, Post post, List<PostImage> images) {
         PostDetailResult ret = new PostDetailResult();
         ret.user = UserData.from(user);
         ret.post = PostData.from(post, images);
-        return ret;
+        return ApiResult.ok(ret);
     }
 
     @Getter
