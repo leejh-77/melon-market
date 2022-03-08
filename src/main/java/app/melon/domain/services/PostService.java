@@ -9,6 +9,7 @@ import app.melon.domain.models.post.PostImage;
 import app.melon.domain.models.post.PostImageRepository;
 import app.melon.domain.models.post.PostRepository;
 import app.melon.domain.models.user.SimpleUser;
+import app.melon.domain.models.user.User;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -25,13 +27,16 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostImageRepository postImageRepository;
     private final ImageStorage imageStorage;
+    private final UserService userService;
 
     public PostService(PostRepository postRepository,
                        PostImageRepository postImageRepository,
-                       @Qualifier("PostImageStorage") ImageStorage imageStorage) {
+                       @Qualifier("PostImageStorage") ImageStorage imageStorage,
+                       UserService userService) {
         this.postRepository = postRepository;
         this.postImageRepository = postImageRepository;
         this.imageStorage = imageStorage;
+        this.userService = userService;
     }
 
     public void addPost(AddPostCommand command) throws ApiException {
@@ -44,7 +49,10 @@ public class PostService {
         }
 
         SimpleUser simpleUser = (SimpleUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Post post = new Post(command.getTitle(), command.getBody(), command.getPrice(), simpleUser.getUserId());
+        Post post = new Post(command.getTitle(),
+                command.getBody(), command.getPrice(),
+                simpleUser.getUserId(), LocalDateTime.now());
+
         this.postRepository.save(post);
 
         for (MultipartFile file : files) {
@@ -71,6 +79,10 @@ public class PostService {
 
     public Post getPost(long postId) {
         return this.postRepository.findById(postId);
+    }
+
+    public User getUserByPost(Post post) {
+        return this.userService.getUser(post.getUserId());
     }
 
     public List<PostImage> getPostImages(long postId) {

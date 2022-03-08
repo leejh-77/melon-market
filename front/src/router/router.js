@@ -24,6 +24,10 @@ const routes = [
     component: PostEditView
   },
   {
+    path: '/post-edit',
+    component: PostEditView
+  },
+  {
     path: '/post-detail/:postId',
     component: PostDetailView
   }

@@ -26,7 +26,7 @@ export default {
     }
   },
   mounted() {
-    postService.getPosts()
+    postService.getPostList()
       .then(res => {
         console.log(res.data)
         this.posts = res.data

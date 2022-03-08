@@ -24,18 +24,18 @@ public class Post {
     private int price;
 
     @Column(name = "created_time", nullable = false)
-    private LocalDateTime createdDate;
+    private LocalDateTime createdTime;
 
     @Column(name = "user_id")
     private long userId;
 
     public Post(){}
 
-    public Post(String title, String body, int price, long userId) {
+    public Post(String title, String body, int price, long userId, LocalDateTime createdTime) {
         this.title = title;
         this.body = body;
         this.price = price;
         this.userId = userId;
-        this.createdDate = LocalDateTime.now();
+        this.createdTime = createdTime;
     }
 }

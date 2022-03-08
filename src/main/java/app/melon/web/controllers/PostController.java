@@ -4,6 +4,7 @@ import app.melon.domain.commands.AddPostCommand;
 import app.melon.domain.errors.ApiException;
 import app.melon.domain.models.post.Post;
 import app.melon.domain.models.post.PostImage;
+import app.melon.domain.models.user.User;
 import app.melon.domain.services.PostService;
 import app.melon.web.results.ApiResult;
 import app.melon.web.results.PostDetailResult;
@@ -33,7 +34,7 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getPosts() {
+    public ResponseEntity<?> getPostList() {
         List<Post> posts = this.service.getPosts();
         List<PostResult> results = new ArrayList<>();
         for (Post post : posts) {
@@ -65,8 +66,9 @@ public class PostController {
     @GetMapping("/{postId}")
     public ResponseEntity<?> getPost(@PathVariable long postId) {
         Post post = this.service.getPost(postId);
+        User user = this.service.getUserByPost(post);
         List<PostImage> images = this.service.getPostImages(postId);
-        return ApiResult.ok(PostDetailResult.from(post, images)).toResponse();
+        return ApiResult.ok(PostDetailResult.from(user, post, images)).toResponse();
     }
 
     @PutMapping("/{postId}")

@@ -14,7 +14,7 @@ public class PostImageRepository extends HibernateRepository<PostImage> {
     }
 
     public PostImage findImageByPostId(long id) {
-        return super.find("post_id = ?0", id);
+        return super.findOne("post_id = ?0", id);
     }
 
     public List<PostImage> findImagesByPostId(long id) {

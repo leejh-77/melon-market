@@ -2,18 +2,17 @@
   <div class="container">
     <img ref="post-image" class="picture" alt="image" @click="$emit('onClickImage')"/>
     <p class="name">{{ post.title }}</p>
-    <p class="price">{{ post.price }} won</p>
+    <p class="price">{{ post.price }}원</p>
     <p class="location">{{ post.location }}</p>
     <div class="extra">
-      <p class="likes">likes {{ post.likeCount }}</p>
-      <p>*</p>
-      <p class="chats">chats {{ post.chatCount }}</p>
+      <p class="likes">좋아요 {{ post.likeCount }}</p>
+      <p> · </p>
+      <p class="chats">채팅 {{ post.chatCount }}</p>
     </div>
   </div>
 </template>
 <script>
 import postService from '@/services/postService'
-import { Buffer } from 'buffer'
 
 export default {
   name: 'PostCard',
@@ -21,8 +20,7 @@ export default {
   mounted() {
     postService.getPostImage(this.post.imageUrl)
       .then(res => {
-        const base64 = Buffer.from(res.data, 'binary').toString('base64')
-        this.$refs['post-image'].src = 'data:image/jpg;base64, ' + base64
+        this.$refs['post-image'].src = res
       })
       .catch(e => {
         console.log(e)
@@ -44,6 +42,7 @@ export default {
     height: 220px;
     background: white;
     border-radius: 20px;
+    object-fit: cover;
   }
 
   .picture:hover {
@@ -72,6 +71,7 @@ export default {
     p {
       margin-right: 5px;
       color: gray;
+      font-size: 14px;
     }
   }
 }

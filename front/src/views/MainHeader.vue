@@ -50,7 +50,7 @@ export default {
       this.$refs['user-setting-modal'].show()
     },
     actionGoToWritePost() {
-      this.$router.push('/post')
+      this.$router.push('/post-edit')
     },
     actionChangeInfo() {
       this.$refs['user-info-modal'].show()

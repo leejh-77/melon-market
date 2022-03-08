@@ -2,6 +2,7 @@ package app.melon.web.security;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
@@ -17,6 +18,7 @@ public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
         logger.debug("Access to " + request.getRequestURI() + " denied.");
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.sendRedirect("/");
     }
 }

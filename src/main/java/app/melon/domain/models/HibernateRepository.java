@@ -1,11 +1,9 @@
 package app.melon.domain.models;
 
-import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Table;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
@@ -39,11 +37,13 @@ public abstract class HibernateRepository<T> {
     }
 
     public T findById(long id) {
-        return this.find("id = ?0", id);
+        return this.findOne("id = ?0", id);
     }
 
-    protected T find(String query, Object... params) {
-        return this.createQuery(query, params).uniqueResult();
+    protected T findOne(String query, Object... params) {
+        Query<T> q = this.createQuery(query, params);
+        q.setMaxResults(1);
+        return q.getSingleResult();
     }
 
     protected List<T> findAll(String query, Object... params) {
