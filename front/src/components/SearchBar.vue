@@ -1,7 +1,7 @@
 <template>
     <div class="wrap">
         <div class="search-container">
-            <input class="searchTerm" type="text" placeholder="Search..."/>
+            <input class="searchTerm" type="text" placeholder="검색"/>
         </div>
     </div>
 </template>

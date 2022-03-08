@@ -47,14 +47,13 @@ CREATE TABLE IF NOT EXISTS `melon_market`.`post_image`
     FOREIGN KEY (`post_id`) REFERENCES post (id)
 ) ENGINE = InnoDB;
 
-# DROP TABLE IF EXISTS `melon_market`.`like`;
+# DROP TABLE IF EXISTS `melon_market`.`post_like`;
 
-CREATE TABLE IF NOT EXISTS `melon_market`.`like`
+CREATE TABLE IF NOT EXISTS `melon_market`.`post_like`
 (
     `id`           INT      NOT NULL AUTO_INCREMENT,
     `post_id`      INT      NOT NULL,
     `user_id`      INT      NOT NULL,
-    `created_time` DATETIME NOT NULL,
     PRIMARY KEY (`id`),
     FOREIGN KEY (`user_id`) REFERENCES user (id),
     FOREIGN KEY (`post_id`) REFERENCES post (id)

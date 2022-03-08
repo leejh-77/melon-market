@@ -3,11 +3,12 @@
     <div class="container">
       <ImagePager :images="images"/>
       <div class="user-info">
-        <img src="../assets/logo.png"/>
+        <img :src="getUserImage"/>
         <p class="name">{{ user.username }}</p>
       </div>
       <div class="line"/>
       <div class="content">
+        <img class="like" :src="getLikeImageSrc" @click="changeLike" v-if="authenticated">
         <p class="title">{{ post.title }}</p>
         <p class="date">{{ getDateString }}</p>
         <p class="price">{{ new Intl.NumberFormat().format(post.price) }}원</p>
@@ -42,6 +43,19 @@ export default {
       return '좋아요 ' + this.post.likeCount +
         ' · 채팅 ' + this.post.chatCount +
         ' · 조회수 ' + this.post.viewCount
+    },
+    getLikeImageSrc() {
+      return this.post.likedByMe ? require('@/assets/like.png') : require('@/assets/not-like.png')
+    },
+    getUserImage() {
+      if (this.user.imageUrl != null) {
+        return null
+      } else {
+        return require('@/assets/user.png')
+      }
+    },
+    authenticated() {
+      return this.$store.state.authenticated
     }
   },
   data() {
@@ -53,7 +67,8 @@ export default {
         createdTime: '',
         likeCount: 0,
         chatCount: 0,
-        viewCount: 0
+        viewCount: 0,
+        likedByMe: false
       },
       user: {
         username: '',
@@ -70,6 +85,18 @@ export default {
             this.images.push(res)
           })
       })
+    },
+    changeLike() {
+      postService.changeLike(this.post.id, !this.post.likedByMe)
+        .then(res => {
+          if (this.post.likedByMe) {
+            this.post.likedByMe = false
+            this.post.likeCount--
+          } else {
+            this.post.likedByMe = true
+            this.post.likeCount++
+          }
+        })
     }
   },
   mounted() {
@@ -119,6 +146,15 @@ export default {
     }
 
     .content {
+      position: relative;
+      .like {
+        width: 30px;
+        position: absolute;
+        right: 0;
+      }
+      .like:hover {
+        cursor: pointer;
+      }
       .title {
         margin-top: 30px;
         margin-bottom: 6px;

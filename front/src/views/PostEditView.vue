@@ -1,18 +1,18 @@
 <template>
   <div class="main">
     <form class="main-form" @submit.prevent="actionDone">
-      <span class="description">Sell your stuffs!</span>
+      <span class="description">안 쓰는 물건을 올리세요!</span>
       <ImageContainer :files="images" @deleteImage="deleteImage(idx)" ref="image-container" class="image-container"/>
-      <label class="add-button" for="upload-photo">Add Picture</label>
+      <label class="add-button" for="upload-photo">사진 추가하기</label>
       <input type="file" ref="picture-input" id="upload-photo" @change="updateImageContainer" accept=".png, .jpg, .jpeg"
              multiple/>
-      <label>Title</label>
+      <label>제목</label>
       <input class="title" type="text" v-model="title"/>
-      <label>Price</label>
+      <label>가격</label>
       <input class="price" type="number" v-model="price"/>
-      <label>Description</label>
+      <label>설명</label>
       <textarea class="body" v-model="body"/>
-      <button class="done-button">Done</button>
+      <button class="done-button">완료</button>
     </form>
   </div>
 </template>
@@ -38,11 +38,11 @@ export default {
   methods: {
     actionDone() {
       if (this.title.length === 0) {
-        alert('Title must be long than 0 character')
+        alert('제목은 한 글자 이상이어야 합니다')
         return
       }
       if (this.rawFiles.length === 0) {
-        alert('At least one picture has to be attached')
+        alert('최소 하나의 사진이 첨부되어야 합니다!')
         return
       }
 
@@ -60,7 +60,7 @@ export default {
           this.$router.push('/')
         })
         .catch(e => {
-          alert('Failed to create post')
+          alert('글 작성에 실패했습니다')
         })
     },
     updateImageContainer() {

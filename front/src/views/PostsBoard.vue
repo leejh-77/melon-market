@@ -41,7 +41,6 @@ export default {
   height: 100%;
   padding: 50px 0;
   background: #f8f8f8;
-  min-height: 500px;
 
   .description {
     margin-bottom: 40px;

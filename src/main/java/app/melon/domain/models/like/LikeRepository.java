@@ -20,7 +20,7 @@ public class LikeRepository extends HibernateRepository<Like> {
 
     public int findCountByPostId(long id) {
         NativeQuery<?> query = super.getSession()
-                .createNativeQuery("SELECT COUNT(*) FROM `like` WHERE post_id = ?0");
+                .createNativeQuery("SELECT COUNT(*) FROM post_like WHERE post_id = ?0");
         query.setParameter(0, id);
         return ((BigInteger) query.uniqueResult()).intValue();
     }

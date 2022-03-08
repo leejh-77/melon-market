@@ -4,12 +4,14 @@ import app.melon.domain.commands.AddPostCommand;
 import app.melon.domain.errors.ApiException;
 import app.melon.domain.models.post.Post;
 import app.melon.domain.models.post.PostImage;
+import app.melon.domain.models.user.SimpleUser;
 import app.melon.domain.models.user.User;
 import app.melon.domain.services.PostService;
 import app.melon.domain.services.UserService;
 import app.melon.web.results.ApiResult;
 import app.melon.web.results.PostDetailResult;
 import app.melon.web.results.PostResult;
+import app.melon.web.security.AuthenticationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -69,11 +71,17 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<?> getPost(@PathVariable long postId) {
+    public ResponseEntity<?> getPost(@PathVariable long postId, Principal principal) {
         Post post = this.postService.findPost(postId);
         User user = this.userService.getUser(post.getUserId());
         List<PostImage> images = this.postService.findPostImages(postId);
-        return PostDetailResult.from(user, post, images);
+        int likeCount = this.postService.findLikeCount(postId);
+        boolean likedByMe = false;
+        SimpleUser simpleUser = AuthenticationUtils.extractSimpleUserFromPrincipal(principal);
+        if (simpleUser != null) {
+            likedByMe = this.postService.isLikedPost(postId, simpleUser.getUserId());
+        }
+        return PostDetailResult.from(user, post, images, likeCount, likedByMe);
     }
 
     @PutMapping("/{postId}")
@@ -89,14 +97,16 @@ public class PostController {
     @Secured(value = {"ROLE_USER"})
     @PostMapping("/{postId}/likes")
     public ResponseEntity<?> likePost(@PathVariable long postId, Principal principal) {
-        this.postService.likePost(postId, principal);
+        SimpleUser user = AuthenticationUtils.extractSimpleUserFromPrincipal(principal);
+        this.postService.likePost(postId, user.getUserId());
         return ApiResult.ok();
     }
 
     @Secured(value = {"ROLE_USER"})
     @DeleteMapping("/{postId}/likes")
     public ResponseEntity<?> dislikePost(@PathVariable long postId, Principal principal) {
-        this.postService.dislikePost(postId, principal);
+        SimpleUser user = AuthenticationUtils.extractSimpleUserFromPrincipal(principal);
+        this.postService.dislikePost(postId, user.getUserId());
         return ApiResult.ok();
     }
 

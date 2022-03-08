@@ -32,9 +32,9 @@ public class Post {
     private long userId;
 
     @Column(name = "view_count")
-    private long viewCount;
+    private int viewCount;
 
-    public Post(long id, String title, String body, int price, LocalDateTime createdTime, long userId, long viewCount) {
+    public Post(long id, String title, String body, int price, LocalDateTime createdTime, long userId, int viewCount) {
         this.id = id;
         this.title = title;
         this.body = body;

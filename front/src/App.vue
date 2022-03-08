@@ -1,7 +1,7 @@
 <template>
   <div>
     <MainHeader class="main-header"/>
-    <router-view/>
+    <router-view class="router-view"/>
     <MainFooter/>
   </div>
 </template>
@@ -33,6 +33,10 @@ export default {
 * {
   margin: 0;
   padding: 0;
+}
+
+.router-view {
+  min-height: 800px;
 }
 
 </style>

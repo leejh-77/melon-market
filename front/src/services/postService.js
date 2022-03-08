@@ -22,5 +22,9 @@ export default {
   },
   getPost(id) {
     return axios.get('/api/posts/' + id)
+  },
+  changeLike(id, isLike) {
+    const url = '/api/posts/' + id + '/likes'
+    return isLike ? axios.post(url) : axios.delete(url)
   }
 }

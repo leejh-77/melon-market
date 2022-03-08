@@ -7,7 +7,7 @@
     <div class="right-items">
       <div class="upper-items">
         <nav>
-          <a href="login" v-show="!isAuthenticated">Login</a>
+          <a @click.prevent="actionGoToLogin" v-show="!isAuthenticated">Login</a>
         </nav>
         <img ref="user-image" class="user-image" v-show="isAuthenticated"
              @click="actionShowSettingModal" src="../assets/user.png"/>
@@ -45,11 +45,14 @@ export default {
     actionGoToHome() {
       this.$router.push('/')
     },
-    actionShowSettingModal() {
-      this.$refs['user-setting-modal'].show()
+    actionGoToLogin() {
+      this.$router.push('/login')
     },
     actionGoToWritePost() {
       this.$router.push('/post-edit')
+    },
+    actionShowSettingModal() {
+      this.$refs['user-setting-modal'].show()
     },
     actionChangeInfo() {
       this.$refs['user-info-modal'].show()

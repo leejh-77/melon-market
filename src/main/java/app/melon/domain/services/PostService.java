@@ -13,6 +13,7 @@ import app.melon.domain.models.post.PostRepository;
 import app.melon.domain.models.user.SimpleUser;
 import app.melon.domain.models.user.User;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -96,21 +97,23 @@ public class PostService {
         return this.postImageRepository.findImagesByPostId(postId);
     }
 
-    public void likePost(long postId, Principal principal) {
-        SimpleUser user = (SimpleUser) principal;
-        Like like = this.likeRepository.findByUserIdAndPostId(user.getUserId(), postId);
+    public boolean isLikedPost(long postId, long userId) {
+        return this.likeRepository.findByUserIdAndPostId(userId, postId) != null;
+    }
+
+    public void likePost(long postId, long userId) {
+        Like like = this.likeRepository.findByUserIdAndPostId(userId, postId);
         if (like != null) {
             return;
         }
         like = Like.builder()
-                .userId(user.getUserId())
+                .userId(userId)
                 .postId(postId).build();
         this.likeRepository.save(like);
     }
 
-    public void dislikePost(long postId, Principal principal) {
-        SimpleUser user = (SimpleUser) principal;
-        Like like = this.likeRepository.findByUserIdAndPostId(user.getUserId(), postId);
+    public void dislikePost(long postId, long userId) {
+        Like like = this.likeRepository.findByUserIdAndPostId(userId, postId);
         if (like == null) {
             return;
         }

@@ -2,10 +2,10 @@
   <div class="main">
     <form class="main-form" @submit.prevent="actionLogin">
       <span class="main-title">Melon market</span>
-      <input v-model="emailAddress" type="email" placeholder="EmailAddress">
-      <input v-model="username" type="text" placeholder="Username">
-      <input v-model="password" type="password" placeholder="Password">
-      <input v-model="confirmPassword" type="password" placeholder="Confirm Password">
+      <input v-model="emailAddress" type="email" placeholder="이메일">
+      <input v-model="username" type="text" placeholder="이름">
+      <input v-model="password" type="password" placeholder="비밀번호">
+      <input v-model="confirmPassword" type="password" placeholder="확인 비밀번호">
       <div class="main-buttons">
         <button class="btn-signup">Signup</button>
       </div>
@@ -35,21 +35,21 @@ export default {
           this.$router.push('/login')
         })
         .catch(e => {
-          alert('Failed to signup.')
+          alert('회원가입에 실패했습니다')
         })
     },
     validateInputs() {
       const regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
       if (!this.emailAddress.match(regex)) {
-        alert('Invalid email address')
+        alert('올바르지 않은 이메일 형식입니다')
         return false
       }
       if (this.password.length < 6) {
-        alert('Password must be longer than 5 characters')
+        alert('비밀번호는 6자 이상이어야 합니다')
         return false
       }
       if (this.confirmPassword !== this.password) {
-        alert('Config password is different from password')
+        alert('확인 비밀번호가 올바르지 않습니다')
         return false
       }
       return true
@@ -63,7 +63,6 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
-  min-height: 500px;
   background: #f8f8f8;
   padding: 30px 0;
 

@@ -5,7 +5,7 @@
       <img :src="file" alt="image">
     </div>
     <div class="no-picture" v-if="files.length === 0">
-      <span>No picture</span>
+      <span>사진이 없습니다</span>
     </div>
   </div>
 </template>

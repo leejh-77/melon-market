@@ -47,6 +47,7 @@ public class PostControllerTests {
                 .price(12000)
                 .userId(0)
                 .createdTime(time)
+                .viewCount(0)
                 .build();
         PostImage image = new PostImage(0, "image");
 
@@ -54,7 +55,7 @@ public class PostControllerTests {
         doReturn(post).when(postServiceMock).findPost(anyLong());
         doReturn(List.of(image)).when(postServiceMock).findPostImages(anyLong());
 
-        String expected = "{\"user\":{\"id\":0,\"imageUrl\":null,\"username\":\"Jonghoon Lee\"},\"post\":{\"id\":0,\"title\":\"Title\",\"body\":\"Body\",\"price\":12000,\"likeCount\":0,\"chatCount\":0,\"viewCount\":0,\"imageUrls\":[\"image\"],\"createdTime\":\"2000-10-01T00:00:00\"}}";
+        String expected = "{\"user\":{\"id\":0,\"imageUrl\":null,\"username\":\"Jonghoon Lee\"},\"post\":{\"id\":0,\"title\":\"Title\",\"body\":\"Body\",\"price\":12000,\"likeCount\":0,\"chatCount\":0,\"viewCount\":0,\"imageUrls\":[\"image\"],\"createdTime\":\"2000-10-01T00:00:00\",\"liked\":false}}";
 
         mvc.perform(get("/api/posts/1"))
                 .andExpect(status().is(200))

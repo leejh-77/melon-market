@@ -16,10 +16,10 @@ public class PostDetailResult {
     private UserData user;
     private PostData post;
 
-    public static ResponseEntity<PostDetailResult> from(User user, Post post, List<PostImage> images) {
+    public static ResponseEntity<PostDetailResult> from(User user, Post post, List<PostImage> images, int likeCount, boolean likedByMe) {
         PostDetailResult ret = new PostDetailResult();
         ret.user = UserData.from(user);
-        ret.post = PostData.from(post, images);
+        ret.post = PostData.from(post, images, likeCount, likedByMe);
         return ApiResult.ok(ret);
     }
 
@@ -44,16 +44,20 @@ public class PostDetailResult {
         private String title;
         private String body;
         private int price;
+        private boolean likedByMe;
         private int likeCount;
         private int chatCount;
         private int viewCount;
         private List<String> imageUrls;
         private LocalDateTime createdTime;
 
-        public static PostData from(Post post, List<PostImage> images) {
+        public static PostData from(Post post, List<PostImage> images, int likeCount, boolean likedByMe) {
             PostData data = new PostData();
             data.id = post.getId();
             data.title = post.getTitle();
+            data.likedByMe = likedByMe;
+            data.likeCount = likeCount;
+            data.viewCount = post.getViewCount();
             data.body = post.getBody();
             data.price = post.getPrice();
             data.createdTime = post.getCreatedTime();
