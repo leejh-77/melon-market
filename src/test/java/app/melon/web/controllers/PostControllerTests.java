@@ -51,8 +51,8 @@ public class PostControllerTests {
         PostImage image = new PostImage(0, "image");
 
         doReturn(user).when(userServiceMock).getUser(anyLong());
-        doReturn(post).when(postServiceMock).getPost(anyLong());
-        doReturn(List.of(image)).when(postServiceMock).getPostImages(anyLong());
+        doReturn(post).when(postServiceMock).findPost(anyLong());
+        doReturn(List.of(image)).when(postServiceMock).findPostImages(anyLong());
 
         String expected = "{\"user\":{\"id\":0,\"imageUrl\":null,\"username\":\"Jonghoon Lee\"},\"post\":{\"id\":0,\"title\":\"Title\",\"body\":\"Body\",\"price\":12000,\"likeCount\":0,\"chatCount\":0,\"viewCount\":0,\"imageUrls\":[\"image\"],\"createdTime\":\"2000-10-01T00:00:00\"}}";
 

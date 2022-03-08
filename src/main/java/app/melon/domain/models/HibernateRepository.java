@@ -36,6 +36,11 @@ public abstract class HibernateRepository<T> {
         this.entityManager.flush();
     }
 
+    public void delete(T obj) {
+        this.entityManager.remove(obj);
+        this.entityManager.flush();
+    }
+
     public T findById(long id) {
         return this.findOne("id = ?0", id);
     }

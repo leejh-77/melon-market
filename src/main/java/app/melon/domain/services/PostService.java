@@ -4,6 +4,8 @@ import app.melon.domain.commands.AddPostCommand;
 import app.melon.domain.errors.ApiException;
 import app.melon.domain.errors.Errors;
 import app.melon.domain.files.ImageStorage;
+import app.melon.domain.models.like.Like;
+import app.melon.domain.models.like.LikeRepository;
 import app.melon.domain.models.post.Post;
 import app.melon.domain.models.post.PostImage;
 import app.melon.domain.models.post.PostImageRepository;
@@ -17,6 +19,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,12 +30,15 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostImageRepository postImageRepository;
     private final ImageStorage imageStorage;
+    private final LikeRepository likeRepository;
 
     public PostService(PostRepository postRepository,
                        PostImageRepository postImageRepository,
+                       LikeRepository likeRepository,
                        @Qualifier("PostImageStorage") ImageStorage imageStorage) {
         this.postRepository = postRepository;
         this.postImageRepository = postImageRepository;
+        this.likeRepository = likeRepository;
         this.imageStorage = imageStorage;
     }
 
@@ -62,12 +68,16 @@ public class PostService {
         }
     }
 
-    public List<Post> getPostList() {
+    public List<Post> findPostList() {
         return this.postRepository.findTopPosts(30);
     }
 
     public PostImage findCoverImage(long id) {
         return this.postImageRepository.findImageByPostId(id);
+    }
+
+    public int findLikeCount(long id) {
+        return this.likeRepository.findCountByPostId(id);
     }
 
     public byte[] getImage(String url) throws ApiException {
@@ -78,11 +88,32 @@ public class PostService {
         return image;
     }
 
-    public Post getPost(long postId) {
+    public Post findPost(long postId) {
         return this.postRepository.findById(postId);
     }
 
-    public List<PostImage> getPostImages(long postId) {
+    public List<PostImage> findPostImages(long postId) {
         return this.postImageRepository.findImagesByPostId(postId);
+    }
+
+    public void likePost(long postId, Principal principal) {
+        SimpleUser user = (SimpleUser) principal;
+        Like like = this.likeRepository.findByUserIdAndPostId(user.getUserId(), postId);
+        if (like != null) {
+            return;
+        }
+        like = Like.builder()
+                .userId(user.getUserId())
+                .postId(postId).build();
+        this.likeRepository.save(like);
+    }
+
+    public void dislikePost(long postId, Principal principal) {
+        SimpleUser user = (SimpleUser) principal;
+        Like like = this.likeRepository.findByUserIdAndPostId(user.getUserId(), postId);
+        if (like == null) {
+            return;
+        }
+        this.likeRepository.delete(like);
     }
 }

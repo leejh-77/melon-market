@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,11 +38,12 @@ public class PostController {
 
     @GetMapping
     public ResponseEntity<?> getPostList() {
-        List<Post> posts = this.postService.getPostList();
+        List<Post> posts = this.postService.findPostList();
         List<PostResult> results = new ArrayList<>();
         for (Post post : posts) {
             PostImage image = this.postService.findCoverImage(post.getId());
-            results.add(PostResult.from(post, image));
+            int likeCount = this.postService.findLikeCount(post.getId());
+            results.add(PostResult.from(post, image, likeCount));
         }
         return ApiResult.ok(results);
     }
@@ -68,9 +70,9 @@ public class PostController {
 
     @GetMapping("/{postId}")
     public ResponseEntity<?> getPost(@PathVariable long postId) {
-        Post post = this.postService.getPost(postId);
+        Post post = this.postService.findPost(postId);
         User user = this.userService.getUser(post.getUserId());
-        List<PostImage> images = this.postService.getPostImages(postId);
+        List<PostImage> images = this.postService.findPostImages(postId);
         return PostDetailResult.from(user, post, images);
     }
 
@@ -82,6 +84,20 @@ public class PostController {
     @DeleteMapping("/{postId}")
     public ResponseEntity<?> deletePost(@PathVariable long postId) {
         return null;
+    }
+
+    @Secured(value = {"ROLE_USER"})
+    @PostMapping("/{postId}/likes")
+    public ResponseEntity<?> likePost(@PathVariable long postId, Principal principal) {
+        this.postService.likePost(postId, principal);
+        return ApiResult.ok();
+    }
+
+    @Secured(value = {"ROLE_USER"})
+    @DeleteMapping("/{postId}/likes")
+    public ResponseEntity<?> dislikePost(@PathVariable long postId, Principal principal) {
+        this.postService.dislikePost(postId, principal);
+        return ApiResult.ok();
     }
 
     @ExceptionHandler(ApiException.class)
