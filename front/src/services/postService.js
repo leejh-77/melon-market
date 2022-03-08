@@ -17,7 +17,7 @@ export default {
       responseType: 'arraybuffer'
     }).then(res => {
       const base64 = Buffer.from(res.data, 'binary').toString('base64')
-      return 'data:image/jpg;base64, ' + base64
+      return 'data:image/png;base64, ' + base64
     })
   },
   getPost(id) {

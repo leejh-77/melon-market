@@ -2,14 +2,17 @@
   <div>
     <MainHeader class="main-header"/>
     <router-view/>
+    <MainFooter/>
   </div>
 </template>
 
 <script>
 import MainHeader from './views/MainHeader.vue'
+import MainFooter from '@/views/MainFooter'
 
 export default {
   components: {
+    MainFooter,
     MainHeader
   }
 }
@@ -30,10 +33,6 @@ export default {
 * {
   margin: 0;
   padding: 0;
-}
-
-.main-header {
-  padding: 15px 20%;
 }
 
 </style>

@@ -67,6 +67,7 @@ export default {
 <style lang="scss" scoped>
 
 .main {
+  padding: 15px 20%;
   display: flex;
   justify-content: space-between;
   align-items: center;

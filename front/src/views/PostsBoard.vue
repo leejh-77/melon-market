@@ -12,6 +12,7 @@ import postService from '@/services/postService'
 
 export default {
   name: 'PostsBoard',
+  props: ['query'],
   components: {
     PostCard
   },
@@ -28,7 +29,7 @@ export default {
   mounted() {
     postService.getPostList()
       .then(res => {
-        console.log(res.data)
+        console.log('[GetPostList]', res.data)
         this.posts = res.data
       })
   }
@@ -38,8 +39,9 @@ export default {
 <style lang="scss" scoped>
 .main {
   height: 100%;
-  padding: 50px 0px;
+  padding: 50px 0;
   background: #f8f8f8;
+  min-height: 500px;
 
   .description {
     margin-bottom: 40px;

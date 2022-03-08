@@ -2,7 +2,7 @@
   <div class="container">
     <img ref="post-image" class="picture" alt="image" @click="$emit('onClickImage')"/>
     <p class="name">{{ post.title }}</p>
-    <p class="price">{{ post.price }}원</p>
+    <p class="price">{{ new Intl.NumberFormat().format(post.price) }}원</p>
     <p class="location">{{ post.location }}</p>
     <div class="extra">
       <p class="likes">좋아요 {{ post.likeCount }}</p>

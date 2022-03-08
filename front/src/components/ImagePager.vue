@@ -37,7 +37,6 @@ export default {
   height: 500px;
 
   .main-image {
-    max-width: 100%;
     min-width: 100%;
     object-fit: cover;
     border-radius: 10px;
