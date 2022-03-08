@@ -45,7 +45,7 @@ public class AuthControllerTests {
     }
 
     @Test
-    public void validRequest_shouldSuccess() throws Exception {
+    public void validRequest_shouldSuccessAndReturn201() throws Exception {
         RegisterRequest req = new RegisterRequest();
         req.setEmailAddress("jonghoon.lee@email.com");
         req.setUsername("Jonghoon");
@@ -54,6 +54,6 @@ public class AuthControllerTests {
         mvc.perform(post("/api/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(JsonUtils.toJson(req)))
-                .andExpect(status().is(200));
+                .andExpect(status().is(201));
     }
 }

@@ -9,6 +9,7 @@ import app.melon.domain.models.post.PostImage;
 import app.melon.domain.models.post.PostImageRepository;
 import app.melon.domain.models.post.PostRepository;
 import app.melon.domain.models.user.SimpleUser;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -23,11 +24,14 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final PostImageRepository postImageRepository;
-    private final ImageStorage imageStorage = new ImageStorage(() -> System.getProperty("user.dir") + "/data/post/images");
+    private final ImageStorage imageStorage;
 
-    public PostService(PostRepository postRepository, PostImageRepository postImageRepository) {
+    public PostService(PostRepository postRepository,
+                       PostImageRepository postImageRepository,
+                       @Qualifier("PostImageStorage") ImageStorage imageStorage) {
         this.postRepository = postRepository;
         this.postImageRepository = postImageRepository;
+        this.imageStorage = imageStorage;
     }
 
     public void addPost(AddPostCommand command) throws ApiException {

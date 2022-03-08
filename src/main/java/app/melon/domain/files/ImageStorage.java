@@ -1,11 +1,9 @@
 package app.melon.domain.files;
 
 import org.apache.commons.io.FilenameUtils;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,14 +13,14 @@ import java.util.UUID;
 
 public class ImageStorage {
 
-    private final StorageProvider provider;
+    private final String directory;
 
-    public ImageStorage(StorageProvider provider) {
-        this.provider = provider;
+    public ImageStorage(String directory) {
+        this.directory = directory;
     }
 
     public String saveImage(MultipartFile file) {
-        Path path = Paths.get(this.provider.getDirectory()).toAbsolutePath().normalize();
+        Path path = Paths.get(this.directory).toAbsolutePath().normalize();
         try {
             Files.createDirectories(path);
         } catch (IOException e) {
@@ -47,7 +45,7 @@ public class ImageStorage {
     }
 
     public byte[] loadImage(String filename) {
-        Path path = Paths.get(this.provider.getDirectory()).toAbsolutePath().normalize();
+        Path path = Paths.get(this.directory).toAbsolutePath().normalize();
         Path location = path.resolve(filename);
         if (!location.toFile().exists()) {
             return null;

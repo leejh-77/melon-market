@@ -2,6 +2,7 @@ package app.melon.domain.files;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 public class UserImageStorageTests {
 
     @Autowired
+    @Qualifier("UserImageStorage")
     private ImageStorage storage;
 
     @Test
@@ -27,11 +29,5 @@ public class UserImageStorageTests {
         byte[] loaded = storage.loadImage(filename);
 
         assertArrayEquals(bytes, loaded);
-    }
-
-    @Test
-    public void getPath() {
-        String dir = System.getProperty("user.dir");
-        System.out.println(dir);
     }
 }
