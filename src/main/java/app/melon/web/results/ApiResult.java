@@ -1,58 +1,47 @@
 package app.melon.web.results;
 
 import lombok.Getter;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 
 import java.util.HashMap;
 
-public class ApiResult<T> {
+public class ApiResult {
 
-    private final T body;
-    private final int status;
-
-    private ApiResult(int status) {
-        this(status, null);
+    public static ResponseEntity<?> created() {
+        return build(201, null);
     }
 
-    private ApiResult(int status, T body) {
-        this.status = status;
-        this.body = body;
-    }
-
-    public static ApiResult<?> created() {
-        return new ApiResult<>(201);
-    }
-
-    public static ApiResult<MessageResult> failure(String message) {
+    public static ResponseEntity<MessageResult> failure(String message) {
         return message(401, message);
     }
 
-    public static ApiResult<MessageResult> message(int status, String message) {
-        return new ApiResult<>(status, new MessageResult(message));
+    private static <T> ResponseEntity<T> build(int status, T body) {
+        return ResponseEntity.status(status).body(body);
     }
 
-    public static ApiResult<?> ok() {
+    public static ResponseEntity<MessageResult> message(int status, String message) {
+        return build(status, new MessageResult(message));
+    }
+
+    public static ResponseEntity<?> ok() {
         return ok(null);
     }
 
-    public static <T> ApiResult<T> ok(T body) {
-        return new ApiResult<>(200, body);
+    public static <T> ResponseEntity<T> ok(T body) {
+        return build(200, body);
     }
 
-    public static ApiResult<MessageResult> notFound() {
+    public static ResponseEntity<MessageResult> notFound() {
         return message(404, "Page not found");
     }
 
-    public static ApiResult<MessageResult> serverError() {
+    public static ResponseEntity<MessageResult> serverError() {
         return serverError("Server error");
     }
 
-    public static ApiResult<MessageResult> serverError(String message) {
+    public static ResponseEntity<MessageResult> serverError(String message) {
         return message(500, message);
-    }
-
-    public ResponseEntity<T> toResponse() {
-        return ResponseEntity.status(this.status).body(this.body);
     }
 
     @Getter

@@ -41,13 +41,13 @@ public class PostController {
             PostImage image = this.service.findCoverImage(post.getId());
             results.add(PostResult.from(post, image));
         }
-        return ApiResult.ok(results).toResponse();
+        return ApiResult.ok(results);
     }
 
     @GetMapping("/images/{imageUrl}")
     public ResponseEntity<?> getImage(@PathVariable("imageUrl") String url) throws ApiException {
         byte[] image = this.service.getImage(url);
-        return ApiResult.ok(image).toResponse();
+        return ApiResult.ok(image);
     }
 
     @PostMapping
@@ -60,7 +60,7 @@ public class PostController {
         List<MultipartFile> files = request.getFiles("images");
 
         this.service.addPost(new AddPostCommand(title, body, price, files));
-        return ApiResult.created().toResponse();
+        return ApiResult.created();
     }
 
     @GetMapping("/{postId}")
@@ -68,7 +68,7 @@ public class PostController {
         Post post = this.service.getPost(postId);
         User user = this.service.getUserByPost(post);
         List<PostImage> images = this.service.getPostImages(postId);
-        return ApiResult.ok(PostDetailResult.from(user, post, images)).toResponse();
+        return ApiResult.ok(PostDetailResult.from(user, post, images));
     }
 
     @PutMapping("/{postId}")
@@ -83,6 +83,6 @@ public class PostController {
 
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<?> handleException(ApiException e) {
-        return ApiResult.failure(e.getErrorMessage()).toResponse();
+        return ApiResult.failure(e.getErrorMessage());
     }
 }

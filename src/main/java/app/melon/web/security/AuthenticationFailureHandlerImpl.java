@@ -22,6 +22,6 @@ public class AuthenticationFailureHandlerImpl implements AuthenticationFailureHa
         logger.info("Authentication failed");
 
         response.setStatus(HttpStatus.BAD_REQUEST.value());
-        new ObjectMapper().writeValue(response.getWriter(), ApiResult.failure("Authentication failed").toResponse());
+        new ObjectMapper().writeValue(response.getWriter(), ApiResult.failure("Authentication failed"));
     }
 }

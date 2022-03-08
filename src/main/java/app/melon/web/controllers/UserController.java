@@ -30,23 +30,23 @@ public class UserController {
     public ResponseEntity<?> getMe() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (!(principal instanceof SimpleUser)) {
-            return ApiResult.failure("Failed to get user").toResponse();
+            return ApiResult.failure("Failed to get user");
         }
         SimpleUser simpleUser = (SimpleUser) principal;
         User user = this.service.getUser(simpleUser.getUserId());
         GetMeResult result = GetMeResult.from(user);
-        return ApiResult.ok(result).toResponse();
+        return ApiResult.ok(result);
     }
 
     @PutMapping("/me/images")
     public ResponseEntity<?> updateImage(MultipartFile file) throws ApiException {
         SimpleUser user = (SimpleUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         this.service.updateUserImage(new UpdateUserImageCommand(user.getUserId(), file));
-        return ApiResult.ok().toResponse();
+        return ApiResult.ok();
     }
 
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<?> handleException(ApiException e) {
-        return ApiResult.failure(e.getErrorMessage()).toResponse();
+        return ApiResult.failure(e.getErrorMessage());
     }
 }

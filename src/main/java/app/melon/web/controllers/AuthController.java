@@ -26,11 +26,11 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest request) throws ApiException {
         service.createUser(request.toCommand());
-        return ApiResult.created().toResponse();
+        return ApiResult.created();
     }
 
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<?> handleException(ApiException e) {
-        return ApiResult.failure(e.getErrorMessage()).toResponse();
+        return ApiResult.failure(e.getErrorMessage());
     }
 }
