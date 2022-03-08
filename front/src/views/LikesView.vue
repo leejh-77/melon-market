@@ -1,10 +1,13 @@
 <template>
-  <div></div>
+  <PostsBoard :query="2"/>
 </template>
 
 <script>
+import PostsBoard from '@/views/PostsBoard'
+
 export default {
-  name: 'LikesView'
+  name: 'LikesView',
+  components: { PostsBoard }
 }
 </script>
 

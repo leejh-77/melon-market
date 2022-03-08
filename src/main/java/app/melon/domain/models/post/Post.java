@@ -31,7 +31,7 @@ public class Post {
     @Column(name = "view_count")
     private int viewCount;
 
-    @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 

@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { Buffer } from 'buffer'
+import { ListQuery } from '@/constant'
 
 export default {
   addPost(data) {
@@ -9,8 +10,16 @@ export default {
       }
     })
   },
-  getPostList() {
-    return axios.get('/api/posts')
+  getPostList(query) {
+    let q
+    if (query === ListQuery.Recent) {
+      q = 'recent'
+    } else if (query === ListQuery.Like) {
+      q = 'like'
+    } else {
+      q = 'popular'
+    }
+    return axios.get('/api/posts?query=' + q)
   },
   getPostImage(url) {
     return axios.get('/api/posts/images/' + url, {

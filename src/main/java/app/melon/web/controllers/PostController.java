@@ -1,6 +1,7 @@
 package app.melon.web.controllers;
 
 import app.melon.domain.commands.AddPostCommand;
+import app.melon.domain.commands.PostListType;
 import app.melon.domain.errors.ApiException;
 import app.melon.domain.models.post.Post;
 import app.melon.domain.models.post.PostImage;
@@ -31,8 +32,8 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getPostList() {
-        List<Post> posts = this.postService.findPostList();
+    public ResponseEntity<?> getPostList(@RequestParam(name = "query") String query) throws ApiException {
+        List<Post> posts = this.postService.getPostList(PostListType.fromName(query));
         List<PostResult> results = new ArrayList<>();
         for (Post post : posts) {
             PostImage image = post.getImages().get(0);
@@ -85,28 +86,6 @@ public class PostController {
     @DeleteMapping("/{postId}")
     public ResponseEntity<?> deletePost(@PathVariable long postId) {
         return null;
-    }
-
-    @Secured(value = {"ROLE_USER"})
-    @PostMapping("/{postId}/likes")
-    public ResponseEntity<?> likePost(@PathVariable long postId) {
-        SimpleUser user = AuthenticationUtils.peekSimpleUser();
-        if (user == null) {
-            return ApiResult.unauthorized();
-        }
-        this.postService.likePost(postId, user.getUserId());
-        return ApiResult.ok();
-    }
-
-    @Secured(value = {"ROLE_USER"})
-    @DeleteMapping("/{postId}/likes")
-    public ResponseEntity<?> dislikePost(@PathVariable long postId) {
-        SimpleUser user = AuthenticationUtils.peekSimpleUser();
-        if (user == null) {
-            return ApiResult.unauthorized();
-        }
-        this.postService.dislikePost(postId, user.getUserId());
-        return ApiResult.ok();
     }
 
     @ExceptionHandler(ApiException.class)

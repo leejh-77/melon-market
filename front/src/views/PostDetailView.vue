@@ -184,7 +184,7 @@ export default {
         text-align: left;
         font-size: 13px;
         opacity: 60%;
-        margin-bottom: 30px;
+        margin-bottom: 60px;
       }
     }
   }

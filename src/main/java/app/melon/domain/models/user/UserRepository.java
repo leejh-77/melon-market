@@ -13,6 +13,6 @@ public class UserRepository extends HibernateRepository<User> {
     }
 
     public User findByEmailAddress(String emailAddress) {
-        return super.findOne("emailAddress = ?0", emailAddress);
+        return super.findOne("email_address = ?0", emailAddress);
     }
 }

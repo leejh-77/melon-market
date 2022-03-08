@@ -30,7 +30,7 @@ public class User {
     @Column(name = "image_name")
     private String imagePath;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_id")
     private List<Post> posts = new ArrayList<>();
 
@@ -86,5 +86,9 @@ public class User {
 
     public String getImagePath() {
         return imagePath;
+    }
+
+    public List<Post> getPosts() {
+        return posts;
     }
 }

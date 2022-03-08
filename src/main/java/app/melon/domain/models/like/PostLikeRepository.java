@@ -15,7 +15,7 @@ public class PostLikeRepository extends HibernateRepository<PostLike> {
     }
 
     public PostLike findByUserIdAndPostId(long userId, long postId) {
-        return super.findOne("userId = ?0 AND postId = ?1", userId, postId);
+        return super.findOne("user_id = ?0 AND post_id = ?1", userId, postId);
     }
 
     public int findCountByPostId(long id) {

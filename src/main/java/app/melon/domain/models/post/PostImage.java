@@ -21,8 +21,8 @@ public class PostImage {
     @Column(name = "created_time")
     private LocalDateTime createdTime;
 
-    @ManyToOne(targetEntity = Post.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
     public PostImage(){}

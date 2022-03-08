@@ -1,6 +1,7 @@
 package app.melon.domain.services;
 
 import app.melon.domain.commands.AddPostCommand;
+import app.melon.domain.commands.PostListType;
 import app.melon.domain.errors.ApiException;
 import app.melon.domain.errors.Errors;
 import app.melon.domain.files.ImageStorage;
@@ -11,6 +12,7 @@ import app.melon.domain.models.post.PostImage;
 import app.melon.domain.models.post.PostImageRepository;
 import app.melon.domain.models.post.PostRepository;
 import app.melon.domain.models.user.SimpleUser;
+import app.melon.domain.models.user.User;
 import app.melon.domain.models.user.UserRepository;
 import app.melon.web.security.AuthenticationUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -76,8 +78,22 @@ public class PostService {
         this.postRepository.save(post);
     }
 
-    public List<Post> findPostList() {
-        return this.postRepository.findTopPosts(30);
+    public List<Post> getPostList(PostListType type) throws ApiException {
+        if (type == PostListType.Recent) {
+            return this.postRepository.findTopPosts(30);
+        }
+        else if (type == PostListType.Popular) {
+            throw new RuntimeException("Not implemented");
+        }
+        else if (type == PostListType.Like) {
+            SimpleUser simpleUser = AuthenticationUtils.peekSimpleUser();
+            if (simpleUser == null) {
+                throw ApiException.of(Errors.UserNotFound);
+            }
+            User user = this.userRepository.findById(simpleUser.getUserId());
+            return this.postRepository.findLikePosts(30, user);
+        }
+        return List.of();
     }
 
     public PostImage findCoverImage(long id) {
