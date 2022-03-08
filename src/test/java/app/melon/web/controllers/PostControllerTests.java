@@ -44,10 +44,10 @@ public class PostControllerTests {
         doReturn(post).when(serviceMock).getPost(anyLong());
         doReturn(List.of(image)).when(serviceMock).getPostImages(anyLong());
 
-        String expected = "{\"user\":{\"id\":0,\"imageUrl\":null,\"username\":\"Jonghoon Lee\"},\"post\":{\"id\":0,\"title\":\"Title\",\"body\":\"Body\",\"price\":12000,\"likeCount\":0,\"chatCount\":0,\"imageUrls\":[\"image\"],\"createdTime\":\"2000-10-01T00:00:00\"}}";
+        String expected = "{\"user\":{\"id\":0,\"imageUrl\":null,\"username\":\"Jonghoon Lee\"},\"post\":{\"id\":0,\"title\":\"Title\",\"body\":\"Body\",\"price\":12000,\"likeCount\":0,\"chatCount\":0,\"viewCount\":0,\"imageUrls\":[\"image\"],\"createdTime\":\"2000-10-01T00:00:00\"}}";
 
         mvc.perform(get("/api/posts/1"))
                 .andExpect(status().is(200))
-                .andExpect(content().json(expected));
+                .andExpect(content().string(expected));
     }
 }

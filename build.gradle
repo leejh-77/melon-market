@@ -7,7 +7,7 @@ plugins {
 
 group = 'app.hoon'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = "15"
+sourceCompatibility = "11"
 
 repositories {
 	mavenCentral()
@@ -68,4 +68,3 @@ task frontBuild(type: NpmTask, dependsOn:
 }
 
 //processResources.dependsOn 'frontBuild'
-targetCompatibility = JavaVersion.VERSION_15
