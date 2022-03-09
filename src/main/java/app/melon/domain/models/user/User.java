@@ -15,11 +15,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "username", nullable = false, length = 50, unique = true)
-    private String username;
-
     @Column(name = "email_address", nullable = false, length = 100, unique = true)
     private String emailAddress;
+
+    @Column(name = "username", nullable = false, length = 50)
+    private String username;
 
     @Column(name = "password", nullable = false, length = 30)
     private String password;
@@ -27,19 +27,18 @@ public class User {
     @Column(name = "created_date", nullable = false)
     private LocalDate createdDate;
 
-    @Column(name = "image_name")
-    private String imagePath;
+    @Column(name = "image_url")
+    private String imageUrl;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
     private final List<Post> posts = new ArrayList<>();
 
     public User() {
     }
 
-    public User(String username, String emailAddress, String password) {
-        this.username = username;
+    public User(String emailAddress, String username, String password) {
         this.emailAddress = emailAddress;
+        this.username = username;
         this.password = password;
         this.createdDate = LocalDate.now();
     }
@@ -80,12 +79,12 @@ public class User {
         this.createdDate = createdDate;
     }
 
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
+    public void setImageUrl(String imagePath) {
+        this.imageUrl = imagePath;
     }
 
-    public String getImagePath() {
-        return imagePath;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
     public List<Post> getPosts() {

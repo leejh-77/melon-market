@@ -1,6 +1,5 @@
 package app.melon.web.controllers;
 
-import app.melon.domain.models.like.PostLike;
 import app.melon.domain.models.user.SimpleUser;
 import app.melon.domain.services.PostService;
 import app.melon.web.results.ApiResult;

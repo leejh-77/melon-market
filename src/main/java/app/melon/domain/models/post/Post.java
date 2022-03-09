@@ -1,6 +1,5 @@
 package app.melon.domain.models.post;
 
-import app.melon.domain.models.like.PostLike;
 import app.melon.domain.models.user.User;
 
 import javax.persistence.*;
@@ -22,7 +21,7 @@ public class Post {
     @Column(name = "body")
     private String body;
 
-    @Column(name = "price",  nullable = false)
+    @Column(name = "price")
     private int price;
 
     @Column(name = "created_time", nullable = false)
@@ -31,16 +30,14 @@ public class Post {
     @Column(name = "view_count")
     private int viewCount;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "post_id")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "post")
     private List<PostImage> images = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "post_id")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "post")
     private List<PostLike> likes = new ArrayList<>();
 
     public long getId() {

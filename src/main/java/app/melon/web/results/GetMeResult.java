@@ -12,7 +12,7 @@ public class GetMeResult {
     public static ResponseEntity<GetMeResult> from(User user) {
         GetMeResult result = new GetMeResult();
         result.username = user.getUsername();
-        result.imagePath = user.getImagePath();
+        result.imagePath = user.getImageUrl();
         return ApiResult.ok(result);
     }
 }

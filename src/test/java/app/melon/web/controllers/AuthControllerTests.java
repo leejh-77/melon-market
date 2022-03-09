@@ -1,6 +1,6 @@
 package app.melon.web.controllers;
 
-import app.melon.base.JsonUtils;
+import app.melon.infrastructure.utils.JsonUtils;
 import app.melon.domain.services.UserService;
 import app.melon.web.configs.SecurityConfiguration;
 import app.melon.web.requests.RegisterRequest;

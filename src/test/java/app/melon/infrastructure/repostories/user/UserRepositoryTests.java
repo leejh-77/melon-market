@@ -1,12 +1,12 @@
-package app.melon.domain.models.user;
+package app.melon.infrastructure.repostories.user;
 
+import app.melon.domain.models.user.User;
+import app.melon.infrastructure.repositories.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
-
-import javax.persistence.PersistenceException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -20,7 +20,7 @@ public class UserRepositoryTests {
 
     @Test
     public void nullUsername_shouldFail() {
-        User user = new User(null, "jonghoon.lee@email.com", "1234566");
+        User user = new User("jonghoon.lee@email.com", null, "1234566");
         assertThrows(DataIntegrityViolationException.class, () -> {
             repository.save(user);
         });
@@ -28,7 +28,7 @@ public class UserRepositoryTests {
 
     @Test
     public void nullEmailAddress_shouldFail() {
-        User user = new User("jonghoon", null, "1234566");
+        User user = new User(null, "jonghoon", "1234566");
         assertThrows(DataIntegrityViolationException.class, () -> {
             repository.save(user);
         });
@@ -37,10 +37,10 @@ public class UserRepositoryTests {
     @Test
     public void duplicateEmailAddress_shouldFail() {
         String emailAddress = "jonghoon.lee@email.com";
-        User user = new User("jonghoon", emailAddress, "1234566");
+        User user = new User(emailAddress, "jonghoon", "1234566");
         repository.save(user);
 
-        User newUser = new User("newUser", emailAddress, "123455666");
+        User newUser = new User(emailAddress, "newUser", "123455666");
         assertThrows(DataIntegrityViolationException.class, () -> {
             repository.save(newUser);
         });
@@ -52,7 +52,7 @@ public class UserRepositoryTests {
         String username = "jonghoon";
         String password = "12345678";
 
-        User user = new User(username, emailAddress, password);
+        User user = new User(emailAddress, username, password);
         repository.save(user);
 
         user = repository.findByEmailAddress(emailAddress);

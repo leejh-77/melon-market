@@ -5,15 +5,15 @@ import app.melon.domain.commands.PostListType;
 import app.melon.domain.errors.ApiException;
 import app.melon.domain.errors.Errors;
 import app.melon.domain.files.ImageStorage;
-import app.melon.domain.models.like.PostLike;
-import app.melon.domain.models.like.PostLikeRepository;
+import app.melon.domain.models.post.PostLike;
+import app.melon.infrastructure.repositories.post.PostLikeRepository;
 import app.melon.domain.models.post.Post;
 import app.melon.domain.models.post.PostImage;
-import app.melon.domain.models.post.PostImageRepository;
-import app.melon.domain.models.post.PostRepository;
+import app.melon.infrastructure.repositories.post.PostImageRepository;
+import app.melon.infrastructure.repositories.post.PostRepository;
 import app.melon.domain.models.user.SimpleUser;
 import app.melon.domain.models.user.User;
-import app.melon.domain.models.user.UserRepository;
+import app.melon.infrastructure.repositories.user.UserRepository;
 import app.melon.web.security.AuthenticationUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -72,7 +72,7 @@ public class PostService {
             String filename = imageStorage.saveImage(file);
             PostImage image = new PostImage();
             image.setPost(post);
-            image.setImageName(filename);
+            image.setImageUrl(filename);
             images.add(image);
         }
         this.postRepository.save(post);
@@ -91,7 +91,7 @@ public class PostService {
                 throw ApiException.of(Errors.UserNotFound);
             }
             User user = this.userRepository.findById(simpleUser.getUserId()).get();
-            return this.postRepository.findLikedPosts(30, user);
+            return this.postRepository.findLikedPosts(30, user.getId());
         }
         return List.of();
     }

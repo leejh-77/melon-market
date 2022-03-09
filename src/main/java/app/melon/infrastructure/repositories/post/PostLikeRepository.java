@@ -1,11 +1,8 @@
-package app.melon.domain.models.like;
+package app.melon.infrastructure.repositories.post;
 
-import org.hibernate.query.NativeQuery;
+import app.melon.domain.models.post.PostLike;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import javax.persistence.EntityManager;
-import java.math.BigInteger;
 
 @Repository
 public interface PostLikeRepository extends JpaRepository<PostLike, Long> {

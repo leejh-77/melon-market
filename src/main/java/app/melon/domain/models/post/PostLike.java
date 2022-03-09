@@ -1,4 +1,4 @@
-package app.melon.domain.models.like;
+package app.melon.domain.models.post;
 
 import app.melon.domain.models.post.Post;
 import app.melon.domain.models.user.User;
@@ -22,6 +22,13 @@ public class PostLike {
     private User user;
 
     public PostLike(){}
+
+    public static PostLike create(Post post, User user) {
+        PostLike like = new PostLike();
+        like.post = post;
+        like.user = user;
+        return like;
+    }
 
     public long getId() {
         return id;

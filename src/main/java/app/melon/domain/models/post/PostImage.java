@@ -1,6 +1,5 @@
 package app.melon.domain.models.post;
 
-import app.melon.domain.models.user.User;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -15,8 +14,8 @@ public class PostImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "image_name")
-    private String imageName;
+    @Column(name = "image_url")
+    private String imageUrl;
 
     @Column(name = "created_time")
     private LocalDateTime createdTime;
@@ -27,16 +26,25 @@ public class PostImage {
 
     public PostImage(){}
 
+    public static PostImage create(Post post, String imageUrl, LocalDateTime createdTime) {
+        PostImage image = new PostImage();
+        image.imageUrl = imageUrl;
+        image.createdTime = createdTime;
+
+        image.setPost(post);
+        return image;
+    }
+
     public long getId() {
         return id;
     }
 
-    public String getImageName() {
-        return imageName;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setImageName(String imageName) {
-        this.imageName = imageName;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public LocalDateTime getCreatedTime() {
@@ -53,5 +61,9 @@ public class PostImage {
 
     public void setPost(Post post) {
         this.post = post;
+
+        if (post != null && !post.getImages().contains(this)) {
+            post.getImages().add(this);
+        }
     }
 }

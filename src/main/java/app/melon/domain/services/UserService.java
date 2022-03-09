@@ -7,7 +7,7 @@ import app.melon.domain.errors.Errors;
 import app.melon.domain.files.ImageStorage;
 import app.melon.domain.models.user.SimpleUser;
 import app.melon.domain.models.user.User;
-import app.melon.domain.models.user.UserRepository;
+import app.melon.infrastructure.repositories.user.UserRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -40,18 +41,19 @@ public class UserService implements UserDetailsService {
             throw ApiException.of(Errors.UsernameExists);
         }
         String password = this.passwordEncoder.encode(command.getPassword());
-        user = new User(command.getUsername(), command.getEmailAddress(), password);
+        user = new User(command.getEmailAddress(), command.getUsername(), password);
         repository.save(user);
         return user;
     }
 
     public void updateUserImage(UpdateUserImageCommand command) throws ApiException {
-        User user = this.repository.findById(command.getUserId()).get();
-        if (user == null) {
+        Optional<User> opUser = this.repository.findById(command.getUserId());
+        if (opUser.isEmpty()) {
             throw ApiException.of(Errors.UserNotFound);
         }
+        User user = opUser.get();
         String imagePath = this.imageStorage.saveImage(command.getFile());
-        user.setImagePath(imagePath);
+        user.setImageUrl(imagePath);
         this.repository.save(user);
     }
 

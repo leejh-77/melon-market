@@ -14,7 +14,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doReturn;
@@ -39,7 +38,7 @@ public class PostControllerTests {
     public void getPost_shouldSuccess() throws Exception {
         LocalDateTime time = LocalDateTime.of(2000, 10, 1, 0, 0);
 
-        User user = new User("Jonghoon Lee", "jonghoon@email.com", "111111");
+        User user = new User("jonghoon@email.com", "Jonghoon Lee", "111111");
 
         Post post = new Post();
         post.setTitle("Title");
@@ -51,10 +50,8 @@ public class PostControllerTests {
 
         PostImage image = new PostImage();
         image.setPost(post);
-        image.setImageName("image");
+        image.setImageUrl("image");
         image.setCreatedTime(LocalDateTime.now());
-
-        post.getImages().add(image);
 
         doReturn(user).when(userServiceMock).getUser(anyLong());
         doReturn(post).when(postServiceMock).findPost(anyLong());

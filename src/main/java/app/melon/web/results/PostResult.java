@@ -19,7 +19,7 @@ public class PostResult {
         ret.id = post.getId();
         ret.price = post.getPrice();
         ret.title = post.getTitle();
-        ret.imageUrl = image.getImageName();
+        ret.imageUrl = image.getImageUrl();
         ret.likeCount = likeCount;
         return ret;
     }

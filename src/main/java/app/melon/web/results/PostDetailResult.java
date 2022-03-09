@@ -32,7 +32,7 @@ public class PostDetailResult {
         private static UserData from(User user) {
             UserData data = new UserData();
             data.id = user.getId();
-            data.imageUrl = user.getImagePath();
+            data.imageUrl = user.getImageUrl();
             data.username = user.getUsername();
             return data;
         }
@@ -61,7 +61,7 @@ public class PostDetailResult {
             data.body = post.getBody();
             data.price = post.getPrice();
             data.createdTime = post.getCreatedTime();
-            data.imageUrls = images.stream().map(PostImage::getImageName).collect(Collectors.toList());
+            data.imageUrls = images.stream().map(PostImage::getImageUrl).collect(Collectors.toList());
             return data;
         }
     }

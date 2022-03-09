@@ -1,5 +1,6 @@
-package app.melon.domain.models.post;
+package app.melon.infrastructure.repositories.post;
 
+import app.melon.domain.models.post.PostImage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
