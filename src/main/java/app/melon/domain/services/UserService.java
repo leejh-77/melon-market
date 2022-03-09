@@ -46,7 +46,7 @@ public class UserService implements UserDetailsService {
     }
 
     public void updateUserImage(UpdateUserImageCommand command) throws ApiException {
-        User user = this.repository.findById(command.getUserId());
+        User user = this.repository.findById(command.getUserId()).get();
         if (user == null) {
             throw ApiException.of(Errors.UserNotFound);
         }
@@ -69,6 +69,6 @@ public class UserService implements UserDetailsService {
     }
 
     public User getUser(long userId) {
-        return this.repository.findById(userId);
+        return this.repository.findById(userId).get();
     }
 }

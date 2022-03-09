@@ -3,11 +3,9 @@ package app.melon.domain.models.user;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
 
-import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,21 +15,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ActiveProfiles("test")
 public class UserRepositoryTests {
 
-    @TestConfiguration
-    public static class UserRepositoryTestConfiguration {
-        @Bean
-        public UserRepository userRepository(EntityManager entityManager) {
-            return new UserRepository(entityManager);
-        }
-    }
-
     @Autowired
     private UserRepository repository;
 
     @Test
     public void nullUsername_shouldFail() {
         User user = new User(null, "jonghoon.lee@email.com", "1234566");
-        assertThrows(PersistenceException.class, () -> {
+        assertThrows(DataIntegrityViolationException.class, () -> {
             repository.save(user);
         });
     }
@@ -39,7 +29,7 @@ public class UserRepositoryTests {
     @Test
     public void nullEmailAddress_shouldFail() {
         User user = new User("jonghoon", null, "1234566");
-        assertThrows(PersistenceException.class, () -> {
+        assertThrows(DataIntegrityViolationException.class, () -> {
             repository.save(user);
         });
     }
@@ -51,7 +41,7 @@ public class UserRepositoryTests {
         repository.save(user);
 
         User newUser = new User("newUser", emailAddress, "123455666");
-        assertThrows(PersistenceException.class, () -> {
+        assertThrows(DataIntegrityViolationException.class, () -> {
             repository.save(newUser);
         });
     }

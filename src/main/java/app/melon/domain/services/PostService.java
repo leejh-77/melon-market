@@ -64,7 +64,7 @@ public class PostService {
         post.setTitle(command.getTitle());
         post.setBody(command.getBody());
         post.setPrice(command.getPrice());
-        post.setUser(this.userRepository.findById(simpleUser.getUserId()));
+        post.setUser(this.userRepository.findById(simpleUser.getUserId()).get());
         post.setCreatedTime(LocalDateTime.now());
 
         List<PostImage> images = post.getImages();
@@ -80,7 +80,7 @@ public class PostService {
 
     public List<Post> getPostList(PostListType type) throws ApiException {
         if (type == PostListType.Recent) {
-            return this.postRepository.findTopPosts(30);
+            return this.postRepository.findTop30ByOrderByCreatedTimeDesc();
         }
         else if (type == PostListType.Popular) {
             throw new RuntimeException("Not implemented");
@@ -90,18 +90,14 @@ public class PostService {
             if (simpleUser == null) {
                 throw ApiException.of(Errors.UserNotFound);
             }
-            User user = this.userRepository.findById(simpleUser.getUserId());
-            return this.postRepository.findLikePosts(30, user);
+            User user = this.userRepository.findById(simpleUser.getUserId()).get();
+            return this.postRepository.findLikedPosts(30, user);
         }
         return List.of();
     }
 
-    public PostImage findCoverImage(long id) {
-        return this.postImageRepository.findImageByPostId(id);
-    }
-
     public int findLikeCount(long id) {
-        return this.likeRepository.findCountByPostId(id);
+        return this.likeRepository.countByPostId(id);
     }
 
     public byte[] getImage(String url) throws ApiException {
@@ -113,7 +109,7 @@ public class PostService {
     }
 
     public Post findPost(long postId) {
-        return this.postRepository.findById(postId);
+        return this.postRepository.findById(postId).get();
     }
 
     public boolean isLikedPost(long postId, long userId) {
@@ -126,7 +122,7 @@ public class PostService {
             return;
         }
 
-        Post post = this.postRepository.findById(postId);
+        Post post = this.postRepository.findById(postId).get();
         like = new PostLike();
         like.setPost(post);
         like.setUser(post.getUser());
