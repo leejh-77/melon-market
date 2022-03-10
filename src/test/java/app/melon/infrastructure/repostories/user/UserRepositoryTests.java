@@ -20,7 +20,7 @@ public class UserRepositoryTests {
 
     @Test
     public void nullUsername_shouldFail() {
-        User user = new User("jonghoon.lee@email.com", null, "1234566");
+        User user = User.create("jonghoon.lee@email.com", null, "1234566");
         assertThrows(DataIntegrityViolationException.class, () -> {
             repository.save(user);
         });
@@ -28,7 +28,7 @@ public class UserRepositoryTests {
 
     @Test
     public void nullEmailAddress_shouldFail() {
-        User user = new User(null, "jonghoon", "1234566");
+        User user = User.create(null, "jonghoon", "1234566");
         assertThrows(DataIntegrityViolationException.class, () -> {
             repository.save(user);
         });
@@ -37,10 +37,10 @@ public class UserRepositoryTests {
     @Test
     public void duplicateEmailAddress_shouldFail() {
         String emailAddress = "jonghoon.lee@email.com";
-        User user = new User(emailAddress, "jonghoon", "1234566");
+        User user = User.create(emailAddress, "jonghoon", "1234566");
         repository.save(user);
 
-        User newUser = new User(emailAddress, "newUser", "123455666");
+        User newUser = User.create(emailAddress, "newUser", "123455666");
         assertThrows(DataIntegrityViolationException.class, () -> {
             repository.save(newUser);
         });
@@ -52,7 +52,7 @@ public class UserRepositoryTests {
         String username = "jonghoon";
         String password = "12345678";
 
-        User user = new User(emailAddress, username, password);
+        User user = User.create(emailAddress, username, password);
         repository.save(user);
 
         user = repository.findByEmailAddress(emailAddress);

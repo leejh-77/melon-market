@@ -10,7 +10,7 @@ import app.melon.domain.models.user.User;
 import app.melon.domain.services.PostService;
 import app.melon.web.results.ApiResult;
 import app.melon.web.results.PostDetailResult;
-import app.melon.web.results.PostResult;
+import app.melon.web.results.PostListResult;
 import app.melon.web.security.AuthenticationUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -34,13 +34,28 @@ public class PostController {
     @GetMapping
     public ResponseEntity<?> getPostList(@RequestParam(name = "query") String query) throws ApiException {
         List<Post> posts = this.postService.getPostList(PostListType.fromName(query));
-        List<PostResult> results = new ArrayList<>();
+        List<PostListResult> results = new ArrayList<>();
         for (Post post : posts) {
             PostImage image = post.getImages().get(0);
             int likeCount = this.postService.findLikeCount(post.getId());
-            results.add(PostResult.from(post, image, likeCount));
+            results.add(PostListResult.from(post, image, likeCount));
         }
         return ApiResult.ok(results);
+    }
+
+    @GetMapping("/{postId}")
+    public ResponseEntity<?> getPost(@PathVariable long postId) {
+        Post post = this.postService.findPost(postId);
+        User user = post.getUser();
+        List<PostImage> images = post.getImages();
+
+        int likeCount = this.postService.findLikeCount(postId);
+        boolean likedByMe = false;
+        SimpleUser simpleUser = AuthenticationUtils.peekSimpleUser();
+        if (simpleUser != null) {
+            likedByMe = this.postService.isLikedPost(postId, simpleUser.getUserId());
+        }
+        return PostDetailResult.from(user, post, images, likeCount, likedByMe);
     }
 
     @GetMapping("/images/{imageUrl}")
@@ -63,29 +78,18 @@ public class PostController {
         return ApiResult.created();
     }
 
-    @GetMapping("/{postId}")
-    public ResponseEntity<?> getPost(@PathVariable long postId) {
-        Post post = this.postService.findPost(postId);
-        User user = post.getUser();
-        List<PostImage> images = post.getImages();
 
-        int likeCount = this.postService.findLikeCount(postId);
-        boolean likedByMe = false;
-        SimpleUser simpleUser = AuthenticationUtils.peekSimpleUser();
-        if (simpleUser != null) {
-            likedByMe = this.postService.isLikedPost(postId, simpleUser.getUserId());
-        }
-        return PostDetailResult.from(user, post, images, likeCount, likedByMe);
-    }
-
+    @Secured(value = {"ROLE_USER"})
     @PutMapping("/{postId}")
     public ResponseEntity<?> updatePost(@PathVariable long postId) {
         return null;
     }
 
+    @Secured(value = {"ROLE_USER"})
     @DeleteMapping("/{postId}")
-    public ResponseEntity<?> deletePost(@PathVariable long postId) {
-        return null;
+    public ResponseEntity<?> deletePost(@PathVariable long postId) throws ApiException {
+        this.postService.deletePost(postId);
+        return ApiResult.ok();
     }
 
     @ExceptionHandler(ApiException.class)

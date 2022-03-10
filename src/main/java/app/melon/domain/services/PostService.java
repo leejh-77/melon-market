@@ -14,6 +14,7 @@ import app.melon.infrastructure.repositories.post.PostRepository;
 import app.melon.domain.models.user.SimpleUser;
 import app.melon.domain.models.user.User;
 import app.melon.infrastructure.repositories.user.UserRepository;
+import app.melon.web.results.ApiResult;
 import app.melon.web.security.AuthenticationUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -59,13 +61,19 @@ public class PostService {
         if (simpleUser == null) {
             throw ApiException.of(Errors.UserNotFound);
         }
+        Optional<User> opUser = this.userRepository.findById(simpleUser.getUserId());
+        if (opUser.isEmpty()) {
+            throw ApiException.of(Errors.UserNotFound);
+        }
 
-        Post post = new Post();
-        post.setTitle(command.getTitle());
-        post.setBody(command.getBody());
-        post.setPrice(command.getPrice());
-        post.setUser(this.userRepository.findById(simpleUser.getUserId()).get());
-        post.setCreatedTime(LocalDateTime.now());
+        User user = opUser.get();
+        Post post = Post.create(
+                command.getTitle(),
+                command.getBody(),
+                command.getPrice(),
+                LocalDateTime.now(),
+                user
+        );
 
         List<PostImage> images = post.getImages();
         for (MultipartFile file : files) {
@@ -116,17 +124,17 @@ public class PostService {
         return this.likeRepository.findByUserIdAndPostId(userId, postId) != null;
     }
 
-    public void likePost(long postId, long userId) {
+    public void likePost(long postId, long userId) throws ApiException {
         PostLike like = this.likeRepository.findByUserIdAndPostId(userId, postId);
         if (like != null) {
             return;
         }
-
-        Post post = this.postRepository.findById(postId).get();
-        like = new PostLike();
-        like.setPost(post);
-        like.setUser(post.getUser());
-
+        Optional<Post> opPost = this.postRepository.findById(postId);
+        if (opPost.isEmpty()) {
+            throw ApiException.of(Errors.ItemNotFound);
+        }
+        Post post = opPost.get();
+        like = PostLike.create(post, post.getUser());
         this.likeRepository.save(like);
     }
 
@@ -136,5 +144,17 @@ public class PostService {
             return;
         }
         this.likeRepository.delete(like);
+    }
+
+    public void deletePost(long postId) throws ApiException {
+        Optional<Post> opPost = this.postRepository.findById(postId);
+        if (opPost.isEmpty()) {
+            throw ApiException.of(Errors.ItemNotFound);
+        }
+        Post post = opPost.get();
+        if (post.getUser().getId() != AuthenticationUtils.peekSimpleUser().getUserId()) {
+            throw ApiException.of(Errors.InvalidRequest);
+        }
+        this.postRepository.delete(post);
     }
 }

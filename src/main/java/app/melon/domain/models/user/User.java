@@ -36,11 +36,13 @@ public class User {
     public User() {
     }
 
-    public User(String emailAddress, String username, String password) {
-        this.emailAddress = emailAddress;
-        this.username = username;
-        this.password = password;
-        this.createdDate = LocalDate.now();
+    public static User create(String emailAddress, String username, String password) {
+        User user = new User();
+        user.emailAddress = emailAddress;
+        user.username = username;
+        user.password = password;
+        user.createdDate = LocalDate.now();
+        return user;
     }
 
     public long getId() {

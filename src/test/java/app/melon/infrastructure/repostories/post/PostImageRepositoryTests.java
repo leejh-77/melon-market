@@ -69,20 +69,15 @@ public class PostImageRepositoryTests {
         this.em.flush();
         this.em.clear();
 
-        Post temp = this.postRepository.findById(1L).get();
-        for (PostImage image : temp.getImages()) {
-            System.out.println(image.getImageUrl());
-        }
-
         System.out.println("#### without jetch join ###");
 
-        List<Post> posts = this.postRepository.findAll();
-        for (Post p : posts) {
-            List<PostImage> images = p.getImages();
-            for (PostImage image : images) {
-                image.getImageUrl();
-            }
-        }
+        List<Post> posts = this.postRepository.findAllPosts();
+        posts.get(0).getImages().get(0).getImageUrl();
+//        for (Post post : posts) {
+//            for (PostImage image : post.getImages()) {
+//                System.out.println(image.getImageUrl());
+//            }
+//        }
 
         System.out.println("### with fetch join ###");
 

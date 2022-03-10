@@ -5,7 +5,6 @@ import lombok.Getter;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Getter
 @Entity
 @Table(name = "post_image")
 public class PostImage {

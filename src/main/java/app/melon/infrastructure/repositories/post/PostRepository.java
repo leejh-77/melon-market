@@ -14,4 +14,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
 
     @Query("select p from Post p join fetch p.images")
     List<Post> findAllFetchJoin();
+
+    @Query("select p from Post p")
+    List<Post> findAllPosts();
 }

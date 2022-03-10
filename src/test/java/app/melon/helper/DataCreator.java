@@ -13,7 +13,7 @@ public class DataCreator {
         String emailAddress = genRandomString("test") + "@email.com";
         String username = "Name!@";
         String password = "password@#$";
-        return new User(emailAddress, username, password);
+        return User.create(emailAddress, username, password);
     }
 
     public static Post newPost() {

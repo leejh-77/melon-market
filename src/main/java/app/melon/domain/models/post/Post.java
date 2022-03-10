@@ -1,6 +1,9 @@
 package app.melon.domain.models.post;
 
 import app.melon.domain.models.user.User;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -35,10 +38,21 @@ public class Post {
     private User user;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "post")
-    private List<PostImage> images = new ArrayList<>();
+    private final List<PostImage> images = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "post")
-    private List<PostLike> likes = new ArrayList<>();
+    private final List<PostLike> likes = new ArrayList<>();
+
+    public static Post create(String title, String body, int price, LocalDateTime createdTime, User user) {
+        Post post = new Post();
+        post.title = title;
+        post.body = body;
+        post.price = price;
+        post.createdTime = createdTime.withNano(0);
+        post.viewCount = 0;
+        post.user = user;
+        return post;
+    }
 
     public long getId() {
         return id;
@@ -69,7 +83,7 @@ public class Post {
     }
 
     public LocalDateTime getCreatedTime() {
-        return createdTime;
+        return createdTime.withNano(0);
     }
 
     public void setCreatedTime(LocalDateTime createdTime) {

@@ -41,7 +41,7 @@ public class UserService implements UserDetailsService {
             throw ApiException.of(Errors.UsernameExists);
         }
         String password = this.passwordEncoder.encode(command.getPassword());
-        user = new User(command.getEmailAddress(), command.getUsername(), password);
+        user = User.create(command.getEmailAddress(), command.getUsername(), password);
         repository.save(user);
         return user;
     }
