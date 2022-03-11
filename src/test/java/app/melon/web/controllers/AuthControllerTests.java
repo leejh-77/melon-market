@@ -13,6 +13,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
@@ -54,6 +55,7 @@ public class AuthControllerTests {
         mvc.perform(post("/api/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(JsonUtils.toJson(req)))
+                .andDo(log())
                 .andExpect(status().is(201));
     }
 }

@@ -2,20 +2,23 @@ package app.melon.domain.services;
 
 import app.melon.domain.commands.AddPostCommand;
 import app.melon.domain.commands.PostListType;
+import app.melon.domain.commands.UpdatePostCommand;
 import app.melon.domain.errors.ApiException;
 import app.melon.domain.errors.Errors;
 import app.melon.domain.files.ImageStorage;
-import app.melon.domain.models.post.PostLike;
-import app.melon.infrastructure.repositories.post.PostLikeRepository;
 import app.melon.domain.models.post.Post;
 import app.melon.domain.models.post.PostImage;
-import app.melon.infrastructure.repositories.post.PostRepository;
+import app.melon.domain.models.post.PostLike;
+import app.melon.domain.models.user.SimpleUser;
 import app.melon.domain.models.user.User;
+import app.melon.infrastructure.repositories.post.PostLikeRepository;
+import app.melon.infrastructure.repositories.post.PostRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -36,27 +39,7 @@ public class PostService {
         this.imageStorage = imageStorage;
     }
 
-    public void addPost(AddPostCommand command, User user) {
-        Post post = Post.create(
-                command.getTitle(),
-                command.getBody(),
-                command.getPrice(),
-                LocalDateTime.now(),
-                user
-        );
-
-        List<PostImage> images = post.getImages();
-        for (MultipartFile file : command.getImages()) {
-            String filename = imageStorage.saveImage(file);
-            PostImage image = new PostImage();
-            image.setPost(post);
-            image.setImageUrl(filename);
-            images.add(image);
-        }
-        this.postRepository.save(post);
-    }
-
-    public List<Post> getPostList(PostListType type, User user) {
+    public List<Post> getPostList(PostListType type) throws ApiException {
         if (type == PostListType.Recent) {
             return this.postRepository.findTop30ByOrderByCreatedTimeDesc();
         }
@@ -64,7 +47,12 @@ public class PostService {
             throw new RuntimeException("Not implemented");
         }
         else if (type == PostListType.Like) {
-            return this.postRepository.findLikedPosts(30, user.getId());
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (!(principal instanceof SimpleUser)) {
+                throw ApiException.of(Errors.InvalidRequest);
+            }
+            SimpleUser user = (SimpleUser) principal;
+            return this.postRepository.findLikedPosts(30, user.getUserId());
         }
         return List.of();
     }
@@ -83,6 +71,66 @@ public class PostService {
 
     public Post findPost(long postId) {
         return this.postRepository.findById(postId).get();
+    }
+
+
+    public void addPost(AddPostCommand command, User user) {
+        Post post = Post.create(
+                command.getTitle(),
+                command.getBody(),
+                command.getPrice(),
+                LocalDateTime.now(),
+                user
+        );
+        this.saveAndAddNewImages(post, command.getImages());
+        this.postRepository.save(post);
+    }
+
+    public void updatePost(UpdatePostCommand command, User user) throws ApiException {
+        Post post = this.checkItemValidity(command.getPostId(), user);
+
+        post.setTitle(command.getTitle());
+        post.setPrice(command.getPrice());
+        post.setBody(command.getBody());
+
+        List<Long> imagesToDelete = command.getDeletedImages();
+
+        List<PostImage> images = post.getImages();
+        images.forEach(image -> {
+            if (imagesToDelete.contains(image.getId())) {
+                post.getImages().remove(image);
+                this.imageStorage.deleteImage(image.getImageUrl());
+            }
+        });
+        this.saveAndAddNewImages(post, command.getAddedImages());
+        this.postRepository.save(post);
+    }
+
+    public void deletePost(long postId, User user) throws ApiException {
+        Post post = this.checkItemValidity(postId, user);
+        this.postRepository.delete(post);
+    }
+
+    private void saveAndAddNewImages(Post post, List<MultipartFile> files) {
+        for (MultipartFile file : files) {
+            String filename = imageStorage.saveImage(file);
+            PostImage image = new PostImage();
+            image.setPost(post);
+            image.setImageUrl(filename);
+            post.getImages().add(image);
+        }
+    }
+
+    private Post checkItemValidity(long postId, User user) throws ApiException {
+        Optional<Post> opPost = this.postRepository.findById(postId);
+        if (opPost.isEmpty()) {
+            throw ApiException.of(Errors.ItemNotFound);
+        }
+        Post post = opPost.get();
+        if (post.getUser().getId() != user.getId()) {
+            throw ApiException.of(Errors.InvalidRequest);
+        }
+        return post;
     }
 
     public boolean isLikedPost(long postId, long userId) {
@@ -109,17 +157,5 @@ public class PostService {
             return;
         }
         this.likeRepository.delete(like);
-    }
-
-    public void deletePost(long postId, User user) throws ApiException {
-        Optional<Post> opPost = this.postRepository.findById(postId);
-        if (opPost.isEmpty()) {
-            throw ApiException.of(Errors.ItemNotFound);
-        }
-        Post post = opPost.get();
-        if (post.getUser().getId() != user.getId()) {
-            throw ApiException.of(Errors.InvalidRequest);
-        }
-        this.postRepository.delete(post);
     }
 }

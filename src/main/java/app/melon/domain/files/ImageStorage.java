@@ -56,4 +56,18 @@ public class ImageStorage {
             throw new RuntimeException("Failed to load file", e);
         }
     }
+
+    public void deleteImage(String filename) {
+        Path path = Paths.get(this.directory).toAbsolutePath().normalize();
+        Path location = path.resolve(filename);
+        if (!location.toFile().exists()) {
+            return;
+        }
+        try {
+            Files.delete(location);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load file", e);
+        }
+
+    }
 }

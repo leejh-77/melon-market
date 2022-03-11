@@ -5,6 +5,7 @@ import app.melon.web.requests.RegisterRequest;
 import app.melon.web.results.ApiResult;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,10 +28,5 @@ public class AuthController {
     public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest request) throws ApiException {
         service.registerUser(request.toCommand());
         return ApiResult.created();
-    }
-
-    @ExceptionHandler(ApiException.class)
-    public ResponseEntity<?> handleException(ApiException e) {
-        return ApiResult.failure(e.getErrorMessage());
     }
 }

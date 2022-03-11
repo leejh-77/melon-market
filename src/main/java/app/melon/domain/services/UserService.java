@@ -1,7 +1,7 @@
 package app.melon.domain.services;
 
 import app.melon.domain.commands.RegisterCommand;
-import app.melon.domain.commands.UpdateUserImageCommand;
+import app.melon.domain.commands.UpdateUserCommand;
 import app.melon.domain.errors.ApiException;
 import app.melon.domain.errors.Errors;
 import app.melon.domain.files.ImageStorage;
@@ -10,12 +10,9 @@ import app.melon.domain.models.user.User;
 import app.melon.infrastructure.repositories.user.UserRepository;
 import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -47,7 +44,7 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
-    public void updateUserImage(UpdateUserImageCommand command) throws ApiException {
+    public void updateUserImage(UpdateUserCommand command) throws ApiException {
         Optional<User> opUser = this.repository.findById(command.getUserId());
         if (opUser.isEmpty()) {
             throw ApiException.of(Errors.UserNotFound);

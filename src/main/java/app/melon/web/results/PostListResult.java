@@ -14,12 +14,12 @@ public class PostListResult {
     private int chatCount;
     private String imageUrl;
 
-    public static PostListResult from(Post post, PostImage image, int likeCount) {
+    public static PostListResult from(Post post, int likeCount) {
         PostListResult ret = new PostListResult();
         ret.id = post.getId();
         ret.price = post.getPrice();
         ret.title = post.getTitle();
-        ret.imageUrl = image.getImageUrl();
+        ret.imageUrl = post.getImages().get(0).getImageUrl();
         ret.likeCount = likeCount;
         return ret;
     }

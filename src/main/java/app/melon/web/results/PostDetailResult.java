@@ -16,11 +16,11 @@ public class PostDetailResult {
     private UserData user;
     private PostData post;
 
-    public static ResponseEntity<PostDetailResult> from(Post post, int likeCount, boolean likedByMe) {
+    public static PostDetailResult from(Post post, int likeCount, boolean likedByMe) {
         PostDetailResult ret = new PostDetailResult();
         ret.user = UserData.from(post.getUser());
         ret.post = PostData.from(post, likeCount, likedByMe);
-        return ApiResult.ok(ret);
+        return ret;
     }
 
     @Getter

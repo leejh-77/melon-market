@@ -52,13 +52,12 @@ public class PostControllerTests {
     private UserService userServiceMock;
 
     @Test
-    @WithUserDetails(userDetailsServiceBeanName = "userDetailsService")
     public void getPostList_shouldSuccess() throws Exception {
         User user = DataCreator.newUser();
         Post post = DataCreator.newPost(user);
         PostImage image = DataCreator.newPostImage(post);
 
-        doReturn(List.of(post)).when(postServiceMock).getPostList(eq(PostListType.Recent), any());
+        doReturn(List.of(post)).when(postServiceMock).getPostList(eq(PostListType.Recent));
 
         mvc.perform(get("/api/posts?query=recent"))
                 .andExpect(status().is(200))
@@ -149,6 +148,6 @@ public class PostControllerTests {
 
     @Test
     public void deletePost_shouldSuccess() {
-
+         DataCreator.newUser();
     }
 }
