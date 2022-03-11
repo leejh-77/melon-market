@@ -8,10 +8,14 @@ import app.melon.domain.files.ImageStorage;
 import app.melon.domain.models.user.SimpleUser;
 import app.melon.domain.models.user.User;
 import app.melon.infrastructure.repositories.user.UserRepository;
+import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -24,23 +28,20 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
 
     private final UserRepository repository;
-    private final PasswordEncoder passwordEncoder;
     private final ImageStorage imageStorage;
 
-    public UserService(UserRepository repository,
-                       PasswordEncoder passwordEncoder,
-                       @Qualifier("UserImageStorage") ImageStorage imageStorage) {
+    public UserService(UserRepository repository, @Qualifier("UserImageStorage") ImageStorage imageStorage) {
         this.repository = repository;
-        this.passwordEncoder = passwordEncoder;
         this.imageStorage = imageStorage;
     }
 
-    public User createUser(RegisterCommand command) throws ApiException {
+    public User registerUser(RegisterCommand command) throws ApiException {
         User user = this.repository.findByEmailAddress(command.getEmailAddress());
         if (user != null) {
             throw ApiException.of(Errors.UsernameExists);
         }
-        String password = this.passwordEncoder.encode(command.getPassword());
+        PasswordEncoder encoder = this.passwordEncoder();
+        String password = encoder.encode(command.getPassword());
         user = User.create(command.getEmailAddress(), command.getUsername(), password);
         repository.save(user);
         return user;
@@ -73,4 +74,10 @@ public class UserService implements UserDetailsService {
     public User getUser(long userId) {
         return this.repository.findById(userId).get();
     }
+
+    @Lookup
+    public PasswordEncoder passwordEncoder() {
+        return null;
+    }
+
 }
