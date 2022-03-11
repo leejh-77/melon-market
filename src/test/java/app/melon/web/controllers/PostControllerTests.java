@@ -4,29 +4,28 @@ import app.melon.domain.commands.AddPostCommand;
 import app.melon.domain.commands.PostListType;
 import app.melon.domain.models.post.Post;
 import app.melon.domain.models.post.PostImage;
-import app.melon.domain.models.user.SimpleUser;
 import app.melon.domain.models.user.User;
 import app.melon.domain.services.PostService;
 import app.melon.domain.services.UserService;
 import app.melon.helper.DataCreator;
 import app.melon.helper.TestConfig;
+import app.melon.infrastructure.utils.JsonUtils;
 import app.melon.web.configs.SecurityConfiguration;
+import app.melon.web.requests.AddPostRequest;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.util.List;
 
@@ -35,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest
@@ -142,12 +141,16 @@ public class PostControllerTests {
     }
 
     @Test
-    public void updatePost_shouldSuccess() {
-
+    public void updatePost_withoutAuthentication_shouldFail() throws Exception {
+        mvc.perform(put("/api/posts/1"))
+                .andExpect(status().is(302))
+                .andExpect(redirectedUrlPattern("**/login"));
     }
 
     @Test
-    public void deletePost_shouldSuccess() {
-         DataCreator.newUser();
+    public void deletePost_withoutAuthentication_shouldFail() throws Exception {
+        mvc.perform(delete("/api/posts/1"))
+                .andExpect(status().is(302))
+                .andExpect(redirectedUrlPattern("**/login"));
     }
 }

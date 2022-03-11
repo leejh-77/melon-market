@@ -3,13 +3,6 @@ import { Buffer } from 'buffer'
 import { ListQuery } from '@/constant'
 
 export default {
-  addPost(data) {
-    return axios.post('/api/posts', data, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
-  },
   getPostList(query) {
     let q
     if (query === ListQuery.Recent) {
@@ -21,6 +14,9 @@ export default {
     }
     return axios.get('/api/posts?query=' + q)
   },
+  getPost(id) {
+    return axios.get('/api/posts/' + id)
+  },
   getPostImage(url) {
     return axios.get('/api/posts/images/' + url, {
       responseType: 'arraybuffer'
@@ -29,8 +25,22 @@ export default {
       return 'data:image/png;base64, ' + base64
     })
   },
-  getPost(id) {
-    return axios.get('/api/posts/' + id)
+  addPost(data) {
+    return axios.post('/api/posts', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+  },
+  updatePost(id, data) {
+    return axios.put('/api/posts/' + id, data, {
+      header: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+  },
+  deletePost(id) {
+    return axios.delete('/api/posts/' + id)
   },
   changeLike(id, isLike) {
     const url = '/api/posts/' + id + '/likes'

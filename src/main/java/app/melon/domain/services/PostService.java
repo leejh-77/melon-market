@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -73,7 +74,6 @@ public class PostService {
         return this.postRepository.findById(postId).get();
     }
 
-
     public void addPost(AddPostCommand command, User user) {
         Post post = Post.create(
                 command.getTitle(),
@@ -82,8 +82,8 @@ public class PostService {
                 LocalDateTime.now(),
                 user
         );
-        this.saveAndAddNewImages(post, command.getImages());
         this.postRepository.save(post);
+        this.saveAndAddImages(post, command.getImages());
     }
 
     public void updatePost(UpdatePostCommand command, User user) throws ApiException {
@@ -93,32 +93,34 @@ public class PostService {
         post.setPrice(command.getPrice());
         post.setBody(command.getBody());
 
-        List<Long> imagesToDelete = command.getDeletedImages();
-
-        List<PostImage> images = post.getImages();
-        images.forEach(image -> {
-            if (imagesToDelete.contains(image.getId())) {
-                post.getImages().remove(image);
-                this.imageStorage.deleteImage(image.getImageUrl());
-            }
-        });
-        this.saveAndAddNewImages(post, command.getAddedImages());
         this.postRepository.save(post);
+
+        List<Long> imagesToDelete = command.getDeletedImages();
+        List<PostImage> deletes = post.getImages().stream().filter(image -> imagesToDelete.contains(image.getId()))
+                .collect(Collectors.toList());
+
+        this.saveAndAddImages(post, command.getAddedImages());
+        this.deleteImages(deletes);
     }
 
     public void deletePost(long postId, User user) throws ApiException {
         Post post = this.checkItemValidity(postId, user);
         this.postRepository.delete(post);
+        this.deleteImages(post.getImages());
     }
 
-    private void saveAndAddNewImages(Post post, List<MultipartFile> files) {
-        for (MultipartFile file : files) {
+    private void saveAndAddImages(Post post, List<MultipartFile> files) {
+        files.forEach(file -> {
             String filename = imageStorage.saveImage(file);
-            PostImage image = new PostImage();
-            image.setPost(post);
-            image.setImageUrl(filename);
-            post.getImages().add(image);
-        }
+            PostImage.create(post, filename, LocalDateTime.now().withNano(0));
+        });
+    }
+
+    private void deleteImages(List<PostImage> images) {
+        images.forEach(image -> {
+            image.getPost().getImages().remove(image);
+            this.imageStorage.deleteImage(image.getImageUrl());
+        });
     }
 
     private Post checkItemValidity(long postId, User user) throws ApiException {
