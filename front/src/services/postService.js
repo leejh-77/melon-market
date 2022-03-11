@@ -33,8 +33,8 @@ export default {
     })
   },
   updatePost(id, data) {
-    return axios.put('/api/posts/' + id, data, {
-      header: {
+    return axios.post('/api/posts/' + id, data, {
+      headers: {
         'Content-Type': 'multipart/form-data'
       }
     })

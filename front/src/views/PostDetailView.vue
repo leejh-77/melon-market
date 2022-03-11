@@ -8,12 +8,16 @@
       </div>
       <div class="line"/>
       <div class="content">
-        <img class="like" :src="getLikeImageSrc" @click="changeLike" v-if="authenticated">
+        <img class="like" :src="getLikeImageSrc" @click="actionToggleLike" v-if="authenticated">
         <p class="title">{{ post.title }}</p>
         <p class="date">{{ getDateString }}</p>
         <p class="price">{{ new Intl.NumberFormat().format(post.price) }}원</p>
         <p class="body">{{ post.body }}</p>
         <p class="meta-info">{{ getMetaInfoString }}</p>
+        <div class="edit-container" v-if="isMyPost">
+          <button class="edit-button" @click="actionGoToEditPost">수정</button>
+          <button class="delete-button" @click="actionDeletePost">삭제</button>
+        </div>
         <div class="line"/>
       </div>
     </div>
@@ -34,9 +38,12 @@ export default {
 
       const diff = today - day
       switch (diff) {
-        case 0: return '오늘'
-        case 1: return '어제'
-        default: return diff + ' 일 전'
+        case 0:
+          return '오늘'
+        case 1:
+          return '어제'
+        default:
+          return diff + ' 일 전'
       }
     },
     getMetaInfoString() {
@@ -56,11 +63,18 @@ export default {
     },
     authenticated() {
       return this.$store.state.authenticated
+    },
+    isMyPost() {
+      if (!this.authenticated) {
+        return
+      }
+      return this.$store.state.user.id === this.user.id
     }
   },
   data() {
     return {
       post: {
+        id: 0,
         title: '',
         body: '',
         price: 0,
@@ -68,9 +82,11 @@ export default {
         likeCount: 0,
         chatCount: 0,
         viewCount: 0,
-        likedByMe: false
+        likedByMe: false,
+        imageUrls: []
       },
       user: {
+        id: 0,
         username: '',
         imageUrl: ''
       },
@@ -86,7 +102,7 @@ export default {
           })
       })
     },
-    changeLike() {
+    actionToggleLike() {
       postService.changeLike(this.post.id, !this.post.likedByMe)
         .then(res => {
           if (this.post.likedByMe) {
@@ -97,6 +113,20 @@ export default {
             this.post.likeCount++
           }
         })
+    },
+    actionDeletePost() {
+      if (confirm('정말 삭제하시겠습니까?')) {
+        postService.deletePost(this.post.id)
+          .then(res => {
+            this.$router.push('/')
+          })
+          .catch(e => {
+
+          })
+      }
+    },
+    actionGoToEditPost() {
+      this.$router.push('/post-edit/' + this.post.id)
     }
   },
   mounted() {
@@ -135,11 +165,13 @@ export default {
         height: 70%;
         border-radius: 50%;
       }
+
       .name {
         font-weight: bold;
         margin-left: 10px;
       }
     }
+
     .line {
       height: 0.7px;
       background-color: lightgray;
@@ -147,14 +179,17 @@ export default {
 
     .content {
       position: relative;
+
       .like {
         width: 30px;
         position: absolute;
         right: 0;
       }
+
       .like:hover {
         cursor: pointer;
       }
+
       .title {
         margin-top: 30px;
         margin-bottom: 6px;
@@ -163,28 +198,64 @@ export default {
         font-size: 20px;
         font-weight: bold;
       }
+
       .date {
         font-size: 13px;
         text-align: left;
         margin-bottom: 8px;
         opacity: 50%;
       }
+
       .price {
         font-size: 18px;
         text-align: left;
         font-weight: bold;
         margin-bottom: 30px;
       }
+
       .body {
         text-align: left;
         font-size: 16px;
         padding-bottom: 40px;
       }
+
       .meta-info {
         text-align: left;
         font-size: 13px;
         opacity: 60%;
+        margin-bottom: 30px;
+      }
+
+      .edit-container {
+        display: flex;
+        justify-content: right;
         margin-bottom: 60px;
+
+        button {
+          height: 40px;
+          width: 120px;
+          margin-left: 20px;
+          font-size: 14px;
+          font-weight: bold;
+        }
+
+        button:hover {
+          cursor: pointer;
+        }
+
+        .edit-button {
+          border: 1px solid cornflowerblue;
+          border-radius: 10px;
+          color: cornflowerblue;
+          background-color: white;
+        }
+
+        .delete-button {
+          border: none;
+          border-radius: 10px;
+          color: white;
+          background-color: indianred;
+        }
       }
     }
   }

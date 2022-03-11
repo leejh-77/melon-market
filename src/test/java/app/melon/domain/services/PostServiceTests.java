@@ -6,7 +6,6 @@ import app.melon.domain.models.post.Post;
 import app.melon.domain.models.user.User;
 import app.melon.helper.DataCreator;
 import app.melon.infrastructure.repositories.post.PostRepository;
-import app.melon.infrastructure.repositories.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,8 +15,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -33,7 +30,7 @@ public class PostServiceTests {
     @Test
     public void updatePost_itemNotExist_shouldFail() {
         UpdatePostCommand command = new UpdatePostCommand(
-                0, "Title", "Body", List.of(), 1000, List.of()
+                0, "Title", "Body", 1000, List.of(), List.of()
         );
         doReturn(Optional.empty()).when(postRepositoryMock).findById(0L);
         assertThrows(ApiException.class, () -> {
@@ -44,7 +41,7 @@ public class PostServiceTests {
     @Test
     public void updatePost_userNotMatched_shouldFail() {
         UpdatePostCommand command = new UpdatePostCommand(
-                0, "Title", "Body", List.of(), 1000, List.of()
+                0, "Title", "Body", 1000, List.of(), List.of()
         );
 
         User user = DataCreator.newUser();

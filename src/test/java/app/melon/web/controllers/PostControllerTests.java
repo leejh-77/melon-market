@@ -35,6 +35,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest
@@ -138,6 +139,22 @@ public class PostControllerTests {
             MultipartFile file = command.getImages().get(i);
             assertArrayEquals(images[i].getInputStream().readAllBytes(), file.getBytes());
         }
+    }
+
+    @Test
+    @WithUserDetails(userDetailsServiceBeanName = "userDetailsService")
+    public void updatePost_shouldSuccess() throws Exception {
+        MockMultipartFile image1 = new MockMultipartFile("images", "image1", "image/jpeg", new byte[]{1, 2, 3});
+        MockMultipartFile[] images = {image1};
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.multipart("/api/posts/1")
+                .file(image1)
+                .param("title", "updated")
+                .param("price", "1222")
+                .param("deletedImages", "kdidkd");
+
+        mvc.perform(request)
+                .andExpect(status().is(200)).andDo(log());
     }
 
     @Test

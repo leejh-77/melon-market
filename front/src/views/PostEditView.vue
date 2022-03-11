@@ -2,7 +2,8 @@
   <div class="main">
     <form class="main-form" @submit.prevent="actionDone">
       <span class="description">안 쓰는 물건을 올리세요!</span>
-      <ImageContainer :files="images" @deleteImage="deleteImage(idx)" ref="image-container" class="image-container"/>
+      <ImageContainer :files="imageData" @deleteImage="deleteImage" ref="image-container"
+                      class="image-container"/>
       <label class="add-button" for="upload-photo">사진 추가하기</label>
       <input type="file" ref="picture-input" id="upload-photo" @change="updateImageContainer" accept=".png, .jpg, .jpeg"
              multiple/>
@@ -28,11 +29,19 @@ export default {
   },
   data() {
     return {
-      images: [],
-      rawFiles: [],
+      images: [
+        /**
+         data
+         url
+         deleted
+         file
+         * */
+      ],
+      imageData: [],
       title: '',
       price: 0,
-      body: ''
+      body: '',
+      id: null
     }
   },
   methods: {
@@ -41,7 +50,7 @@ export default {
         alert('제목은 한 글자 이상이어야 합니다')
         return
       }
-      if (this.rawFiles.length === 0) {
+      if (this.imageData.length === 0) {
         alert('최소 하나의 사진이 첨부되어야 합니다!')
         return
       }
@@ -51,34 +60,108 @@ export default {
       formData.append('body', this.body)
       formData.append('price', this.price)
 
-      for (let i = 0; i < this.rawFiles.length; i++) {
-        formData.append('images', this.rawFiles[i])
+      for (let i = 0; i < this.images.length; i++) {
+        const image = this.images[i]
+        if (image.file != null) {
+          formData.append('images', image.file)
+        } else if (image.deleted) {
+          formData.append('deletedImages', image.url)
+        }
       }
 
-      postService.addPost(formData)
-        .then(res => {
-          this.$router.push('/')
-        })
-        .catch(e => {
-          alert('글 작성에 실패했습니다')
-        })
+      console.log('[EditPost] Title - ', formData.getAll('title'))
+      console.log('[EditPost] Body - ', formData.getAll('body'))
+      console.log('[EditPost] Price - ', formData.getAll('price'))
+      console.log('[EditPost] AddedImages - ', formData.getAll('images'))
+      console.log('[EditPost] DeletedImages - ', formData.getAll('deletedImages'))
+
+      if (this.id === null) {
+        postService.addPost(formData)
+          .then(res => {
+            this.$router.push('/post-detail/' + res.data)
+          })
+          .catch(e => {
+            alert('글 작성에 실패했습니다')
+          })
+      } else {
+        postService.updatePost(this.id, formData)
+          .then(res => {
+            this.$router.push('/post-detail/' + this.id)
+          })
+          .catch(e => {
+            alert('글 수정에 실패했습니다')
+          })
+      }
     },
     updateImageContainer() {
       const files = this.$refs['picture-input'].files
-      this.rawFiles.push(...files)
 
       for (let i = 0; i < files.length; i++) {
         const reader = new FileReader()
         reader.onload = (event) => {
-          this.images.push(event.target.result)
+          this.images.push({
+            data: event.target.result,
+            deleted: false,
+            file: files[i],
+            url: null
+          })
+          this.makeImageData()
         }
         reader.readAsDataURL(files.item(i))
       }
     },
     deleteImage(idx) {
-      this.images.splice(idx, 1)
-      this.rawFiles.splice(idx, 1)
+      const image = this.images[idx]
+      console.log('[Delete Image]', idx, image)
+      if (image.file != null) {
+        this.images.splice(idx, 1)
+      } else {
+        image.deleted = true
+      }
+      this.makeImageData()
+    },
+    makeImageData() {
+      this.imageData = this.images
+        .filter(image => !image.deleted)
+        .map(image => image.data)
+    },
+    fillData(postId) {
+      console.log('[EditPost] postId : ' + postId)
+      postService.getPost(postId)
+        .then(res => {
+          console.log('[GetPostData]', res.data)
+
+          const post = res.data.post
+          this.id = post.id
+          this.title = post.title
+          this.body = post.body
+          this.price = post.price
+
+          post.imageUrls.forEach(url => {
+            postService.getPostImage(url)
+              .then(res => {
+                console.log('[GetPostImage]', url)
+                this.images.push({
+                  data: res,
+                  deleted: false,
+                  url: url,
+                  file: null
+                })
+                this.makeImageData()
+              })
+          })
+        })
+        .catch(e => {
+          alert('글을 불러오지 못했습니다')
+        })
     }
+  },
+  mounted() {
+    const postId = this.$route.params.postId
+    if (postId == null) {
+      return // new post
+    }
+    this.fillData(postId)
   }
 }
 </script>

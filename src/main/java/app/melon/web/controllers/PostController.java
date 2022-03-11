@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -58,18 +59,19 @@ public class PostController {
         return ApiResult.ok(image);
     }
 
+    @Secured(value = {"ROLE_USER"})
     @PostMapping
     public ResponseEntity<?> addPost(@Valid AddPostRequest request,
                                      @AuthenticationPrincipal SimpleUser user) {
-        this.postService.addPost(request.toCommand(), user.getUser());
-        return ApiResult.created();
+        Post post = this.postService.addPost(request.toCommand(), user.getUser());
+        return ApiResult.ok(post.getId());
     }
 
     @Secured(value = {"ROLE_USER"})
-    @PutMapping("/{postId}")
+    @PostMapping("/{postId}")
     public ResponseEntity<?> updatePost(@PathVariable long postId,
-                                        @AuthenticationPrincipal SimpleUser user,
-                                        UpdatePostRequest request) throws ApiException {
+                                        @Valid UpdatePostRequest request,
+                                        @AuthenticationPrincipal SimpleUser user) throws ApiException {
         this.postService.updatePost(request.toCommand(postId), user.getUser());
         return ApiResult.ok();
     }

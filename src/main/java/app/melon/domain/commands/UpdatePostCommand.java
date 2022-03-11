@@ -12,10 +12,10 @@ public class UpdatePostCommand {
     private final String title;
     private final String body;
     private final int price;
-    private final List<Long> deletedImages;
+    private final List<String> deletedImages;
     private final List<MultipartFile> addedImages;
 
-    public UpdatePostCommand(long postId, String title, String body, List<Long> deletedImages, int price, List<MultipartFile> addedImages) {
+    public UpdatePostCommand(long postId, String title, String body, int price, List<String> deletedImages, List<MultipartFile> addedImages) {
         this.postId = postId;
         this.title = title;
         this.body = body;

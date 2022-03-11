@@ -5,6 +5,7 @@ export default createStore({
   state: {
     authenticated: false,
     user: {
+      id: null,
       username: null,
       imagePath: null
     }
@@ -15,14 +16,16 @@ export default createStore({
     }
   },
   mutations: {
-    setUser(state, value) {
-      state.user = value
+    setUser(state, user) {
+      state.user = user
+      state.authenticated = user.id != null
     }
   },
   actions: {
     getMyData({ commit }) {
       userService.getMyData()
         .then(res => {
+          console.log('[GetMyData]', res.data)
           commit('setUser', res.data)
         })
         .catch(e => {

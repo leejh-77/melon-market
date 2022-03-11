@@ -17,7 +17,6 @@ export default {
   },
   methods: {
     changeImage(dir) {
-      console.log(this.images.length)
       if (dir < 0 && this.currentIndex + dir >= 0) {
         this.currentIndex += dir
       }

@@ -10,16 +10,22 @@ import java.util.List;
 @Getter
 public class UpdatePostRequest {
 
-
     @Size(min = 1)
-    private String title;
-    private String body;
-    private int price;
-    private List<Long> deletedImages;
-    private List<MultipartFile> addedImages;
+    private final String title;
+    private final String body;
+    private final int price;
+    private final List<String> deletedImages;
+    private final List<MultipartFile> images;
 
+    public UpdatePostRequest(String title, String body, int price, List<String> deletedImages, List<MultipartFile> images) {
+        this.title = title;
+        this.body = body;
+        this.price = price;
+        this.deletedImages = deletedImages == null ? List.of() : deletedImages;
+        this.images = images == null ? List.of() : images;
+    }
 
     public UpdatePostCommand toCommand(long postId) {
-        return new UpdatePostCommand(postId, title, body, deletedImages, price, addedImages);
+        return new UpdatePostCommand(postId, title, body, price, deletedImages, images);
     }
 }

@@ -45,7 +45,6 @@ export default {
   },
   mounted() {
     const type = this.query ?? ListQuery.Recent
-    console.log(type)
     postService.getPostList(type)
       .then(res => {
         console.log('[GetPostList]', res.data)

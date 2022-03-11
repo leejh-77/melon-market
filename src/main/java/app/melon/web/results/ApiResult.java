@@ -14,7 +14,7 @@ public class ApiResult {
     }
 
     public static ResponseEntity<MessageResult> failure(String message) {
-        return message(401, message);
+        return message(400, message);
     }
 
     private static <T> ResponseEntity<T> build(int status, T body) {

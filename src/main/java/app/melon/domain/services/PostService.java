@@ -74,7 +74,7 @@ public class PostService {
         return this.postRepository.findById(postId).get();
     }
 
-    public void addPost(AddPostCommand command, User user) {
+    public Post addPost(AddPostCommand command, User user) {
         Post post = Post.create(
                 command.getTitle(),
                 command.getBody(),
@@ -84,6 +84,7 @@ public class PostService {
         );
         this.postRepository.save(post);
         this.saveAndAddImages(post, command.getImages());
+        return post;
     }
 
     public void updatePost(UpdatePostCommand command, User user) throws ApiException {
@@ -93,20 +94,20 @@ public class PostService {
         post.setPrice(command.getPrice());
         post.setBody(command.getBody());
 
-        this.postRepository.save(post);
-
-        List<Long> imagesToDelete = command.getDeletedImages();
-        List<PostImage> deletes = post.getImages().stream().filter(image -> imagesToDelete.contains(image.getId()))
+        List<String> imagesToDelete = command.getDeletedImages();
+        List<PostImage> deletes = post.getImages().stream().filter(image -> imagesToDelete.contains(image.getImageUrl()))
                 .collect(Collectors.toList());
 
         this.saveAndAddImages(post, command.getAddedImages());
         this.deleteImages(deletes);
+
+        this.postRepository.save(post);
     }
 
     public void deletePost(long postId, User user) throws ApiException {
         Post post = this.checkItemValidity(postId, user);
-        this.postRepository.delete(post);
         this.deleteImages(post.getImages());
+        this.postRepository.delete(post);
     }
 
     private void saveAndAddImages(Post post, List<MultipartFile> files) {
@@ -117,10 +118,11 @@ public class PostService {
     }
 
     private void deleteImages(List<PostImage> images) {
-        images.forEach(image -> {
-            image.getPost().getImages().remove(image);
+        for (int i = images.size()-1; i >= 0; i--) {
+            PostImage image = images.get(i);
+            images.remove(i);
             this.imageStorage.deleteImage(image.getImageUrl());
-        });
+        }
     }
 
     private Post checkItemValidity(long postId, User user) throws ApiException {
