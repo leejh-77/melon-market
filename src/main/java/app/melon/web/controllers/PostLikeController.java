@@ -4,10 +4,9 @@ import app.melon.domain.errors.ApiException;
 import app.melon.domain.models.user.SimpleUser;
 import app.melon.domain.services.PostService;
 import app.melon.web.results.ApiResult;
-import app.melon.web.security.AuthenticationUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,22 +25,16 @@ public class PostLikeController {
 
     @Secured(value = {"ROLE_USER"})
     @PostMapping
-    public ResponseEntity<?> likePost(@PathVariable long postId) throws ApiException {
-        SimpleUser user = AuthenticationUtils.peekSimpleUser();
-        if (user == null) {
-            return ApiResult.unauthorized();
-        }
+    public ResponseEntity<?> likePost(@PathVariable long postId,
+                                      @AuthenticationPrincipal SimpleUser user) throws ApiException {
         this.postService.likePost(postId, user.getUserId());
         return ApiResult.ok();
     }
 
     @Secured(value = {"ROLE_USER"})
     @DeleteMapping
-    public ResponseEntity<?> dislikePost(@PathVariable long postId) {
-        SimpleUser user = AuthenticationUtils.peekSimpleUser();
-        if (user == null) {
-            return ApiResult.unauthorized();
-        }
+    public ResponseEntity<?> dislikePost(@PathVariable long postId,
+                                         @AuthenticationPrincipal SimpleUser user) {
         this.postService.dislikePost(postId, user.getUserId());
         return ApiResult.ok();
     }

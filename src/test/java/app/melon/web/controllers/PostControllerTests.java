@@ -4,18 +4,24 @@ import app.melon.domain.commands.AddPostCommand;
 import app.melon.domain.commands.PostListType;
 import app.melon.domain.models.post.Post;
 import app.melon.domain.models.post.PostImage;
+import app.melon.domain.models.user.SimpleUser;
 import app.melon.domain.models.user.User;
 import app.melon.domain.services.PostService;
 import app.melon.domain.services.UserService;
 import app.melon.helper.DataCreator;
+import app.melon.helper.TestConfig;
 import app.melon.web.configs.SecurityConfiguration;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.mock.web.MockPart;
+import org.springframework.context.annotation.Bean;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -26,14 +32,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest
-@ContextConfiguration(classes = {SecurityConfiguration.class, PostController.class})
+@ContextConfiguration(classes = {SecurityConfiguration.class, PostController.class, TestConfig.class})
 public class PostControllerTests {
 
     @Autowired
@@ -46,12 +52,13 @@ public class PostControllerTests {
     private UserService userServiceMock;
 
     @Test
+    @WithUserDetails(userDetailsServiceBeanName = "userDetailsService")
     public void getPostList_shouldSuccess() throws Exception {
         User user = DataCreator.newUser();
         Post post = DataCreator.newPost(user);
         PostImage image = DataCreator.newPostImage(post);
 
-        doReturn(List.of(post)).when(postServiceMock).getPostList(PostListType.Recent);
+        doReturn(List.of(post)).when(postServiceMock).getPostList(eq(PostListType.Recent), any());
 
         mvc.perform(get("/api/posts?query=recent"))
                 .andExpect(status().is(200))
@@ -102,17 +109,17 @@ public class PostControllerTests {
     }
 
     @Test
-    @WithMockUser
+    @WithUserDetails(userDetailsServiceBeanName = "userDetailsService")
     public void addPost_shouldSuccess() throws Exception {
         Post post = DataCreator.newPost();
-        MockPart image1 = new MockPart("images", new byte[]{1, 2, 3});
-        MockPart image2 = new MockPart("images", new byte[]{4, 5, 6});
-        MockPart image3 = new MockPart("images", new byte[]{7, 8, 9});
+        MockMultipartFile image1 = new MockMultipartFile("images", "image1", "image/jpeg", new byte[]{1, 2, 3});
+        MockMultipartFile image2 = new MockMultipartFile("images", "image2", "image/jpeg", new byte[]{1, 2, 3});
+        MockMultipartFile image3 = new MockMultipartFile("images", "image3", "image/jpeg", new byte[]{1, 2, 3});
 
-        MockPart[] images = {image1, image2, image3};
+        MockMultipartFile[] images = {image1, image2, image3};
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.multipart("/api/posts")
-                .part(images)
+                .file(image1).file(image2).file(image3)
                 .param("title", post.getTitle())
                 .param("body", post.getBody())
                 .param("price", String.valueOf(post.getPrice()));
@@ -122,14 +129,14 @@ public class PostControllerTests {
         mvc.perform(request)
                 .andExpect(status().is(201));
 
-        verify(postServiceMock).addPost(captor.capture());
+        verify(postServiceMock).addPost(captor.capture(), any());
 
         AddPostCommand command = captor.getValue();
         assertEquals(post.getTitle(), command.getTitle());
         assertEquals(post.getBody(), command.getBody());
         assertEquals(post.getPrice(), command.getPrice());
 
-        for (int i = 0; i < command.getImages().size(); i++) {
+        for (int i = 0; i < images.length; i++) {
             MultipartFile file = command.getImages().get(i);
             assertArrayEquals(images[i].getInputStream().readAllBytes(), file.getBytes());
         }

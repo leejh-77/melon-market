@@ -41,6 +41,10 @@ public class ApiResult {
         return message(404, "Page not found");
     }
 
+    public static ResponseEntity<MessageResult> badRequest() {
+        return message(400, "Bad request");
+    }
+
     public static ResponseEntity<MessageResult> serverError() {
         return serverError("Server error");
     }

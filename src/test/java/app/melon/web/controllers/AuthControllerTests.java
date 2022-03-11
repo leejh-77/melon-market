@@ -23,7 +23,7 @@ public class AuthControllerTests {
     private MockMvc mvc;
 
     @MockBean
-    private UserService serviceMock;
+    private UserService service;
 
     @Test
     public void emptyPayload_shouldFailAndReturn400() throws Exception {

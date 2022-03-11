@@ -1,23 +1,23 @@
 package app.melon.web.controllers;
 
-import app.melon.domain.commands.AddPostCommand;
 import app.melon.domain.commands.PostListType;
 import app.melon.domain.errors.ApiException;
 import app.melon.domain.models.post.Post;
 import app.melon.domain.models.post.PostImage;
 import app.melon.domain.models.user.SimpleUser;
-import app.melon.domain.models.user.User;
 import app.melon.domain.services.PostService;
+import app.melon.web.requests.AddPostRequest;
+import app.melon.web.requests.UpdatePostRequest;
 import app.melon.web.results.ApiResult;
 import app.melon.web.results.PostDetailResult;
 import app.melon.web.results.PostListResult;
-import app.melon.web.security.AuthenticationUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,8 +32,13 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getPostList(@RequestParam(name = "query") String query) throws ApiException {
-        List<Post> posts = this.postService.getPostList(PostListType.fromName(query));
+    public ResponseEntity<?> getPostList(@RequestParam(name = "query") String query,
+                                         @AuthenticationPrincipal SimpleUser user) {
+        PostListType type = PostListType.fromName(query);
+        if (type == PostListType.Like && user == null) {
+            return ApiResult.badRequest();
+        }
+        List<Post> posts = this.postService.getPostList(PostListType.fromName(query), user.getUser());
         List<PostListResult> results = new ArrayList<>();
         for (Post post : posts) {
             PostImage image = post.getImages().get(0);
@@ -44,18 +49,12 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<?> getPost(@PathVariable long postId) {
+    public ResponseEntity<?> getPost(@PathVariable long postId,
+                                     @AuthenticationPrincipal SimpleUser user) {
         Post post = this.postService.findPost(postId);
-        User user = post.getUser();
-        List<PostImage> images = post.getImages();
-
         int likeCount = this.postService.findLikeCount(postId);
-        boolean likedByMe = false;
-        SimpleUser simpleUser = AuthenticationUtils.peekSimpleUser();
-        if (simpleUser != null) {
-            likedByMe = this.postService.isLikedPost(postId, simpleUser.getUserId());
-        }
-        return PostDetailResult.from(user, post, images, likeCount, likedByMe);
+        boolean likedByMe = user != null && this.postService.isLikedPost(postId, user.getUserId());
+        return PostDetailResult.from(post, likeCount, likedByMe);
     }
 
     @GetMapping("/images/{imageUrl}")
@@ -65,30 +64,24 @@ public class PostController {
     }
 
     @PostMapping
-    @Secured(value = {"ROLE_USER"})
-    public ResponseEntity<?> addPost(MultipartHttpServletRequest request) throws ApiException {
-        AddPostCommand command = new AddPostCommand(
-                request.getParameter("title"),
-                request.getParameter("body"),
-                Integer.parseInt(request.getParameter("price")),
-                request.getFiles("images")
-        );
-
-        this.postService.addPost(command);
+    public ResponseEntity<?> addPost(@Valid AddPostRequest request,
+                                     @AuthenticationPrincipal SimpleUser user) {
+        this.postService.addPost(request.toCommand(), user.getUser());
         return ApiResult.created();
     }
 
 
     @Secured(value = {"ROLE_USER"})
     @PutMapping("/{postId}")
-    public ResponseEntity<?> updatePost(@PathVariable long postId) {
+    public ResponseEntity<?> updatePost(@PathVariable long postId, UpdatePostRequest request) {
         return null;
     }
 
     @Secured(value = {"ROLE_USER"})
     @DeleteMapping("/{postId}")
-    public ResponseEntity<?> deletePost(@PathVariable long postId) throws ApiException {
-        this.postService.deletePost(postId);
+    public ResponseEntity<?> deletePost(@PathVariable long postId,
+                                        @AuthenticationPrincipal SimpleUser user) throws ApiException {
+        this.postService.deletePost(postId, user.getUser());
         return ApiResult.ok();
     }
 

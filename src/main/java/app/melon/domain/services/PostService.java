@@ -9,16 +9,10 @@ import app.melon.domain.models.post.PostLike;
 import app.melon.infrastructure.repositories.post.PostLikeRepository;
 import app.melon.domain.models.post.Post;
 import app.melon.domain.models.post.PostImage;
-import app.melon.infrastructure.repositories.post.PostImageRepository;
 import app.melon.infrastructure.repositories.post.PostRepository;
-import app.melon.domain.models.user.SimpleUser;
 import app.melon.domain.models.user.User;
-import app.melon.infrastructure.repositories.user.UserRepository;
-import app.melon.web.results.ApiResult;
-import app.melon.web.security.AuthenticationUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
@@ -30,43 +24,19 @@ import java.util.Optional;
 @Transactional
 public class PostService {
 
-    private final UserRepository userRepository;
     private final PostRepository postRepository;
-    private final PostImageRepository postImageRepository;
     private final PostLikeRepository likeRepository;
     private final ImageStorage imageStorage;
 
-    public PostService(UserRepository userRepository,
-                       PostRepository postRepository,
-                       PostImageRepository postImageRepository,
+    public PostService(PostRepository postRepository,
                        PostLikeRepository likeRepository,
                        @Qualifier("PostImageStorage") ImageStorage imageStorage) {
-        this.userRepository = userRepository;
         this.postRepository = postRepository;
-        this.postImageRepository = postImageRepository;
         this.likeRepository = likeRepository;
         this.imageStorage = imageStorage;
     }
 
-    public void addPost(AddPostCommand command) throws ApiException {
-        List<MultipartFile> files = command.getImages();
-        if (files.size() == 0) {
-            throw ApiException.of(Errors.ImageNotFound);
-        }
-        if (!StringUtils.hasText(command.getTitle())) {
-            throw ApiException.of(Errors.InvalidRequest);
-        }
-
-        SimpleUser simpleUser = AuthenticationUtils.peekSimpleUser();
-        if (simpleUser == null) {
-            throw ApiException.of(Errors.UserNotFound);
-        }
-        Optional<User> opUser = this.userRepository.findById(simpleUser.getUserId());
-        if (opUser.isEmpty()) {
-            throw ApiException.of(Errors.UserNotFound);
-        }
-
-        User user = opUser.get();
+    public void addPost(AddPostCommand command, User user) {
         Post post = Post.create(
                 command.getTitle(),
                 command.getBody(),
@@ -76,7 +46,7 @@ public class PostService {
         );
 
         List<PostImage> images = post.getImages();
-        for (MultipartFile file : files) {
+        for (MultipartFile file : command.getImages()) {
             String filename = imageStorage.saveImage(file);
             PostImage image = new PostImage();
             image.setPost(post);
@@ -86,7 +56,7 @@ public class PostService {
         this.postRepository.save(post);
     }
 
-    public List<Post> getPostList(PostListType type) throws ApiException {
+    public List<Post> getPostList(PostListType type, User user) {
         if (type == PostListType.Recent) {
             return this.postRepository.findTop30ByOrderByCreatedTimeDesc();
         }
@@ -94,11 +64,6 @@ public class PostService {
             throw new RuntimeException("Not implemented");
         }
         else if (type == PostListType.Like) {
-            SimpleUser simpleUser = AuthenticationUtils.peekSimpleUser();
-            if (simpleUser == null) {
-                throw ApiException.of(Errors.UserNotFound);
-            }
-            User user = this.userRepository.findById(simpleUser.getUserId()).get();
             return this.postRepository.findLikedPosts(30, user.getId());
         }
         return List.of();
@@ -146,13 +111,13 @@ public class PostService {
         this.likeRepository.delete(like);
     }
 
-    public void deletePost(long postId) throws ApiException {
+    public void deletePost(long postId, User user) throws ApiException {
         Optional<Post> opPost = this.postRepository.findById(postId);
         if (opPost.isEmpty()) {
             throw ApiException.of(Errors.ItemNotFound);
         }
         Post post = opPost.get();
-        if (post.getUser().getId() != AuthenticationUtils.peekSimpleUser().getUserId()) {
+        if (post.getUser().getId() != user.getId()) {
             throw ApiException.of(Errors.InvalidRequest);
         }
         this.postRepository.delete(post);

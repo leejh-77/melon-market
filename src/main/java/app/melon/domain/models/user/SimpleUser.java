@@ -9,18 +9,18 @@ import java.util.Collections;
 
 public class SimpleUser implements UserDetails {
 
-    private final long userId;
-    private final String username;
-    private final String password;
+    private final User user;
 
     public SimpleUser(User user) {
-        this.userId = user.getId();
-        this.username = user.getUsername();
-        this.password = user.getPassword();
+        this.user = user;
+    }
+
+    public User getUser() {
+        return this.user;
     }
 
     public long getUserId() {
-        return this.userId;
+        return this.user.getId();
     }
 
     @Override
@@ -30,12 +30,12 @@ public class SimpleUser implements UserDetails {
 
     @Override
     public String getPassword() {
-        return this.password;
+        return this.user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return this.username;
+        return this.user.getUsername();
     }
 
     @Override
