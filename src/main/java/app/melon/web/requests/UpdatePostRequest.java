@@ -13,11 +13,11 @@ public class UpdatePostRequest {
     @Size(min = 1)
     private final String title;
     private final String body;
-    private final int price;
+    private final Integer price;
     private final List<String> deletedImages;
     private final List<MultipartFile> images;
 
-    public UpdatePostRequest(String title, String body, int price, List<String> deletedImages, List<MultipartFile> images) {
+    public UpdatePostRequest(String title, String body, Integer price, List<String> deletedImages, List<MultipartFile> images) {
         this.title = title;
         this.body = body;
         this.price = price;

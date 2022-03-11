@@ -123,10 +123,11 @@ public class PostControllerTests {
                 .param("body", post.getBody())
                 .param("price", String.valueOf(post.getPrice()));
 
+        doReturn(post).when(postServiceMock).addPost(any(), any());
         ArgumentCaptor<AddPostCommand> captor = ArgumentCaptor.forClass(AddPostCommand.class);
 
         mvc.perform(request)
-                .andExpect(status().is(201));
+                .andExpect(status().is(200));
 
         verify(postServiceMock).addPost(captor.capture(), any());
 
@@ -159,7 +160,7 @@ public class PostControllerTests {
 
     @Test
     public void updatePost_withoutAuthentication_shouldFail() throws Exception {
-        mvc.perform(put("/api/posts/1"))
+        mvc.perform(post("/api/posts/1"))
                 .andExpect(status().is(302))
                 .andExpect(redirectedUrlPattern("**/login"));
     }
