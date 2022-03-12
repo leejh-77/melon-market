@@ -53,9 +53,10 @@ public class PostControllerTests {
         Post post = DataCreator.newPost(user);
         PostImage image = DataCreator.newPostImage(post);
 
-        doReturn(List.of(post)).when(postServiceMock).getPostList(eq(PostListType.Recent), "");
+        doReturn(List.of(post)).when(postServiceMock).getPostList(eq(PostListType.Recent), eq(null));
 
-        mvc.perform(get("/api/posts?query=recent"))
+        mvc.perform(get("/api/posts?type=recent"))
+                .andDo(log())
                 .andExpect(status().is(200))
                 .andExpect(jsonPath("$[0].id").value(post.getId()))
                 .andExpect(jsonPath("$[0].title").value(post.getTitle()))
