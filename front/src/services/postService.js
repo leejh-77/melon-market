@@ -3,16 +3,19 @@ import { Buffer } from 'buffer'
 import { ListQuery } from '@/constant'
 
 export default {
-  getPostList(query) {
-    let q
-    if (query === ListQuery.Recent) {
-      q = 'recent'
-    } else if (query === ListQuery.Like) {
-      q = 'like'
+  getPostList(type, query) {
+    let params = 'type='
+    if (type === ListQuery.Recent) {
+      params += 'recent'
+    } else if (type === ListQuery.Like) {
+      params += 'recent'
     } else {
-      q = 'popular'
+      params += 'recent'
     }
-    return axios.get('/api/posts?query=' + q)
+    if (query != null) {
+      params += '&query=' + query
+    }
+    return axios.get('/api/posts?' + params)
   },
   getPost(id) {
     return axios.get('/api/posts/' + id)

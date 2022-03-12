@@ -14,7 +14,6 @@ import app.melon.domain.models.user.User;
 import app.melon.infrastructure.repositories.post.PostLikeRepository;
 import app.melon.infrastructure.repositories.post.PostRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,6 +27,8 @@ import java.util.stream.Collectors;
 @Transactional
 public class PostService {
 
+    private static final int LIST_QUERY_COUNT = 30;
+
     private final PostRepository postRepository;
     private final PostLikeRepository likeRepository;
     private final ImageStorage imageStorage;
@@ -40,20 +41,19 @@ public class PostService {
         this.imageStorage = imageStorage;
     }
 
-    public List<Post> getPostList(PostListType type) throws ApiException {
+    public List<Post> getPostList(PostListType type, String query) throws ApiException {
         if (type == PostListType.Recent) {
-            return this.postRepository.findTop30ByOrderByCreatedTimeDesc();
+            return this.postRepository.findRecentPosts(LIST_QUERY_COUNT, query);
+        }
+        else if (type == PostListType.Like) {
+            SimpleUser user = SimpleUser.peek();
+            if (user == null) {
+                throw ApiException.of(Errors.InvalidRequest);
+            }
+            return this.postRepository.findLikedPosts(LIST_QUERY_COUNT, user.getUserId());
         }
         else if (type == PostListType.Popular) {
             throw new RuntimeException("Not implemented");
-        }
-        else if (type == PostListType.Like) {
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (!(principal instanceof SimpleUser)) {
-                throw ApiException.of(Errors.InvalidRequest);
-            }
-            SimpleUser user = (SimpleUser) principal;
-            return this.postRepository.findLikedPosts(30, user.getUserId());
         }
         return List.of();
     }

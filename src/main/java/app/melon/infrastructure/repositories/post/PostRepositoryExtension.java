@@ -10,4 +10,5 @@ public interface PostRepositoryExtension {
 
     List<Post> findLikedPosts(int count, long userId);
 
+    List<Post> findRecentPosts(int count, String query);
 }

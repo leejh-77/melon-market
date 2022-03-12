@@ -1,14 +1,27 @@
 <template>
     <div class="wrap">
         <div class="search-container">
-            <input class="searchTerm" type="text" placeholder="검색"/>
+            <input class="searchTerm" v-model="queryText"
+                   type="text" placeholder="검색"
+                   @keyup.enter="actionSearch"/>
         </div>
     </div>
 </template>
 
 <script>
 export default {
-  name: 'SearchBar'
+  name: 'SearchBar',
+  data() {
+    return {
+      queryText: ''
+    }
+  },
+  methods: {
+    actionSearch() {
+      console.log('[SearchBar] queryText - ', this.queryText)
+      this.emitter.emit('update-queryText', this.queryText)
+    }
+  }
 }
 </script>
 
@@ -25,7 +38,6 @@ export default {
         height: 20px;
         border-radius: 10px;
         outline: none;
-        color: #9DBFAF;
 
         background-image: url("../assets/search-bar-icon.png");
         background-repeat: no-repeat;

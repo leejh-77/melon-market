@@ -67,6 +67,7 @@ export default {
       userService.logout()
         .then(res => {
           console.log('[Logout]', res)
+          this.$store.state.authenticated = false
           this.$router.push('/')
         })
         .catch(e => {

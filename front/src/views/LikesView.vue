@@ -1,12 +1,18 @@
 <template>
-  <PostsBoard :query="2"/>
+  <PostsBoard :type="getType"/>
 </template>
 
 <script>
 import PostsBoard from '@/views/PostsBoard'
+import { ListQuery } from '@/constant'
 
 export default {
   name: 'LikesView',
+  computed: {
+    getType() {
+      return ListQuery.Like
+    }
+  },
   components: { PostsBoard }
 }
 </script>

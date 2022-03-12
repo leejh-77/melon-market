@@ -9,23 +9,19 @@ import app.melon.domain.services.PostService;
 import app.melon.domain.services.UserService;
 import app.melon.helper.DataCreator;
 import app.melon.helper.TestConfig;
-import app.melon.infrastructure.utils.JsonUtils;
 import app.melon.web.configs.SecurityConfiguration;
-import app.melon.web.requests.AddPostRequest;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.util.List;
 
@@ -57,7 +53,7 @@ public class PostControllerTests {
         Post post = DataCreator.newPost(user);
         PostImage image = DataCreator.newPostImage(post);
 
-        doReturn(List.of(post)).when(postServiceMock).getPostList(eq(PostListType.Recent));
+        doReturn(List.of(post)).when(postServiceMock).getPostList(eq(PostListType.Recent), "");
 
         mvc.perform(get("/api/posts?query=recent"))
                 .andExpect(status().is(200))

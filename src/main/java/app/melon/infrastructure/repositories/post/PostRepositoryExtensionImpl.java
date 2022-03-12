@@ -25,4 +25,29 @@ public class PostRepositoryExtensionImpl implements PostRepositoryExtension {
         query.setMaxResults(count);
         return query.getResultList();
     }
+
+    @Override
+    public List<Post> findRecentPosts(int count, String queryText) {
+        TypedQuery<Post> query;
+        if (queryText != null) {
+            query = this.createRecentPostsQueryWithSearchText(queryText);
+        } else {
+            query = this.createRecentPostsQuery();
+        }
+        query.setMaxResults(count);
+        return query.getResultList();
+    }
+
+    private TypedQuery<Post> createRecentPostsQuery() {
+        return this.em.createQuery(
+                "SELECT p FROM Post p ORDER BY p.createdTime DESC", Post.class);
+    }
+
+    private TypedQuery<Post> createRecentPostsQueryWithSearchText(String queryText) {
+        TypedQuery<Post> query = this.em.createQuery(
+                "SELECT p FROM Post p WHERE p.title LIKE :queryText" +
+                        " ORDER BY p.createdTime DESC", Post.class);
+        query.setParameter("queryText", "%" + queryText + "%");
+        return query;
+    }
 }

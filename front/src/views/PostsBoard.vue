@@ -2,7 +2,8 @@
   <div class="main">
     <h1 class="title">{{ getTitle }}</h1>
     <div class="board">
-      <PostCard v-on:onClickImage="onClickImage(post.id)" class="post-card" v-for="post in posts" :key="post.id"
+      <PostCard v-on:onClickImage="onClickImage(post.id)"
+                class="post-card" v-for="post in posts" :key="post.id"
                 :post="post"/>
     </div>
   </div>
@@ -14,13 +15,13 @@ import { ListQuery } from '@/constant'
 
 export default {
   name: 'PostsBoard',
-  props: ['query'],
+  props: ['type'],
   components: {
     PostCard
   },
   computed: {
     getTitle() {
-      const type = this.query ?? ListQuery.Recent
+      const type = this.getListType()
       switch (type) {
         case ListQuery.Recent:
           return '최근 매물'
@@ -41,15 +42,28 @@ export default {
   methods: {
     onClickImage(id) {
       this.$router.push('/post-detail/' + id)
+    },
+    getListType() {
+      return this.type ?? ListQuery.Recent
+    },
+    loadList(queryText) {
+      const type = this.getListType()
+      if (type !== ListQuery.Recent) {
+        queryText = null
+      }
+      postService.getPostList(type, queryText)
+        .then(res => {
+          console.log('[GetPostList]', res.data)
+          this.posts = res.data
+        })
     }
   },
   mounted() {
-    const type = this.query ?? ListQuery.Recent
-    postService.getPostList(type)
-      .then(res => {
-        console.log('[GetPostList]', res.data)
-        this.posts = res.data
-      })
+    this.emitter.on('update-queryText', text => {
+      console.log('[PostBoard] queryText - ', text)
+      this.loadList(text)
+    })
+    this.loadList(null)
   }
 }
 

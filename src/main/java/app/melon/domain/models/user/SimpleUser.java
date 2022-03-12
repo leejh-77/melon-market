@@ -2,6 +2,7 @@ package app.melon.domain.models.user;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -56,5 +57,13 @@ public class SimpleUser implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public static SimpleUser peek() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof SimpleUser) {
+            return (SimpleUser) principal;
+        }
+        return null;
     }
 }
