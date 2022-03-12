@@ -18,6 +18,15 @@ public class Region {
     @Column(name = "district")
     private String district;
 
+    public static Region create(String code, String county, String town, String district) {
+        Region region = new Region();
+        region.code = code;
+        region.county = county;
+        region.town = town;
+        region.district = district;
+        return region;
+    }
+
     public String getCode() {
         return code;
     }

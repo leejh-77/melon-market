@@ -7,39 +7,25 @@ import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.util.ResourceUtils;
 
+@SpringBootTest(classes = {RegionBatchConfig.class})
 public class TSVReaderTest {
+
+    @Autowired
+    private FlatFileItemReader<Region> itemReader;
 
     @Test
     public void readItem() throws Exception {
-        FlatFileItemReader<Region> reader = new FlatFileItemReader<>();
-        DefaultResourceLoader loader = new DefaultResourceLoader();
-
-        String path = ResourceUtils.getURL("regions.tsv").toString();
-        reader.setResource(loader.getResource(path));
-
-        DefaultLineMapper<Region> lineMapper = new DefaultLineMapper<>();
-        DelimitedLineTokenizer tokenizer = new DelimitedLineTokenizer();
-        tokenizer.setNames("code", "county", "town", "district");
-        tokenizer.setDelimiter("\t");
-        tokenizer.setStrict(false);
-        lineMapper.setLineTokenizer(tokenizer);
-
-        BeanWrapperFieldSetMapper<Region> fieldSetMapper = new BeanWrapperFieldSetMapper<>();
-        fieldSetMapper.setTargetType(Region.class);
-        lineMapper.setFieldSetMapper(fieldSetMapper);
-
-        reader.setLineMapper(lineMapper);
-        reader.setLinesToSkip(1);
-
         ExecutionContext context = new ExecutionContext();
-        reader.open(context);
+        itemReader.open(context);
         Region region;
-        while ((region = reader.read()) != null) {
+        while ((region = itemReader.read()) != null) {
             System.out.println(region);
         }
-        reader.close();
+        itemReader.close();
     }
 }
