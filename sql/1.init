@@ -58,6 +58,15 @@ CREATE TABLE IF NOT EXISTS `melon_market`.`post_like`
     FOREIGN KEY (`post_id`) REFERENCES post (id)
 ) ENGINE = InnoDB;
 
+CREATE TABLE IF NOT EXISTS `melon_market`.`region`
+(
+    `code`     VARCHAR(10) NOT NULL,
+    `county`   VARCHAR(64),
+    `town`     VARCHAR(64),
+    `district` VARCHAR(64),
+    PRIMARY KEY (`code`)
+) ENGINE = InnoDB;
+
 SET @OLD_UNIQUE_CHECKS = @@UNIQUE_CHECKS, UNIQUE_CHECKS = 0;
 SET @OLD_FOREIGN_KEY_CHECKS = @@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS = 0;
 SET @OLD_SQL_MODE = @@SQL_MODE, SQL_MODE = 'TRADITIONAL,ALLOW_INVALID_DATES';
