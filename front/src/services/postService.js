@@ -3,7 +3,7 @@ import { Buffer } from 'buffer'
 import { ListQuery } from '@/constant'
 
 export default {
-  getPostList(type, query) {
+  getPostList(type, query, regionCode) {
     let params = 'type='
     if (type === ListQuery.Recent) {
       params += 'recent'
@@ -14,6 +14,9 @@ export default {
     }
     if (query != null) {
       params += '&query=' + query
+    }
+    if (regionCode != null) {
+      params += '&region=' + regionCode
     }
     return axios.get('/api/posts?' + params)
   },

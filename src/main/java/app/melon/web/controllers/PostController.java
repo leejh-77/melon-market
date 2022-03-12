@@ -34,8 +34,9 @@ public class PostController {
 
     @GetMapping
     public ResponseEntity<?> getPostList(@RequestParam(name = "type") String type,
-                                         @RequestParam(name = "query", required = false) String query) throws ApiException {
-        List<Post> posts = this.postService.getPostList(PostListType.fromName(type), query);
+                                         @RequestParam(name = "query", required = false) String query,
+                                         @RequestParam(name = "region", required = false) String region) throws ApiException {
+        List<Post> posts = this.postService.getPostList(PostListType.fromName(type), query, region);
         List<PostListResult> results = new ArrayList<>();
         for (Post post : posts) {
             int likeCount = this.postService.findLikeCount(post.getId());

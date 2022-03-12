@@ -56,7 +56,7 @@ public class PostLikeRepositoryTests {
         int count = this.postLikeRepository.countByPostId(post.getId());
         assertTrue(count > 0);
 
-        List<Post> posts = this.postRepository.findLikedPosts(1, user.getId());
+        List<Post> posts = this.postRepository.findLikedPosts(1, user.getId(), null);
         assertTrue(posts.size() > 0);
     }
 }

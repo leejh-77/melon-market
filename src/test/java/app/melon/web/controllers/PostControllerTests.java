@@ -55,7 +55,7 @@ public class PostControllerTests {
         Post post = DataCreator.newPost(user, region);
         PostImage image = DataCreator.newPostImage(post);
 
-        doReturn(List.of(post)).when(postServiceMock).getPostList(eq(PostListType.Recent), eq(null));
+        doReturn(List.of(post)).when(postServiceMock).getPostList(eq(PostListType.Recent), eq(null), eq(null));
 
         mvc.perform(get("/api/posts?type=recent"))
                 .andDo(log())

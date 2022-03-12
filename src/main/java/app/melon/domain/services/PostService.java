@@ -15,7 +15,6 @@ import app.melon.domain.models.user.User;
 import app.melon.infrastructure.repositories.post.PostLikeRepository;
 import app.melon.infrastructure.repositories.post.PostRepository;
 import app.melon.infrastructure.repositories.region.RegionRepository;
-import app.melon.web.results.ApiResult;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,16 +46,16 @@ public class PostService {
         this.imageStorage = imageStorage;
     }
 
-    public List<Post> getPostList(PostListType type, String query) throws ApiException {
+    public List<Post> getPostList(PostListType type, String query, String region) throws ApiException {
         if (type == PostListType.Recent) {
-            return this.postRepository.findRecentPosts(LIST_QUERY_COUNT, query);
+            return this.postRepository.findRecentPosts(LIST_QUERY_COUNT, query, region);
         }
         else if (type == PostListType.Like) {
             SimpleUser user = SimpleUser.peek();
             if (user == null) {
                 throw ApiException.of(Errors.InvalidRequest);
             }
-            return this.postRepository.findLikedPosts(LIST_QUERY_COUNT, user.getUserId());
+            return this.postRepository.findLikedPosts(LIST_QUERY_COUNT, user.getUserId(), region);
         }
         else if (type == PostListType.Popular) {
             throw new RuntimeException("Not implemented");
