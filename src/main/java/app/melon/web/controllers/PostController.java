@@ -3,7 +3,6 @@ package app.melon.web.controllers;
 import app.melon.domain.commands.PostListType;
 import app.melon.domain.errors.ApiException;
 import app.melon.domain.models.post.Post;
-import app.melon.domain.models.post.PostImage;
 import app.melon.domain.models.user.SimpleUser;
 import app.melon.domain.services.PostService;
 import app.melon.web.requests.AddPostRequest;
@@ -15,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -47,8 +45,8 @@ public class PostController {
 
     @GetMapping("/{postId}")
     public ResponseEntity<?> getPost(@PathVariable long postId,
-                                     @AuthenticationPrincipal SimpleUser user) {
-        Post post = this.postService.findPost(postId);
+                                     @AuthenticationPrincipal SimpleUser user) throws ApiException {
+        Post post = this.postService.findPostAndManageView(postId);
         int likeCount = this.postService.findLikeCount(postId);
         boolean likedByMe = user != null && this.postService.isLikedPost(postId, user.getUserId());
         PostDetailResult ret = PostDetailResult.from(post, likeCount, likedByMe);

@@ -100,8 +100,8 @@ public class Post {
         return viewCount;
     }
 
-    public void setViewCount(int viewCount) {
-        this.viewCount = viewCount;
+    public void incrementViewCount() {
+        this.viewCount++;
     }
 
     public User getUser() {

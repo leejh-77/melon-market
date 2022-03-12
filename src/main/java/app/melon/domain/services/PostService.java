@@ -9,6 +9,7 @@ import app.melon.domain.files.ImageStorage;
 import app.melon.domain.models.post.Post;
 import app.melon.domain.models.post.PostImage;
 import app.melon.domain.models.post.PostLike;
+import app.melon.domain.models.post.PostViewManagement;
 import app.melon.domain.models.region.Region;
 import app.melon.domain.models.user.SimpleUser;
 import app.melon.domain.models.user.User;
@@ -31,6 +32,8 @@ public class PostService {
 
     private static final int LIST_QUERY_COUNT = 30;
 
+    private final PostViewManagement postViewManagement;
+
     private final PostRepository postRepository;
     private final PostLikeRepository likeRepository;
     private final ImageStorage imageStorage;
@@ -39,11 +42,13 @@ public class PostService {
     public PostService(PostRepository postRepository,
                        PostLikeRepository likeRepository,
                        RegionRepository regionRepository,
+                       PostViewManagement postViewManagement,
                        @Qualifier("PostImageStorage") ImageStorage imageStorage) {
         this.postRepository = postRepository;
         this.regionRepository = regionRepository;
         this.likeRepository = likeRepository;
         this.imageStorage = imageStorage;
+        this.postViewManagement = postViewManagement;
     }
 
     public List<Post> getPostList(PostListType type, String query, String region) throws ApiException {
@@ -77,6 +82,16 @@ public class PostService {
 
     public Post findPost(long postId) {
         return this.postRepository.findById(postId).get();
+    }
+
+    public Post findPostAndManageView(long postId) throws ApiException {
+        Optional<Post> opPost = this.postRepository.findById(postId);
+        if (opPost.isEmpty()) {
+            throw ApiException.of(Errors.ItemNotFound);
+        }
+        Post post = opPost.get();
+        this.postViewManagement.handle(post);
+        return post;
     }
 
     public Post addPost(AddPostCommand command, User user) throws ApiException {
