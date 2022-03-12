@@ -1,15 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import PostsBoard from '../views/PostsBoard.vue'
 import LoginView from '../views/LoginView.vue'
 import SignupView from '@/views/SignupView'
 import PostDetailView from '@/views/PostDetailView'
 import PostEditView from '@/views/PostEditView'
 import LikesView from '@/views/LikesView'
+import PopularView from '@/views/PopularView'
+import MainBoardView from '@/views/MainBoardView'
 
 const routes = [
   // home
-  { path: '/', component: PostsBoard },
+  { path: '/', component: MainBoardView },
 
   // auth
   { path: '/login', component: LoginView },
@@ -21,7 +22,8 @@ const routes = [
   { path: '/post-detail/:postId', component: PostDetailView },
 
   // like
-  { path: '/likes', component: LikesView }
+  { path: '/likes', component: LikesView },
+  { path: '/popular', component: PopularView }
 ]
 
 const router = createRouter({

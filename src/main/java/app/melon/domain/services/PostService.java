@@ -17,11 +17,13 @@ import app.melon.infrastructure.repositories.post.PostLikeRepository;
 import app.melon.infrastructure.repositories.post.PostRepository;
 import app.melon.infrastructure.repositories.region.RegionRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -63,7 +65,8 @@ public class PostService {
             return this.postRepository.findLikedPosts(LIST_QUERY_COUNT, user.getUserId(), region);
         }
         else if (type == PostListType.Popular) {
-            throw new RuntimeException("Not implemented");
+            List<Long> list = this.postViewManagement.getViewRankList(10);
+            return this.postRepository.findAllById(list);
         }
         return List.of();
     }

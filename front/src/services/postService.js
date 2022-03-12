@@ -1,17 +1,9 @@
 import axios from 'axios'
 import { Buffer } from 'buffer'
-import { ListQuery } from '@/constant'
 
 export default {
   getPostList(type, query, regionCode) {
-    let params = 'type='
-    if (type === ListQuery.Recent) {
-      params += 'recent'
-    } else if (type === ListQuery.Like) {
-      params += 'recent'
-    } else {
-      params += 'recent'
-    }
+    let params = 'type=' + type
     if (query != null) {
       params += '&query=' + query
     }

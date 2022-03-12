@@ -1,8 +1,5 @@
 <template>
   <div class="main">
-    <h1 class="title">{{ getTitle }}</h1>
-    <RegionSelector class="region-selector"
-                    @onSelectRegion="onSelectRegion"/>
     <div class="board">
       <PostCard v-on:onClickImage="onClickImage(post.id)"
                 class="post-card" v-for="post in posts" :key="post.id"
@@ -14,29 +11,12 @@
 import PostCard from '../components/PostCard.vue'
 import postService from '@/services/postService'
 import { ListQuery } from '@/constant'
-import RegionSelector from '@/components/RegionSelector'
 
 export default {
   name: 'PostsBoard',
   props: ['type'],
   components: {
-    RegionSelector,
     PostCard
-  },
-  computed: {
-    getTitle() {
-      const type = this.getListType()
-      switch (type) {
-        case ListQuery.Recent:
-          return '최근 매물'
-        case ListQuery.Like:
-          return '좋아요한 매물'
-        case ListQuery.Popular:
-          return '인기 매물'
-        default:
-          return ''
-      }
-    }
   },
   data() {
     return {
@@ -94,19 +74,7 @@ export default {
 <style lang="scss" scoped>
 .main {
   height: 100%;
-  padding: 50px 0;
-  background: #f8f8f8;
-
-  .title {
-    margin-bottom: 15px;
-  }
-
-  .region-selector {
-    padding: 5px;
-    margin-bottom: 40px;
-    text-align: end;
-    margin-right: 10%;
-  }
+  padding: 30px 0;
 
   .board {
     display: grid;

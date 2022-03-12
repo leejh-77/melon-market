@@ -1,7 +1,7 @@
 <template>
   <div class="main">
-    <h1>좋아요한 매물</h1>
-    <PostsBoard :type="getType"/>
+    <h1>인기 매물</h1>
+    <PostsBoard :type="getListType"/>
   </div>
 </template>
 
@@ -10,13 +10,13 @@ import PostsBoard from '@/views/PostsBoard'
 import { ListQuery } from '@/constant'
 
 export default {
-  name: 'LikesView',
+  name: 'PopularView',
+  components: { PostsBoard },
   computed: {
-    getType() {
-      return ListQuery.Like
+    getListType() {
+      return ListQuery.Popular
     }
-  },
-  components: { PostsBoard }
+  }
 }
 </script>
 

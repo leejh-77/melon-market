@@ -7,7 +7,8 @@
     <div class="right-items">
       <div class="upper-items">
         <nav>
-          <a @click.prevent="actionGoToLogin" v-show="!isAuthenticated">Login</a>
+          <a @click.prevent="actionGoToPopular">인기매물</a>
+          <a @click.prevent="actionGoToLogin" v-show="!isAuthenticated">로그인</a>
         </nav>
         <img ref="user-image" class="user-image" v-show="isAuthenticated"
              @click="actionShowSettingModal" src="../assets/user.png"/>
@@ -56,6 +57,9 @@ export default {
     },
     actionGoToLikes() {
       this.$router.push('/likes')
+    },
+    actionGoToPopular() {
+      this.$router.push('/popular')
     },
     actionShowSettingModal() {
       this.$refs['user-setting-modal'].show()
