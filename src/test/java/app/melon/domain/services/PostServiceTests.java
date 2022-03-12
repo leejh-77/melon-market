@@ -3,6 +3,7 @@ package app.melon.domain.services;
 import app.melon.domain.commands.UpdatePostCommand;
 import app.melon.domain.errors.ApiException;
 import app.melon.domain.models.post.Post;
+import app.melon.domain.models.region.Region;
 import app.melon.domain.models.user.User;
 import app.melon.helper.DataCreator;
 import app.melon.infrastructure.repositories.post.PostRepository;
@@ -45,7 +46,8 @@ public class PostServiceTests {
         );
 
         User user = DataCreator.newUser();
-        Post post = DataCreator.newPost(user);
+        Region region = DataCreator.newRegion();
+        Post post = DataCreator.newPost(user, region);
 
         User otherUser = mock(User.class);
         doReturn(1L).when(otherUser).getId();
@@ -66,7 +68,8 @@ public class PostServiceTests {
     @Test
     public void deletePost_userNotMatched_shouldFail() {
         User user = DataCreator.newUser();
-        Post post = DataCreator.newPost(user);
+        Region region = DataCreator.newRegion();
+        Post post = DataCreator.newPost(user, region);
 
         User otherUser = mock(User.class);
         doReturn(1L).when(otherUser).getId();

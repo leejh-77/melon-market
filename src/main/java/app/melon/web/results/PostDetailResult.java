@@ -2,6 +2,7 @@ package app.melon.web.results;
 
 import app.melon.domain.models.post.Post;
 import app.melon.domain.models.post.PostImage;
+import app.melon.domain.models.region.Region;
 import app.melon.domain.models.user.User;
 import lombok.Getter;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +51,7 @@ public class PostDetailResult {
         private int viewCount;
         private List<String> imageUrls;
         private LocalDateTime createdTime;
+        private String region;
 
         public static PostData from(Post post, int likeCount, boolean likedByMe) {
             PostData data = new PostData();
@@ -62,6 +64,9 @@ public class PostDetailResult {
             data.price = post.getPrice();
             data.createdTime = post.getCreatedTime();
             data.imageUrls = post.getImages().stream().map(PostImage::getImageUrl).collect(Collectors.toList());
+
+            Region region = post.getRegion();
+            data.region = region.getCounty() + " " + region.getTown() + " " + region.getDistrict();
             return data;
         }
     }

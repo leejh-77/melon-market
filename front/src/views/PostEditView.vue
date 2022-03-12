@@ -7,6 +7,21 @@
       <label class="add-button" for="upload-photo">사진 추가하기</label>
       <input type="file" ref="picture-input" id="upload-photo" @change="updateImageContainer" accept=".png, .jpg, .jpeg"
              multiple/>
+      <label>지역</label>
+      <div class="region-selector-container">
+        <select ref="select-county" @change="actionSelectRegion($event)" v-model="regions.county">
+          <option value="" disabled selected>선택해주세요</option>
+          <option v-for="region in countyList" :key="region.code" v-bind:value="region">{{ region.county }}</option>
+        </select>
+        <select ref="select-town" @change="actionSelectRegion($event)" v-model="regions.town">
+          <option value="" disabled selected>선택해주세요</option>
+          <option v-for="region in townList" :key="region.code" v-bind:value="region">{{ region.town }}</option>
+        </select>
+        <select ref="select-district" @change="actionSelectRegion($event)" v-model="regions.district">
+          <option value="" disabled selected>선택해주세요</option>
+          <option v-for="region in districtList" :key="region.code" v-bind:value="region">{{ region.district }}</option>
+        </select>
+      </div>
       <label>제목</label>
       <input class="title" type="text" v-model="title"/>
       <label>가격</label>
@@ -21,6 +36,7 @@
 <script>
 import ImageContainer from '@/components/ImageContainer'
 import postService from '@/services/postService'
+import regionService from '@/services/regionService'
 
 export default {
   name: 'PostEditView',
@@ -41,7 +57,15 @@ export default {
       title: '',
       price: 0,
       body: '',
-      id: null
+      id: null,
+      regions: {
+        county: null,
+        town: null,
+        district: null
+      },
+      countyList: null, // [ regions ]
+      townList: null, // [ regions ]
+      districtList: null // [ regions ]
     }
   },
   methods: {
@@ -54,11 +78,16 @@ export default {
         alert('최소 하나의 사진이 첨부되어야 합니다!')
         return
       }
+      if (this.regions.district == null) {
+        alert('지역을 설정해주세요!')
+        return
+      }
 
       const formData = new FormData()
       formData.append('title', this.title)
       formData.append('body', this.body)
       formData.append('price', this.price)
+      formData.append('region', this.regions.district.code)
 
       for (let i = 0; i < this.images.length; i++) {
         const image = this.images[i]
@@ -150,15 +179,50 @@ export default {
                 this.makeImageData()
               })
           })
+          this.loadRegions()
         })
         .catch(e => {
           alert('글을 불러오지 못했습니다')
         })
+    },
+    actionSelectRegion(evt) {
+      const target = evt.target
+      if (target === this.$refs['select-county']) {
+        this.regions.town = null
+        this.townList = null
+        this.regions.district = null
+        this.districtList = null
+        this.loadRegions()
+      } else if (target === this.$refs['select-town']) {
+        this.regions.district = null
+        this.districtList = null
+        this.loadRegions()
+      }
+    },
+    loadRegions() {
+      if (this.countyList == null) {
+        regionService.getRegions().then(res => {
+          this.countyList = res.data
+        })
+      }
+      if (this.townList == null && this.regions.county != null) {
+        const code = this.regions.county.code.substring(0, 2) + '*'
+        regionService.getRegions(code).then(res => {
+          this.townList = res.data
+        })
+      }
+      if (this.districtList == null && this.regions.town != null) {
+        const code = this.regions.town.code.substring(0, 4) + '*'
+        regionService.getRegions(code).then(res => {
+          this.districtList = res.data
+        })
+      }
     }
   },
   mounted() {
     const postId = this.$route.params.postId
     if (postId == null) {
+      this.loadRegions()
       return // new post
     }
     this.fillData(postId)
@@ -206,6 +270,20 @@ export default {
 
     #upload-photo {
       display: none;
+    }
+
+    .region-selector-container {
+      margin-bottom: 30px;
+
+      select {
+        margin: 10px;
+        width: 150px;
+        height: 40px;
+        border: 1px solid lightgray;
+        border-radius: 5px;
+        font-size: 16px;
+        padding: 10px;
+      }
     }
 
     .title {

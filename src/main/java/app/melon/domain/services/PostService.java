@@ -9,10 +9,13 @@ import app.melon.domain.files.ImageStorage;
 import app.melon.domain.models.post.Post;
 import app.melon.domain.models.post.PostImage;
 import app.melon.domain.models.post.PostLike;
+import app.melon.domain.models.region.Region;
 import app.melon.domain.models.user.SimpleUser;
 import app.melon.domain.models.user.User;
 import app.melon.infrastructure.repositories.post.PostLikeRepository;
 import app.melon.infrastructure.repositories.post.PostRepository;
+import app.melon.infrastructure.repositories.region.RegionRepository;
+import app.melon.web.results.ApiResult;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,11 +35,14 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostLikeRepository likeRepository;
     private final ImageStorage imageStorage;
+    private final RegionRepository regionRepository;
 
     public PostService(PostRepository postRepository,
                        PostLikeRepository likeRepository,
+                       RegionRepository regionRepository,
                        @Qualifier("PostImageStorage") ImageStorage imageStorage) {
         this.postRepository = postRepository;
+        this.regionRepository = regionRepository;
         this.likeRepository = likeRepository;
         this.imageStorage = imageStorage;
     }
@@ -74,12 +80,18 @@ public class PostService {
         return this.postRepository.findById(postId).get();
     }
 
-    public Post addPost(AddPostCommand command, User user) {
+    public Post addPost(AddPostCommand command, User user) throws ApiException {
+        Optional<Region> region = this.regionRepository.findById(command.getRegion());
+        if (region.isEmpty()) {
+            throw ApiException.of(Errors.InvalidRequest);
+        }
+
         Post post = Post.create(
                 command.getTitle(),
                 command.getBody(),
                 command.getPrice(),
                 LocalDateTime.now(),
+                region.get(),
                 user
         );
         this.postRepository.save(post);

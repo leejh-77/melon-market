@@ -17,16 +17,20 @@ public class AddPostRequest {
     private final int price;
 
     @NotNull
+    private final String region;
+
+    @NotNull
     private final List<MultipartFile> images;
 
-    public AddPostRequest(String title, String body, int price, List<MultipartFile> images) {
+    public AddPostRequest(String title, String body, int price, List<MultipartFile> images, String region) {
         this.title = title;
         this.body = body;
         this.price = price;
         this.images = images;
+        this.region = region;
     }
 
     public AddPostCommand toCommand() {
-        return new AddPostCommand(this.title, this.body, this.price, this.images);
+        return new AddPostCommand(this.title, this.body, this.price, this.images, this.region);
     }
 }

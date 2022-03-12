@@ -12,11 +12,13 @@ public class AddPostCommand {
     private final String body;
     private final int price;
     private final List<MultipartFile> images;
+    private final String region;
 
-    public AddPostCommand(String title, String body, int price, List<MultipartFile> images) {
+    public AddPostCommand(String title, String body, int price, List<MultipartFile> images, String region) {
         this.title = title;
         this.price = price;
         this.body = body;
         this.images = images;
+        this.region = region;
     }
 }

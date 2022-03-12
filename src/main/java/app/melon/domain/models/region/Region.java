@@ -1,6 +1,10 @@
 package app.melon.domain.models.region;
 
+import app.melon.domain.models.post.Post;
+
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "region")
@@ -17,6 +21,9 @@ public class Region {
 
     @Column(name = "district")
     private String district;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "region")
+    private List<Post> posts = new ArrayList<>();
 
     public static Region create(String code, String county, String town, String district) {
         Region region = new Region();
@@ -57,5 +64,9 @@ public class Region {
 
     public void setDistrict(String district) {
         this.district = district;
+    }
+
+    public List<Post> getPosts() {
+        return posts;
     }
 }

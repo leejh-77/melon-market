@@ -1,9 +1,11 @@
 package app.melon.infrastructure.repostories.post;
 
 import app.melon.domain.models.post.Post;
+import app.melon.domain.models.region.Region;
 import app.melon.domain.models.user.User;
 import app.melon.helper.DataCreator;
 import app.melon.infrastructure.repositories.post.PostRepository;
+import app.melon.infrastructure.repositories.region.RegionRepository;
 import app.melon.infrastructure.repositories.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +30,18 @@ public class PostRepositoryTests {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private RegionRepository regionRepository;
+
     @Test
     public void createPost_nullTitle_shouldFail() {
         User user = DataCreator.newUser();
         this.userRepository.save(user);
 
-        Post post = DataCreator.newPost(user);
+        Region region = DataCreator.newRegion();
+        this.regionRepository.save(region);
+
+        Post post = DataCreator.newPost(user, region);
         post.setTitle(null);
 
         assertThrows(DataIntegrityViolationException.class, () -> {
@@ -55,7 +63,10 @@ public class PostRepositoryTests {
         User user = DataCreator.newUser();
         this.userRepository.save(user);
 
-        Post post = DataCreator.newPost(user);
+        Region region = DataCreator.newRegion();
+        this.regionRepository.save(region);
+
+        Post post = DataCreator.newPost(user, region);
         this.postRepository.save(post);
 
         Optional<User> newUser = this.userRepository.findById(user.getId());
@@ -71,7 +82,10 @@ public class PostRepositoryTests {
         User user = DataCreator.newUser();
         this.userRepository.save(user);
 
-        Post post = DataCreator.newPost(user);
+        Region region = DataCreator.newRegion();
+        this.regionRepository.save(region);
+
+        Post post = DataCreator.newPost(user, region);
         this.postRepository.save(post);
 
         post.setTitle(null);
@@ -86,7 +100,10 @@ public class PostRepositoryTests {
         User user = DataCreator.newUser();
         this.userRepository.save(user);
 
-        Post post = DataCreator.newPost(user);
+        Region region = DataCreator.newRegion();
+        this.regionRepository.save(region);
+
+        Post post = DataCreator.newPost(user, region);
         this.postRepository.save(post);
 
         post.setUser(null);
@@ -102,7 +119,10 @@ public class PostRepositoryTests {
         User user = DataCreator.newUser();
         this.userRepository.save(user);
 
-        Post post = DataCreator.newPost(user);
+        Region region = DataCreator.newRegion();
+        this.regionRepository.save(region);
+
+        Post post = DataCreator.newPost(user, region);
         this.postRepository.save(post);
 
         User newUser = DataCreator.newUser();

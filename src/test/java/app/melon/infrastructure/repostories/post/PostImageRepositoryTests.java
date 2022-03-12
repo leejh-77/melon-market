@@ -2,10 +2,12 @@ package app.melon.infrastructure.repostories.post;
 
 import app.melon.domain.models.post.Post;
 import app.melon.domain.models.post.PostImage;
+import app.melon.domain.models.region.Region;
 import app.melon.domain.models.user.User;
 import app.melon.helper.DataCreator;
 import app.melon.infrastructure.repositories.post.PostImageRepository;
 import app.melon.infrastructure.repositories.post.PostRepository;
+import app.melon.infrastructure.repositories.region.RegionRepository;
 import app.melon.infrastructure.repositories.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,9 @@ public class PostImageRepositoryTests {
     private PostImageRepository postImageRepository;
 
     @Autowired
+    private RegionRepository regionRepository;
+
+    @Autowired
     private EntityManager em;
 
     @Test
@@ -36,7 +41,10 @@ public class PostImageRepositoryTests {
         User user = DataCreator.newUser();
         this.userRepository.save(user);
 
-        Post post = DataCreator.newPost(user);
+        Region region = DataCreator.newRegion();
+        this.regionRepository.save(region);
+
+        Post post = DataCreator.newPost(user, region);
         this.postRepository.save(post);
 
         for (int i = 0; i < 5; i++) {
@@ -53,8 +61,11 @@ public class PostImageRepositoryTests {
         User user = DataCreator.newUser();
         this.userRepository.save(user);
 
+        Region region = DataCreator.newRegion();
+        this.regionRepository.save(region);
+
         for (int i = 0; i < 5; i++) {
-            Post post = DataCreator.newPost(user);
+            Post post = DataCreator.newPost(user, region);
             this.postRepository.save(post);
 
             for (int j = 0; j < 5; j++) {

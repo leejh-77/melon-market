@@ -5,6 +5,7 @@
       <div class="user-info">
         <img :src="getUserImage"/>
         <p class="name">{{ user.username }}</p>
+        <p class="region">{{ post.region }}</p>
       </div>
       <div class="line"/>
       <div class="content">
@@ -170,6 +171,12 @@ export default {
         font-weight: bold;
         margin-left: 10px;
       }
+
+      .region {
+        font-size: 14px;
+        text-align: right;
+        margin-left: auto;
+      }
     }
 
     .line {
@@ -191,9 +198,8 @@ export default {
       }
 
       .title {
-        margin-top: 30px;
+        margin-top: 20px;
         margin-bottom: 6px;
-
         text-align: left;
         font-size: 20px;
         font-weight: bold;

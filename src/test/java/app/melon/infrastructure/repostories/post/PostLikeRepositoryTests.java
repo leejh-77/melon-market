@@ -2,10 +2,12 @@ package app.melon.infrastructure.repostories.post;
 
 import app.melon.domain.models.post.Post;
 import app.melon.domain.models.post.PostLike;
+import app.melon.domain.models.region.Region;
 import app.melon.domain.models.user.User;
 import app.melon.helper.DataCreator;
 import app.melon.infrastructure.repositories.post.PostLikeRepository;
 import app.melon.infrastructure.repositories.post.PostRepository;
+import app.melon.infrastructure.repositories.region.RegionRepository;
 import app.melon.infrastructure.repositories.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,13 +32,19 @@ public class PostLikeRepositoryTests {
     @Autowired
     private PostRepository postRepository;
 
+    @Autowired
+    private RegionRepository regionRepository;
+
     @Test
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void createLike_nullUser_shouldFail() {
         User user = DataCreator.newUser();
         this.userRepository.save(user);
 
-        Post post = DataCreator.newPost(user);
+        Region region = DataCreator.newRegion();
+        this.regionRepository.save(region);
+
+        Post post = DataCreator.newPost(user, region);
         this.postRepository.save(post);
 
         PostLike like = DataCreator.newLike(user, post);

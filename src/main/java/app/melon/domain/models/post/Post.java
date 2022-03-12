@@ -1,5 +1,6 @@
 package app.melon.domain.models.post;
 
+import app.melon.domain.models.region.Region;
 import app.melon.domain.models.user.User;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Fetch;
@@ -34,6 +35,10 @@ public class Post {
     private int viewCount;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "region", nullable = false)
+    private Region region;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -43,7 +48,7 @@ public class Post {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "post")
     private final List<PostLike> likes = new ArrayList<>();
 
-    public static Post create(String title, String body, int price, LocalDateTime createdTime, User user) {
+    public static Post create(String title, String body, int price, LocalDateTime createdTime, Region region, User user) {
         Post post = new Post();
         post.title = title;
         post.body = body;
@@ -51,6 +56,7 @@ public class Post {
         post.createdTime = createdTime.withNano(0);
         post.viewCount = 0;
         post.user = user;
+        post.region = region;
         return post;
     }
 
@@ -112,5 +118,13 @@ public class Post {
 
     public List<PostLike> getLikes() {
         return likes;
+    }
+
+    public Region getRegion() {
+        return region;
+    }
+
+    public void setRegion(Region region) {
+        this.region = region;
     }
 }

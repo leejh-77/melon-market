@@ -3,7 +3,7 @@
     <img ref="post-image" class="picture" alt="image" @click="$emit('onClickImage')"/>
     <p class="name">{{ post.title }}</p>
     <p class="price">{{ new Intl.NumberFormat().format(post.price) }}원</p>
-    <p class="location">{{ post.location }}</p>
+    <p class="location">{{ post.region }}</p>
     <div class="extra">
       <p class="likes">좋아요 {{ post.likeCount }}</p>
       <p> · </p>
@@ -51,11 +51,13 @@ export default {
 
   .name {
     margin-top: 8px;
+    margin-bottom: 5px;
     font-size: 18px;
     color: black;
   }
 
   .price {
+    margin-bottom: 5px;
     color: black;
     font-weight: bold;
   }
@@ -63,6 +65,7 @@ export default {
   .location {
     color: black;
     font-size: 13px;
+    margin-bottom: 3px;
   }
 
   .extra {
@@ -71,7 +74,7 @@ export default {
     p {
       margin-right: 5px;
       color: gray;
-      font-size: 14px;
+      font-size: 13px;
     }
   }
 }

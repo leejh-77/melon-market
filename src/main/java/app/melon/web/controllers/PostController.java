@@ -63,7 +63,7 @@ public class PostController {
     @Secured(value = {"ROLE_USER"})
     @PostMapping
     public ResponseEntity<?> addPost(@Valid AddPostRequest request,
-                                     @AuthenticationPrincipal SimpleUser user) {
+                                     @AuthenticationPrincipal SimpleUser user) throws ApiException {
         Post post = this.postService.addPost(request.toCommand(), user.getUser());
         return ApiResult.ok(post.getId());
     }

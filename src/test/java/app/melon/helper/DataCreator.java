@@ -28,10 +28,10 @@ public class DataCreator {
     }
 
     public static Post newPost() {
-        return newPost(null);
+        return newPost(null, null);
     }
 
-    public static Post newPost(User user) {
+    public static Post newPost(User user, Region region) {
         Post post = new Post();
         post.setTitle(genRandomString("title"));
         post.setBody(genRandomString("body"));
@@ -39,6 +39,7 @@ public class DataCreator {
         post.setCreatedTime(LocalDateTime.now().withNano(0));
         post.setPrice(12000);
         post.setUser(user);
+        post.setRegion(region);
         return post;
     }
 
@@ -50,39 +51,11 @@ public class DataCreator {
         return PostLike.create(post, user);
     }
 
-    public static void insertRegions(RegionRepository repository) throws Exception {
-        DefaultLineMapper<Region> lineMapper = new DefaultLineMapper<>();
-        DelimitedLineTokenizer tokenizer = new DelimitedLineTokenizer();
-        tokenizer.setNames("code", "county", "town", "district");
-        tokenizer.setDelimiter("\t");
-        tokenizer.setStrict(false);
-        lineMapper.setLineTokenizer(tokenizer);
-
-        BeanWrapperFieldSetMapper<Region> fieldSetMapper = new BeanWrapperFieldSetMapper<>();
-        fieldSetMapper.setTargetType(Region.class);
-        lineMapper.setFieldSetMapper(fieldSetMapper);
-
-        String path = ResourceUtils.getURL("src/test/resources/regions.tsv").toString();
-        DefaultResourceLoader loader = new DefaultResourceLoader();
-        FlatFileItemReader<Region> reader = new FlatFileItemReaderBuilder<Region>()
-                .name("TSV Reader")
-                .resource(loader.getResource(path))
-                .lineMapper(lineMapper)
-                .linesToSkip(1).build();
-
-        reader.open(new ExecutionContext());
-        Region region;
-        while ((region = reader.read()) != null) {
-            repository.save(region);
-        }
-        reader.close();
-    }
-
     private static String genRandomString(String v) {
         return v + "." + System.currentTimeMillis();
     }
 
     public static Region newRegion() {
-        return Region.create("1111111111", "서울특별시", "강남구", null);
+        return Region.create("1111111111", "서울특별시", "강남구", "동그리동동");
     }
 }

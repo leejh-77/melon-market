@@ -19,10 +19,13 @@ public class RegionService {
 
     public List<Region> findByCode(String code) {
         if (code == null) {
-            code = "%00000000";
-        } else {
-            code += "%";
+            return this.regionRepository.findCounties();
         }
-        return this.regionRepository.findByCodeLike(code);
+        code = code.substring(0, code.length() - 1); // 끝에 붙은 * 제거
+        code += "%";
+        if (code.length() == 3) {
+            return this.regionRepository.findTowns(code);
+        }
+        return this.regionRepository.findDistricts(code);
     }
 }

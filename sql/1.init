@@ -28,10 +28,12 @@ CREATE TABLE IF NOT EXISTS `melon_market`.`post`
     `price`        INT          NOT NULL,
     `title`        VARCHAR(128) NOT NULL,
     `body`         TEXT,
+    `region`       VARCHAR(10)  NOT NULL,
     `view_count`   INT DEFAULT 0,
     `created_time` DATETIME     NOT NULL,
     PRIMARY KEY (`id`),
-    FOREIGN KEY (user_id) REFERENCES user (id)
+    FOREIGN KEY (user_id) REFERENCES user (id),
+    FOREIGN KEY (region) REFERENCES region (code)
 ) ENGINE = InnoDB;
 
 DROP TABLE IF EXISTS `melon_market`.`post_image`;

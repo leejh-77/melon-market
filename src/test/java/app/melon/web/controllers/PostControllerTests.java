@@ -4,6 +4,7 @@ import app.melon.domain.commands.AddPostCommand;
 import app.melon.domain.commands.PostListType;
 import app.melon.domain.models.post.Post;
 import app.melon.domain.models.post.PostImage;
+import app.melon.domain.models.region.Region;
 import app.melon.domain.models.user.User;
 import app.melon.domain.services.PostService;
 import app.melon.domain.services.UserService;
@@ -50,7 +51,8 @@ public class PostControllerTests {
     @Test
     public void getPostList_shouldSuccess() throws Exception {
         User user = DataCreator.newUser();
-        Post post = DataCreator.newPost(user);
+        Region region = DataCreator.newRegion();
+        Post post = DataCreator.newPost(user, region);
         PostImage image = DataCreator.newPostImage(post);
 
         doReturn(List.of(post)).when(postServiceMock).getPostList(eq(PostListType.Recent), eq(null));
@@ -69,7 +71,8 @@ public class PostControllerTests {
     @Test
     public void getPost_shouldSuccess() throws Exception {
         User user = DataCreator.newUser();
-        Post post = DataCreator.newPost(user);
+        Region region = DataCreator.newRegion();
+        Post post = DataCreator.newPost(user, region);
         PostImage image = DataCreator.newPostImage(post);
 
         doReturn(user).when(userServiceMock).getUser(anyLong());
@@ -108,6 +111,8 @@ public class PostControllerTests {
     @WithUserDetails(userDetailsServiceBeanName = "userDetailsService")
     public void addPost_shouldSuccess() throws Exception {
         Post post = DataCreator.newPost();
+        post.setRegion(DataCreator.newRegion());
+
         MockMultipartFile image1 = new MockMultipartFile("images", "image1", "image/jpeg", new byte[]{1, 2, 3});
         MockMultipartFile image2 = new MockMultipartFile("images", "image2", "image/jpeg", new byte[]{1, 2, 3});
         MockMultipartFile image3 = new MockMultipartFile("images", "image3", "image/jpeg", new byte[]{1, 2, 3});
@@ -118,6 +123,7 @@ public class PostControllerTests {
                 .file(image1).file(image2).file(image3)
                 .param("title", post.getTitle())
                 .param("body", post.getBody())
+                .param("region", post.getRegion().getCode())
                 .param("price", String.valueOf(post.getPrice()));
 
         doReturn(post).when(postServiceMock).addPost(any(), any());
@@ -132,6 +138,7 @@ public class PostControllerTests {
         assertEquals(post.getTitle(), command.getTitle());
         assertEquals(post.getBody(), command.getBody());
         assertEquals(post.getPrice(), command.getPrice());
+        assertEquals(post.getRegion().getCode(), command.getRegion());
 
         for (int i = 0; i < images.length; i++) {
             MultipartFile file = command.getImages().get(i);
