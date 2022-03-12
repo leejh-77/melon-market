@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <h1>인기 물건</h1>
+    <h1>내가 올린 물건</h1>
     <PostsBoard :type="getListType"/>
   </div>
 </template>
@@ -10,11 +10,11 @@ import PostsBoard from '@/views/PostsBoard'
 import { ListQuery } from '@/constant'
 
 export default {
-  name: 'PopularView',
+  name: 'MyPostsView',
   components: { PostsBoard },
   computed: {
     getListType() {
-      return ListQuery.Popular
+      return ListQuery.Me
     }
   }
 }

@@ -57,4 +57,13 @@ public class PostRepositoryExtensionImpl implements PostRepositoryExtension {
         query.setMaxResults(count);
         return query.getResultList();
     }
+
+    @Override
+    public List<Post> findMyPosts(int listQueryCount, long userId) {
+        TypedQuery<Post> query = this.em.createQuery("SELECT p FROM Post p" +
+                " WHERE p.user.id = :userId ORDER BY p.createdTime DESC", Post.class);
+        query.setMaxResults(listQueryCount);
+        query.setParameter("userId", userId);
+        return query.getResultList();
+    }
 }

@@ -7,15 +7,15 @@
     <div class="right-items">
       <div class="upper-items">
         <nav>
-          <a @click.prevent="actionGoToPopular">인기매물</a>
+          <a @click.prevent="actionGoToPopular">인기 물건</a>
           <a @click.prevent="actionGoToLogin" v-show="!isAuthenticated">로그인</a>
         </nav>
         <img ref="user-image" class="user-image" v-show="isAuthenticated"
              @click="actionShowSettingModal" src="../assets/user.png"/>
       </div>
       <UserSettingModal ref="user-setting-modal"
-                        v-on:changeInfo="actionChangeInfo"
                         v-on:writePost="actionGoToWritePost"
+                        v-on:showMine="actionGoToMine"
                         v-on:showLikes="actionGoToLikes"
                         v-on:logout="actionLogout"/>
 
@@ -64,8 +64,8 @@ export default {
     actionShowSettingModal() {
       this.$refs['user-setting-modal'].show()
     },
-    actionChangeInfo() {
-      this.$refs['user-info-modal'].show()
+    actionGoToMine() {
+      this.$router.push('/mine')
     },
     actionLogout() {
       userService.logout()

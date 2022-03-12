@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <h1>최근 매물</h1>
+    <h1>최근 물건</h1>
     <RegionSelector class="region-selector" @onSelectRegion="onSelectRegion" />
     <PostsBoard ref="board" :type="getListType"/>
   </div>

@@ -64,6 +64,13 @@ public class PostService {
             }
             return this.postRepository.findLikedPosts(LIST_QUERY_COUNT, user.getUserId(), region);
         }
+        else if (type == PostListType.Me) {
+            SimpleUser user = SimpleUser.peek();
+            if (user == null) {
+                throw ApiException.of(Errors.InvalidRequest);
+            }
+            return this.postRepository.findMyPosts(LIST_QUERY_COUNT, user.getUserId());
+        }
         else if (type == PostListType.Popular) {
             List<Long> list = this.postViewManagement.getViewRankList(10);
             return this.postRepository.findAllById(list);

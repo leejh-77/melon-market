@@ -7,6 +7,7 @@ import PostEditView from '@/views/PostEditView'
 import LikesView from '@/views/LikesView'
 import PopularView from '@/views/PopularView'
 import MainBoardView from '@/views/MainBoardView'
+import MyPostsView from '@/views/MyPostsView'
 
 const routes = [
   // home
@@ -23,7 +24,8 @@ const routes = [
 
   // like
   { path: '/likes', component: LikesView },
-  { path: '/popular', component: PopularView }
+  { path: '/popular', component: PopularView },
+  { path: '/mine', component: MyPostsView }
 ]
 
 const router = createRouter({

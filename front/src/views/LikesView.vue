@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <h1>좋아요한 매물</h1>
+    <h1>좋아요한 물건</h1>
     <PostsBoard :type="getType"/>
   </div>
 </template>

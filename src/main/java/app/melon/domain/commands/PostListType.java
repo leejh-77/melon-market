@@ -5,7 +5,8 @@ import java.util.Arrays;
 public enum PostListType {
     Recent("recent"),
     Like("like"),
-    Popular("popular");
+    Popular("popular"),
+    Me("me");
 
     private final String name;
 

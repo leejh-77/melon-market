@@ -1,15 +1,15 @@
 <template>
   <div class="main">
     <select ref="select-county" @change="actionSelectRegion" v-model="regions.county">
-      <option value="" selected disabled>선택해주세요</option>
+      <option :value="null">선택해주세요</option>
       <option v-for="region in countyList" :key="region.code" :value="region">{{ region.county }}</option>
     </select>
     <select ref="select-town" @change="actionSelectRegion" v-model="regions.town">
-      <option value="" selected disabled>선택해주세요</option>
+      <option :value="null">선택해주세요</option>
       <option v-for="region in townList" :key="region.code" :value="region">{{ region.town }}</option>
     </select>
     <select ref="select-district" @change="actionSelectRegion" v-model="regions.district">
-      <option value="" selected disabled>선택해주세요</option>
+      <option :value="null">선택해주세요</option>
       <option v-for="region in districtList" :key="region.code" :value="region">{{ region.district }}</option>
     </select>
   </div>
