@@ -8,7 +8,9 @@ export default createStore({
       id: null,
       username: null,
       imagePath: null
-    }
+    },
+    selectedChat: null,
+    chats: []
   },
   getters: {
     authenticated(state) {
@@ -19,6 +21,12 @@ export default createStore({
     setUser(state, user) {
       state.user = user
       state.authenticated = user.id != null
+    },
+    pushChat(state, chat) {
+      state.chats.push(chat)
+    },
+    selectChat(state, chat) {
+      state.selectedChat = chat
     }
   },
   actions: {

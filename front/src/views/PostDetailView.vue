@@ -9,6 +9,7 @@
       </div>
       <div class="line"/>
       <div class="content">
+        <img class="chat" src="@/assets/chat.png" @click="actionChat" v-if="authenticated">
         <img class="like" :src="getLikeImageSrc" @click="actionToggleLike" v-if="authenticated">
         <p class="title">{{ post.title }}</p>
         <p class="date">{{ getDateString }}</p>
@@ -128,6 +129,13 @@ export default {
     },
     actionGoToEditPost() {
       this.$router.push('/post-edit/' + this.post.id)
+    },
+    actionChat() {
+      this.$store.commit('pushChat', {
+        userId: this.user.id,
+        postId: this.post.id,
+        title: this.post.title
+      })
     }
   },
   mounted() {
@@ -194,6 +202,17 @@ export default {
       }
 
       .like:hover {
+        cursor: pointer;
+      }
+
+      .chat {
+        width: 30px;
+        position: absolute;
+        right: 0;
+        margin-right: 45px;
+      }
+
+      .chat:hover {
         cursor: pointer;
       }
 

@@ -3,17 +3,35 @@
     <MainHeader class="main-header"/>
     <router-view class="router-view"/>
     <MainFooter/>
+    <div class="chat-container">
+      <ChatView :chat="getSelectedChat" v-if="getSelectedChat != null"/>
+      <div class="buttons">
+        <ChatButton class="chat-button" v-for="chat in getChats" :key="chat.postId" :chat="chat"/>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import MainHeader from './views/MainHeader.vue'
 import MainFooter from '@/views/MainFooter'
+import ChatButton from '@/components/ChatButton'
+import ChatView from '@/views/ChatView'
 
 export default {
   components: {
+    ChatView,
+    ChatButton,
     MainFooter,
     MainHeader
+  },
+  computed: {
+    getChats() {
+      return this.$store.state.chats
+    },
+    getSelectedChat() {
+      return this.$store.state.selectedChat
+    }
   }
 }
 </script>
@@ -37,6 +55,31 @@ export default {
 
 .router-view {
   min-height: 800px;
+}
+
+.main-header {
+  z-index: 1;
+  position: sticky;
+  top:0;
+}
+
+.chat-container {
+  position: fixed;
+  display: flex;
+  right: 0;
+  bottom: 0;
+  margin-right: 20px;
+  margin-bottom: 10px;
+
+  .buttons {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+
+    .chat-button {
+      margin-top: auto;
+    }
+  }
 }
 
 </style>

@@ -102,7 +102,7 @@ export default {
 
     img {
       object-fit: cover;
-      height: 40px;
+      height: 35px;
       margin-right: 10px;
     }
 
