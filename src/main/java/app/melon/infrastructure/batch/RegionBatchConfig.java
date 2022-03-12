@@ -60,8 +60,8 @@ public class RegionBatchConfig {
 
     @Bean
     public JobParametersValidator jobParametersValidator() {
-        String[] required = new String[]{"filePath"};
-        String[] optional = new String[]{};
+        String[] required = new String[]{};
+        String[] optional = new String[]{"executionTime"};
         return new DefaultJobParametersValidator(required, optional);
     }
 
@@ -96,14 +96,13 @@ public class RegionBatchConfig {
     @Bean
     public Step importRegionStep() throws FileNotFoundException {
         return stepBuilderFactory.get("importRegionStep").<Region, Region>chunk(100)
-                .reader(fileItemReader(null))
+                .reader(fileItemReader())
                 .writer(dbItemWriter()).build();
     }
 
     @Bean
     @StepScope
-    @Value("#{jobParameters['filePath']}")
-    public FlatFileItemReader<Region> fileItemReader(String filePath) throws FileNotFoundException {
+    public FlatFileItemReader<Region> fileItemReader() throws FileNotFoundException {
         DefaultLineMapper<Region> lineMapper = new DefaultLineMapper<>();
         DelimitedLineTokenizer tokenizer = new DelimitedLineTokenizer();
         tokenizer.setNames("code", "county", "town", "district");
@@ -115,7 +114,7 @@ public class RegionBatchConfig {
         fieldSetMapper.setTargetType(Region.class);
         lineMapper.setFieldSetMapper(fieldSetMapper);
 
-        String path = ResourceUtils.getURL(filePath).toString();
+        String path = ResourceUtils.getURL("regions.tsv").toString();
         DefaultResourceLoader loader = new DefaultResourceLoader();
 
         return new FlatFileItemReaderBuilder<Region>()

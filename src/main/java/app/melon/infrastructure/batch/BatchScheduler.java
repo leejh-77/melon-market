@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 public class BatchScheduler {
 
@@ -22,13 +24,11 @@ public class BatchScheduler {
         this.job = job;
     }
 
-    @Scheduled(cron = "0 10")
+    @Scheduled(cron = "0 0 * * * *")
     public void importRegion() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
         JobParameters params = new JobParametersBuilder()
-                .addString("filePath", "regions.tsv")
+                .addString("executionTime", LocalDateTime.now().toString())
                 .toJobParameters();
         this.jobLauncher.run(this.job, params);
     }
-
-
 }

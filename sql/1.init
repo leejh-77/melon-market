@@ -5,7 +5,7 @@ SET @OLD_SQL_MODE = @@SQL_MODE, SQL_MODE = 'TRADITIONAL,ALLOW_INVALID_DATES';
 CREATE SCHEMA IF NOT EXISTS `melon_market` DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
 USE `melon_market`;
 
-DROP TABLE IF EXISTS `melon_market`.`user`;
+# DROP TABLE IF EXISTS `melon_market`.`user`;
 
 CREATE TABLE IF NOT EXISTS `melon_market`.`user`
 (
@@ -16,10 +16,10 @@ CREATE TABLE IF NOT EXISTS `melon_market`.`user`
     `password`      VARCHAR(255) NOT NULL,
     `created_date`  DATETIME     NOT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE INDEX `email_address_idx` (`email_address` ASC),
+    UNIQUE INDEX `email_address_idx` (`email_address` ASC)
 ) ENGINE = InnoDB;
 
-DROP TABLE IF EXISTS `melon_market`.`post`;
+# DROP TABLE IF EXISTS `melon_market`.`post`;
 
 CREATE TABLE IF NOT EXISTS `melon_market`.`post`
 (
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `melon_market`.`post`
     FOREIGN KEY (user_id) REFERENCES user (id)
 ) ENGINE = InnoDB;
 
-DROP TABLE IF EXISTS `melon_market`.`post_image`;
+# DROP TABLE IF EXISTS `melon_market`.`post_image`;
 
 CREATE TABLE IF NOT EXISTS `melon_market`.`post_image`
 (
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS `melon_market`.`post_image`
     FOREIGN KEY (`post_id`) REFERENCES post (id)
 ) ENGINE = InnoDB;
 
-DROP TABLE IF EXISTS `melon_market`.`post_like`;
+# DROP TABLE IF EXISTS `melon_market`.`post_like`;
 
 CREATE TABLE IF NOT EXISTS `melon_market`.`post_like`
 (
