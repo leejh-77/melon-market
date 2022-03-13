@@ -4,6 +4,7 @@ import app.melon.domain.commands.UpdateUserCommand;
 import app.melon.domain.errors.ApiException;
 import app.melon.domain.models.user.SimpleUser;
 import app.melon.domain.services.UserService;
+import app.melon.infrastructure.utils.JwtManager;
 import app.melon.web.requests.UpdateUserRequest;
 import app.melon.web.results.ApiResult;
 import app.melon.web.results.GetMeResult;
@@ -21,15 +22,19 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
 
     private final UserService service;
+    private final JwtManager jwtManager;
 
-    public UserController(UserService service) {
+    public UserController(UserService service,
+                          JwtManager jwtManager) {
         this.service = service;
+        this.jwtManager = jwtManager;
     }
 
     @Secured("ROLE_USER")
     @GetMapping("/me")
     public ResponseEntity<?> getMe(@AuthenticationPrincipal SimpleUser user) {
-        return GetMeResult.from(user.getUser());
+        String jwt = this.jwtManager.generate(user.getUserId());
+        return GetMeResult.from(user.getUser(), jwt);
     }
 
     @Secured("ROLE_USER")

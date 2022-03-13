@@ -9,12 +9,14 @@ public class GetMeResult {
     private long id;
     private String username;
     private String imagePath;
+    private String sockToken;
 
-    public static ResponseEntity<GetMeResult> from(User user) {
+    public static ResponseEntity<GetMeResult> from(User user, String sockToken) {
         GetMeResult result = new GetMeResult();
         result.id = user.getId();
         result.username = user.getUsername();
         result.imagePath = user.getImageUrl();
+        result.sockToken = sockToken;
         return ApiResult.ok(result);
     }
 }
