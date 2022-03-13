@@ -35,7 +35,6 @@ public class DataCreator {
         Post post = new Post();
         post.setTitle(genRandomString("title"));
         post.setBody(genRandomString("body"));
-        post.setViewCount(0);
         post.setCreatedTime(LocalDateTime.now().withNano(0));
         post.setPrice(12000);
         post.setUser(user);

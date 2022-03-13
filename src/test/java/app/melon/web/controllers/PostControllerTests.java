@@ -76,7 +76,7 @@ public class PostControllerTests {
         PostImage image = DataCreator.newPostImage(post);
 
         doReturn(user).when(userServiceMock).getUser(anyLong());
-        doReturn(post).when(postServiceMock).findPost(anyLong());
+        doReturn(post).when(postServiceMock).findPostAndManageView(anyLong());
 
         mvc.perform(get("/api/posts/1"))
                 .andExpect(status().is(200))
