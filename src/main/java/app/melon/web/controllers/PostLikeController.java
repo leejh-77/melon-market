@@ -27,7 +27,7 @@ public class PostLikeController {
     @PostMapping
     public ResponseEntity<?> likePost(@PathVariable long postId,
                                       @AuthenticationPrincipal SimpleUser user) throws ApiException {
-        this.postService.likePost(postId, user.getUserId());
+        this.postService.likePost(postId, user.getUser());
         return ApiResult.ok();
     }
 
@@ -35,7 +35,7 @@ public class PostLikeController {
     @DeleteMapping
     public ResponseEntity<?> dislikePost(@PathVariable long postId,
                                          @AuthenticationPrincipal SimpleUser user) {
-        this.postService.dislikePost(postId, user.getUserId());
+        this.postService.dislikePost(postId, user.getUser());
         return ApiResult.ok();
     }
 

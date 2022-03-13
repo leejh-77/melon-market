@@ -177,8 +177,8 @@ public class PostService {
         return this.likeRepository.findByUserIdAndPostId(userId, postId) != null;
     }
 
-    public void likePost(long postId, long userId) throws ApiException {
-        PostLike like = this.likeRepository.findByUserIdAndPostId(userId, postId);
+    public void likePost(long postId, User user) throws ApiException {
+        PostLike like = this.likeRepository.findByUserIdAndPostId(user.getId(), postId);
         if (like != null) {
             return;
         }
@@ -187,12 +187,12 @@ public class PostService {
             throw ApiException.of(Errors.ItemNotFound);
         }
         Post post = opPost.get();
-        like = PostLike.create(post, post.getUser());
+        like = PostLike.create(post, user);
         this.likeRepository.save(like);
     }
 
-    public void dislikePost(long postId, long userId) {
-        PostLike like = this.likeRepository.findByUserIdAndPostId(userId, postId);
+    public void dislikePost(long postId, User user) {
+        PostLike like = this.likeRepository.findByUserIdAndPostId(user.getId(), postId);
         if (like == null) {
             return;
         }
