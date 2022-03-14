@@ -1,5 +1,6 @@
 import { createStore } from 'vuex'
 import userService from '@/services/userService'
+import { emitter } from '@/socketjs/SocketClient'
 
 export default createStore({
   state: {
@@ -34,6 +35,7 @@ export default createStore({
       userService.getMyData()
         .then(res => {
           console.log('[GetMyData]', res.data)
+          emitter.emit('onReceiveWSToken', res.data.sockToken)
           commit('setUser', res.data)
         })
         .catch(e => {

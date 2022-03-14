@@ -6,6 +6,9 @@ module.exports = defineConfig({
     proxy: {
       '/api/*': {
         target: 'http://localhost:8080'
+      },
+      '/chat/*': {
+        target: 'http://localhost:8080'
       }
     }
   }

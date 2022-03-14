@@ -1,35 +1,55 @@
 package app.melon.web.sock;
 
+import app.melon.infrastructure.utils.JwtManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.CloseStatus;
-import org.springframework.web.socket.WebSocketHandler;
-import org.springframework.web.socket.WebSocketMessage;
-import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.*;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 @Component
-public class WebSocketHandlerImpl implements WebSocketHandler {
+public class WebSocketHandlerImpl extends TextWebSocketHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(WebSocketHandlerImpl.class);
+
+    private final JwtManager jwtManager;
+
+    public WebSocketHandlerImpl(JwtManager jwtManager) {
+        this.jwtManager = jwtManager;
+    }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        ChatSession chatSession = ChatSession.from(session);
+        String token = chatSession.getToken();
+        long userId = this.jwtManager.extractId(token);
+        chatSession.setUserId(userId);
+        chatSession.send(ChatMessage.authenticated());
+
+        logger.info("Received connection : userId - " + chatSession.getUserId());
     }
 
     @Override
-    public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+        ChatSession chatSession = ChatSession.from(session);
+        ChatMessage.Incoming chat = ChatMessage.parse(message);
 
+        switch (chat.getType()) {
+            case Subscribe:
+                ChatHub.subscribe(chat.getTo(), chatSession);
+                break;
+            case Unsubscribe:
+                ChatHub.unsubscribe(chat.getTo(), chatSession);
+                break;
+            case Message:
+                ChatHub.send(chatSession, chat.getContent());
+                break;
+        }
     }
 
     @Override
-    public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
-
-    }
-
-    @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) throws Exception {
-
-    }
-
-    @Override
-    public boolean supportsPartialMessages() {
-        return false;
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+        ChatSession chatSession = ChatSession.from(session);
+        ChatHub.unsubscribeAll(chatSession);
     }
 }

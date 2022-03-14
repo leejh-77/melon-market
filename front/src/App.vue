@@ -17,6 +17,7 @@ import MainHeader from './views/MainHeader.vue'
 import MainFooter from '@/views/MainFooter'
 import ChatButton from '@/components/ChatButton'
 import ChatView from '@/views/ChatView'
+import { emitter } from '@/socketjs/SocketClient'
 
 export default {
   components: {
@@ -32,6 +33,13 @@ export default {
     getSelectedChat() {
       return this.$store.state.selectedChat
     }
+  },
+  mounted() {
+    emitter.on('onReceiveWSToken', (token) => {
+      console.log('[App] received WSToken', token)
+      this.ws.setToken(token)
+      this.ws.connect()
+    })
   }
 }
 </script>
