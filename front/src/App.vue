@@ -17,7 +17,6 @@ import MainHeader from './views/MainHeader.vue'
 import MainFooter from '@/views/MainFooter'
 import ChatButton from '@/components/ChatButton'
 import ChatView from '@/views/ChatView'
-import { socketEmitter } from '@/socketjs/socketClient'
 
 export default {
   components: {
@@ -35,10 +34,10 @@ export default {
     }
   },
   mounted() {
-    socketEmitter.on('onReceiveWSToken', (token) => {
+    this.emitter.on('onReceiveWSToken', (token) => {
       console.log('[App] received WSToken', token)
       this.ws.onMessageReceived = (data) => {
-        this.$store.commit('pushMessage', data)
+        this.$store.dispatch('pushMessage', data)
       }
       this.ws.setToken(token)
       this.ws.connect()
@@ -86,10 +85,7 @@ export default {
     display: flex;
     flex-direction: column;
     margin-left: 10px;
-
-    .chat-button {
-      margin-top: auto;
-    }
+    margin-top: auto;
   }
 }
 

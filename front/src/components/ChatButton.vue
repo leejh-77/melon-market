@@ -1,7 +1,11 @@
 <template>
   <div class="main" @click="actionToggleChatView">
-    <img :src="getUserImage"/>
-    <p class="username">{{ this.chatRoom.name }}</p>
+    <div class="info">
+      <img class="user-image" :src="getUserImage"/>
+      <p class="username">{{ chatRoom.name }}</p>
+    </div>
+    <img class="notification" src="@/assets/notification.png" v-if="chatRoom.hasNewMessage">
+    <img class="close-button" src="@/assets/close.png" @click.stop="actionClose" />
   </div>
 </template>
 
@@ -21,12 +25,15 @@ export default {
   methods: {
     actionToggleChatView() {
       console.log('[ChatButton] select chat room - ' + this.chatRoom.id)
-      const curr = this.$store.state.selectedChat
+      const curr = this.$store.state.selectedChatRoom
       if (curr == null || curr.id !== this.chatRoom.id) {
         this.$store.commit('selectChatRoom', this.chatRoom)
       } else {
         this.$store.commit('selectChatRoom', null)
       }
+    },
+    actionClose() {
+      this.$store.commit('removeChatRoom', this.chatRoom.id)
     }
   }
 
@@ -38,6 +45,8 @@ export default {
 .main {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+
   border: 1px solid lightgray;
   border-radius: 10px;
   height: 40px;
@@ -45,15 +54,34 @@ export default {
   background-color: white;
   padding: 5px 10px;
 
-  img {
-    height: 70%;
-    border-radius: 50%;
-    margin-right: 10px;
+  .info {
+    height: 100%;
+    display: flex;
+    align-items: center;
+
+    .user-image {
+      height: 70%;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    .username {
+      font-size: 14px;
+      font-weight: bold;
+    }
   }
 
-  .username {
-    font-size: 14px;
-    font-weight: bold;
+  .notification {
+    height: 50%;
+    max-height: 50%;
+  }
+
+  .close-button {
+    height: 40%;
+  }
+
+  .close-button:hover {
+    cursor: pointer;
   }
 }
 

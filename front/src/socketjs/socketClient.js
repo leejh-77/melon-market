@@ -1,5 +1,4 @@
 import SockJS from 'sockjs-client'
-import mitt from 'mitt'
 
 class SocketClient {
   constructor() {
@@ -44,4 +43,3 @@ class SocketClient {
 }
 
 export default new SocketClient()
-export const socketEmitter = mitt()

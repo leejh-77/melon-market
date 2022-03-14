@@ -6,7 +6,7 @@ import mitt from 'mitt'
 import SocketClient from '@/socketjs/socketClient'
 
 const app = createApp(App)
-const emitter = mitt()
+export const emitter = mitt()
 app.config.globalProperties.ws = SocketClient
 app.config.globalProperties.emitter = emitter
 app.use(store)

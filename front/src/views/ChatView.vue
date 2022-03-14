@@ -1,8 +1,11 @@
 <template>
   <div class="main">
     <div class="user-info">
-      <img :src="getUserImage"/>
-      <p class="username">{{ getSelectedChat().name }}</p>
+      <div class="info">
+        <img :src="getUserImage"/>
+        <p class="username">{{ getSelectedChat().name }}</p>
+      </div>
+      <img class="close-button" src="@/assets/close.png" @click="actionClose"/>
     </div>
     <div ref="talk-scroll" class="talk-scroll">
       <div class="talk-container">
@@ -48,6 +51,9 @@ export default {
     },
     getSelectedChat() {
       return this.$store.state.selectedChatRoom
+    },
+    actionClose() {
+      this.$store.state.selectedChatRoom = null
     }
   },
   mounted() {
@@ -69,18 +75,34 @@ export default {
   .user-info {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     height: 40px;
     padding: 5px 10px;
     border: 1px solid lightgray;
 
-    img {
-      height: 70%;
-      margin-right: 10px;
+    .info {
+      display: flex;
+      align-items: center;
+      height: 100%;
+
+      img {
+        height: 70%;
+        margin-right: 10px;
+      }
+
+      p {
+        font-size: 14px;
+        font-weight: bold;
+      }
     }
 
-    p {
-      font-size: 14px;
-      font-weight: bold;
+    .close-button {
+      margin-right: 10px;
+      height: 40%;
+    }
+
+    .close-button:hover {
+      cursor: pointer;
     }
   }
 

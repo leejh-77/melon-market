@@ -19,5 +19,8 @@ export default {
   },
   getMyData() {
     return axios.get('/api/users/me')
+  },
+  getUser(id) {
+    return axios.get('/api/users/' + id)
   }
 }

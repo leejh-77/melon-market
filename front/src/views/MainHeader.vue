@@ -39,6 +39,7 @@ export default {
   },
   computed: {
     isAuthenticated() {
+      console.log('[MainHeader] isAuthenticated watcher executed value', this.$store.state.authenticated)
       return this.$store.getters.authenticated
     }
   },
