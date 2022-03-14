@@ -17,4 +17,8 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
     List<Chat> findByMeAndTargetUser(@Param("me") long me,
                                      @Param("target") long target,
                                      @Param("post") long post);
+
+    @Query("SELECT COUNT(DISTINCT c.from.id) FROM Chat c " +
+            "WHERE c.post.id = :postId AND c.from.id NOT IN (SELECT p.user.id FROM Post p WHERE p.id = :postId)")
+    int findChatCount(long postId);
 }

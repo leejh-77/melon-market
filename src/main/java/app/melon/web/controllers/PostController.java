@@ -38,7 +38,8 @@ public class PostController {
         List<PostListResult> results = new ArrayList<>();
         for (Post post : posts) {
             int likeCount = this.postService.findLikeCount(post.getId());
-            results.add(PostListResult.from(post, likeCount));
+            int chatCount = this.postService.findChatCount(post.getId());
+            results.add(PostListResult.from(post, likeCount, chatCount));
         }
         return ApiResult.ok(results);
     }
@@ -48,8 +49,9 @@ public class PostController {
                                      @AuthenticationPrincipal SimpleUser user) throws ApiException {
         Post post = this.postService.findPostAndManageView(postId);
         int likeCount = this.postService.findLikeCount(postId);
+        int chatCount = this.postService.findChatCount(postId);
         boolean likedByMe = user != null && this.postService.isLikedPost(postId, user.getUserId());
-        PostDetailResult ret = PostDetailResult.from(post, likeCount, likedByMe);
+        PostDetailResult ret = PostDetailResult.from(post, likeCount, likedByMe, chatCount);
         return ApiResult.ok(ret);
     }
 

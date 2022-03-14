@@ -35,17 +35,16 @@ export default {
   components: { ImagePager },
   computed: {
     getDateString() {
-      const today = new Date().getDay()
-      const day = new Date(this.post.createdTime).getDay()
+      const today = new Date().getTime()
+      const day = new Date(this.post.createdTime).getTime()
 
-      const diff = today - day
-      switch (diff) {
-        case 0:
-          return '오늘'
-        case 1:
-          return '어제'
-        default:
-          return diff + ' 일 전'
+      const diff = Math.ceil((today - day) / (1000 * 60 * 60 * 24))
+      if (diff <= 1) {
+        return '오늘'
+      } else if (diff <= 2) {
+        return '어제'
+      } else {
+        return diff + ' 일 전'
       }
     },
     getMetaInfoString() {

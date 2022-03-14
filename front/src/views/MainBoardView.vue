@@ -35,7 +35,7 @@ export default {
   .region-selector {
     padding: 5px;
     text-align: end;
-    margin-right: 10%;
+    margin-right: 20%;
   }
 }
 

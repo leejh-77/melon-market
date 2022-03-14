@@ -13,6 +13,7 @@ import app.melon.domain.models.post.PostViewManagement;
 import app.melon.domain.models.region.Region;
 import app.melon.domain.models.user.SimpleUser;
 import app.melon.domain.models.user.User;
+import app.melon.infrastructure.repositories.chat.ChatRepository;
 import app.melon.infrastructure.repositories.post.PostLikeRepository;
 import app.melon.infrastructure.repositories.post.PostRepository;
 import app.melon.infrastructure.repositories.region.RegionRepository;
@@ -38,16 +39,19 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final PostLikeRepository likeRepository;
+    private final ChatRepository chatRepository;
     private final ImageStorage imageStorage;
     private final RegionRepository regionRepository;
 
     public PostService(PostRepository postRepository,
                        PostLikeRepository likeRepository,
+                       ChatRepository chatRepository,
                        RegionRepository regionRepository,
                        PostViewManagement postViewManagement,
                        @Qualifier("PostImageStorage") ImageStorage imageStorage) {
         this.postRepository = postRepository;
         this.regionRepository = regionRepository;
+        this.chatRepository = chatRepository;
         this.likeRepository = likeRepository;
         this.imageStorage = imageStorage;
         this.postViewManagement = postViewManagement;
@@ -80,6 +84,10 @@ public class PostService {
 
     public int findLikeCount(long id) {
         return this.likeRepository.countByPostId(id);
+    }
+
+    public int findChatCount(long id) {
+        return this.chatRepository.findChatCount(id);
     }
 
     public byte[] getImage(String url) throws ApiException {

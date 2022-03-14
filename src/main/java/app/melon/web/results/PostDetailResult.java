@@ -17,10 +17,10 @@ public class PostDetailResult {
     private UserData user;
     private PostData post;
 
-    public static PostDetailResult from(Post post, int likeCount, boolean likedByMe) {
+    public static PostDetailResult from(Post post, int likeCount, boolean likedByMe, int chatCount) {
         PostDetailResult ret = new PostDetailResult();
         ret.user = UserData.from(post.getUser());
-        ret.post = PostData.from(post, likeCount, likedByMe);
+        ret.post = PostData.from(post, likeCount, likedByMe, chatCount);
         return ret;
     }
 
@@ -53,13 +53,14 @@ public class PostDetailResult {
         private LocalDateTime createdTime;
         private String region;
 
-        public static PostData from(Post post, int likeCount, boolean likedByMe) {
+        public static PostData from(Post post, int likeCount, boolean likedByMe, int chatCount) {
             PostData data = new PostData();
             data.id = post.getId();
             data.title = post.getTitle();
             data.likedByMe = likedByMe;
             data.likeCount = likeCount;
             data.viewCount = post.getViewCount();
+            data.chatCount = chatCount;
             data.body = post.getBody();
             data.price = post.getPrice();
             data.createdTime = post.getCreatedTime();
