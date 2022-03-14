@@ -5,14 +5,14 @@ import lombok.Getter;
 import org.springframework.http.ResponseEntity;
 
 @Getter
-public class GetMeResult {
+public class MeResult {
     private long id;
     private String username;
     private String imagePath;
     private String sockToken;
 
-    public static ResponseEntity<GetMeResult> from(User user, String sockToken) {
-        GetMeResult result = new GetMeResult();
+    public static ResponseEntity<MeResult> from(User user, String sockToken) {
+        MeResult result = new MeResult();
         result.id = user.getId();
         result.username = user.getUsername();
         result.imagePath = user.getImageUrl();

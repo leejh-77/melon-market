@@ -5,8 +5,6 @@ SET @OLD_SQL_MODE = @@SQL_MODE, SQL_MODE = 'TRADITIONAL,ALLOW_INVALID_DATES';
 CREATE SCHEMA IF NOT EXISTS `melon_market` DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
 USE `melon_market`;
 
-DROP TABLE IF EXISTS `melon_market`.`user`;
-
 CREATE TABLE IF NOT EXISTS `melon_market`.`user`
 (
     `id`            INT          NOT NULL AUTO_INCREMENT,
@@ -18,8 +16,6 @@ CREATE TABLE IF NOT EXISTS `melon_market`.`user`
     PRIMARY KEY (`id`),
     UNIQUE INDEX `email_address_idx` (`email_address` ASC)
 ) ENGINE = InnoDB;
-
-DROP TABLE IF EXISTS `melon_market`.`post`;
 
 CREATE TABLE IF NOT EXISTS `melon_market`.`post`
 (
@@ -36,8 +32,6 @@ CREATE TABLE IF NOT EXISTS `melon_market`.`post`
     FOREIGN KEY (region) REFERENCES region (code)
 ) ENGINE = InnoDB;
 
-DROP TABLE IF EXISTS `melon_market`.`post_image`;
-
 CREATE TABLE IF NOT EXISTS `melon_market`.`post_image`
 (
     `id`           INT          NOT NULL AUTO_INCREMENT,
@@ -47,8 +41,6 @@ CREATE TABLE IF NOT EXISTS `melon_market`.`post_image`
     PRIMARY KEY (`id`),
     FOREIGN KEY (`post_id`) REFERENCES post (id)
 ) ENGINE = InnoDB;
-
-DROP TABLE IF EXISTS `melon_market`.`post_like`;
 
 CREATE TABLE IF NOT EXISTS `melon_market`.`post_like`
 (
@@ -67,6 +59,18 @@ CREATE TABLE IF NOT EXISTS `melon_market`.`region`
     `town`     VARCHAR(64),
     `district` VARCHAR(64),
     PRIMARY KEY (`code`)
+) ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS `melon_market`.`chat`
+(
+    `id`         INT      NOT NULL AUTO_INCREMENT,
+    `from`       INT      NOT NULL,
+    `to`         INT      NOT NULL,
+    `message`    TEXT     NOT NULL,
+    `created_at` DATETIME NOT NULL,
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (`from`) REFERENCES user (id),
+    FOREIGN KEY (`to`) REFERENCES post (id)
 ) ENGINE = InnoDB;
 
 SET @OLD_UNIQUE_CHECKS = @@UNIQUE_CHECKS, UNIQUE_CHECKS = 0;

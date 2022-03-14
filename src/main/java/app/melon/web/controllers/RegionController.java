@@ -26,7 +26,7 @@ public class RegionController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getRegions(@RequestParam(value = "code", required = false) String code) {
+    public ResponseEntity<List<RegionResult>> getRegions(@RequestParam(value = "code", required = false) String code) {
         List<Region> regions = this.regionService.findByCode(code);
         List<RegionResult> result = regions.stream()
                 .map(RegionResult::from)

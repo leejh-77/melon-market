@@ -31,7 +31,7 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getPostList(@RequestParam(name = "type") String type,
+    public ResponseEntity<List<PostListResult>> getPostList(@RequestParam(name = "type") String type,
                                          @RequestParam(name = "query", required = false) String query,
                                          @RequestParam(name = "region", required = false) String region) throws ApiException {
         List<Post> posts = this.postService.getPostList(PostListType.fromName(type), query, region);
@@ -44,7 +44,7 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<?> getPost(@PathVariable long postId,
+    public ResponseEntity<PostDetailResult> getPost(@PathVariable long postId,
                                      @AuthenticationPrincipal SimpleUser user) throws ApiException {
         Post post = this.postService.findPostAndManageView(postId);
         int likeCount = this.postService.findLikeCount(postId);
@@ -54,14 +54,14 @@ public class PostController {
     }
 
     @GetMapping("/images/{imageUrl}")
-    public ResponseEntity<?> getImage(@PathVariable("imageUrl") String url) throws ApiException {
+    public ResponseEntity<byte[]> getImage(@PathVariable("imageUrl") String url) throws ApiException {
         byte[] image = this.postService.getImage(url);
         return ApiResult.ok(image);
     }
 
     @Secured(value = {"ROLE_USER"})
     @PostMapping
-    public ResponseEntity<?> addPost(@Valid AddPostRequest request,
+    public ResponseEntity<Long> addPost(@Valid AddPostRequest request,
                                      @AuthenticationPrincipal SimpleUser user) throws ApiException {
         Post post = this.postService.addPost(request.toCommand(), user.getUser());
         return ApiResult.ok(post.getId());
