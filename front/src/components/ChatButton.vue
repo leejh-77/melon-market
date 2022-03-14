@@ -27,9 +27,9 @@ export default {
       console.log('[ChatButton] select chat room - ' + this.chatRoom.id)
       const curr = this.$store.state.selectedChatRoom
       if (curr == null || curr.id !== this.chatRoom.id) {
-        this.$store.commit('selectChatRoom', this.chatRoom)
+        this.$store.dispatch('selectChatRoom', this.chatRoom)
       } else {
-        this.$store.commit('selectChatRoom', null)
+        this.$store.dispatch('selectChatRoom', null)
       }
     },
     actionClose() {

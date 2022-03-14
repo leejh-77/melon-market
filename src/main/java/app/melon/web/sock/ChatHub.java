@@ -16,10 +16,10 @@ public class ChatHub {
         sessions.remove(session.getUserId());
     }
 
-    public static void send(ChatSession chatSession, long to, String content) throws IOException {
+    public static void send(ChatSession chatSession, long to, long postId, String content) throws IOException {
         ChatSession session = sessions.get(to);
         if (session != null) {
-            session.send(ChatMessage.message(chatSession.getUserId(), content));
+            session.send(ChatMessage.message(chatSession.getUserId(), postId, content));
         }
     }
 }

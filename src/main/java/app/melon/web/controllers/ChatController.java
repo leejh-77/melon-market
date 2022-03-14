@@ -29,9 +29,9 @@ public class ChatController {
 
     @Secured("ROLE_USER")
     @GetMapping
-    public ResponseEntity<List<ChatResult>> getChatList(@RequestParam("userId") long userId,
+    public ResponseEntity<List<ChatResult>> getChatList(@RequestParam("postId") long postId,
                                                         @AuthenticationPrincipal SimpleUser user) throws ApiException {
-        List<Chat> chatList = this.chatService.getChatListWithMeAndUserId(user.getUser(), userId);
+        List<Chat> chatList = this.chatService.getChatListWithMeAndUserId(user.getUser(), postId);
         List<ChatResult> results = chatList.stream().map(ChatResult::from).collect(Collectors.toList());
         return ApiResult.ok(results);
     }

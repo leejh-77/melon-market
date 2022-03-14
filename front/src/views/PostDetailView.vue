@@ -135,6 +135,7 @@ export default {
         id: this.user.id,
         name: this.user.username,
         imageUrl: this.user.imageUrl,
+        postId: this.post.id,
         messages: []
       })
     }

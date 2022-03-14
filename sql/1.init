@@ -61,16 +61,19 @@ CREATE TABLE IF NOT EXISTS `melon_market`.`region`
     PRIMARY KEY (`code`)
 ) ENGINE = InnoDB;
 
+DROP TABLE IF EXISTS `melon_market`.`chat`;
+
 CREATE TABLE IF NOT EXISTS `melon_market`.`chat`
 (
     `id`         INT      NOT NULL AUTO_INCREMENT,
-    `from`       INT      NOT NULL,
-    `to`         INT      NOT NULL,
+    `from_id`    INT      NOT NULL,
+    `to_id`      INT      NOT NULL,
+    `post_id`    INT      NOT NULL,
     `message`    TEXT     NOT NULL,
     `created_at` DATETIME NOT NULL,
     PRIMARY KEY (`id`),
-    FOREIGN KEY (`from`) REFERENCES user (id),
-    FOREIGN KEY (`to`) REFERENCES post (id)
+    FOREIGN KEY (`from_id`) REFERENCES user (id),
+    FOREIGN KEY (`to_id`) REFERENCES user (id)
 ) ENGINE = InnoDB;
 
 SET @OLD_UNIQUE_CHECKS = @@UNIQUE_CHECKS, UNIQUE_CHECKS = 0;

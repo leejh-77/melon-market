@@ -33,8 +33,13 @@ public class ChatMessage {
         }
     }
 
-    public static TextMessage message(Long from, String message) {
-        return create(Type.Message, from, message);
+    public static TextMessage message(long from, long postId, String message) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("type", Type.Message.type);
+        map.put("from", from);
+        map.put("postId", postId);
+        map.put("message", message);
+        return new TextMessage(JsonUtils.toJson(map));
     }
 
     public static TextMessage authenticated() {
@@ -42,19 +47,16 @@ public class ChatMessage {
     }
 
     public static TextMessage error(String message) {
-        return create(Type.Error, null, message);
+        return create(Type.Error, message);
     }
 
     private static TextMessage create(Type type) {
-        return create(type, null, null);
+        return create(type, null);
     }
 
-    private static TextMessage create(Type type, Long from, String message) {
+    private static TextMessage create(Type type, String message) {
         HashMap<String, Object> map = new HashMap<>();
         map.put("type", type.type);
-        if (from != null) {
-            map.put("from", from);
-        }
         if (message != null) {
             map.put("message", message);
         }
@@ -69,6 +71,7 @@ public class ChatMessage {
         @JsonProperty
         private String type;
         private String content;
+        private long postId;
         private long to;
 
         public Type getType() {
@@ -77,6 +80,10 @@ public class ChatMessage {
 
         public String getContent() {
             return content;
+        }
+
+        public long getPostId() {
+            return postId;
         }
 
         public long getTo() {

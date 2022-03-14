@@ -12,8 +12,9 @@ import java.util.List;
 @Repository
 public interface ChatRepository extends JpaRepository<Chat, Long> {
 
-    @Query("SELECT c FROM Chat c WHERE (c.to = :me AND c.from = :target) " +
-            "OR (c.from = :me AND c.to = :target) ORDER BY c.createdAt DESC")
-    List<Chat> findByMeAndTargetUser(@Param("me") User me,
-                                     @Param("target") User target);
+    @Query("SELECT c FROM Chat c WHERE (c.to.id = :me AND c.from.id = :target) " +
+            "OR (c.from.id = :me AND c.to.id = :target) AND c.post.id = :post ORDER BY c.createdAt DESC")
+    List<Chat> findByMeAndTargetUser(@Param("me") long me,
+                                     @Param("target") long target,
+                                     @Param("post") long post);
 }

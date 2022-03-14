@@ -9,7 +9,7 @@
     </div>
     <div ref="talk-scroll" class="talk-scroll">
       <div class="talk-container">
-        <p v-for="message in getMessages" :key="message.id">{{ message.content }}</p>
+        <p v-for="message in getMessages" :key="message.id">{{ message.message }}</p>
       </div>
     </div>
     <input @keyup.enter="actionSendMessage" placeholder="메시지를 입력하세요" v-model="inputText"/>
@@ -42,9 +42,12 @@ export default {
         return
       }
       this.getSelectedChat().messages.push({
-        content: this.inputText
+        id: this.$store.state.user.id,
+        message: this.inputText
       })
-      this.ws.send(this.getSelectedChat().id, this.inputText)
+
+      const chatRoom = this.getSelectedChat()
+      this.ws.send(chatRoom.id, chatRoom.postId, this.inputText)
       this.inputText = ''
       const el = this.$refs['talk-scroll']
       el.scrollTop = el.scrollHeight + 10
@@ -55,8 +58,6 @@ export default {
     actionClose() {
       this.$store.state.selectedChatRoom = null
     }
-  },
-  mounted() {
   }
 }
 </script>

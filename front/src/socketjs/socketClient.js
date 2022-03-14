@@ -32,12 +32,13 @@ class SocketClient {
     }
   }
 
-  send(to, message) {
+  send(to, postId, message) {
     console.log('[SocketClient] send message : to - ' + to + ', message - ' + message)
     this.socket.send(JSON.stringify({
       type: 'message',
       content: message,
-      to: to
+      to: to,
+      postId: postId
     }))
   }
 }

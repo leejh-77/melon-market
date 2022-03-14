@@ -1,6 +1,7 @@
 import { createStore } from 'vuex'
 import userService from '@/services/userService'
 import { emitter } from '@/main'
+import chatService from '@/services/chatService'
 
 export default createStore({
   state: {
@@ -31,12 +32,6 @@ export default createStore({
       }
       state.chatRooms.push(chatRoom)
     },
-    selectChatRoom(state, chatRoom) {
-      state.selectedChatRoom = chatRoom
-      if (chatRoom != null) {
-        chatRoom.hasNewMessage = false
-      }
-    },
     removeChatRoom(state, roomId) {
       const idx = state.chatRooms.findIndex(r => r.id === roomId)
       if (idx >= 0) {
@@ -65,6 +60,21 @@ export default createStore({
           })
         })
     },
+    selectChatRoom({ commit }, chatRoom) {
+      this.state.selectedChatRoom = chatRoom
+      if (chatRoom == null) {
+        return
+      }
+
+      chatRoom.hasNewMessage = false
+
+      const postId = chatRoom.postId
+      chatService.getChatList(postId)
+        .then(res => {
+          console.log('[Store] Get chat list : ', res.data)
+          this.state.selectedChatRoom.messages = res.data.reverse()
+        })
+    },
     pushMessage({ commit }, message) {
       const found = this.state.chatRooms.find(room => message.from === room.id)
       if (found == null) {
@@ -77,6 +87,7 @@ export default createStore({
               id: data.id,
               imageUrl: data.imageUrl,
               name: data.username,
+              postId: data.postId,
               hasNewMessage: true,
               messages: []
             })
@@ -90,9 +101,7 @@ export default createStore({
       }
 
       console.log('[Store] push message - ', message)
-      this.state.selectedChatRoom.messages.push({
-        content: message.message
-      })
+      this.state.selectedChatRoom.messages.push(message)
     }
   },
   modules: {}
