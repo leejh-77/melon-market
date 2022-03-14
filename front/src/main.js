@@ -3,7 +3,7 @@ import App from './App.vue'
 import router from './router/router'
 import store from './store/store'
 import mitt from 'mitt'
-import SocketClient from '@/socketjs/SocketClient'
+import SocketClient from '@/socketjs/socketClient'
 
 const app = createApp(App)
 const emitter = mitt()

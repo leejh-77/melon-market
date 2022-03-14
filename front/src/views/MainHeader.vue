@@ -72,6 +72,8 @@ export default {
         .then(res => {
           console.log('[Logout]', res)
           this.$store.state.authenticated = false
+          this.$store.state.selectedChat = null
+          this.$store.state.chats = []
           this.$router.push('/')
         })
         .catch(e => {

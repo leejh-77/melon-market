@@ -1,6 +1,6 @@
 import { createStore } from 'vuex'
 import userService from '@/services/userService'
-import { emitter } from '@/socketjs/SocketClient'
+import { socketEmitter } from '@/socketjs/socketClient'
 
 export default createStore({
   state: {
@@ -10,8 +10,8 @@ export default createStore({
       username: null,
       imagePath: null
     },
-    selectedChat: null,
-    chats: []
+    selectedChatRoom: null,
+    chatRooms: []
   },
   getters: {
     authenticated(state) {
@@ -23,11 +23,26 @@ export default createStore({
       state.user = user
       state.authenticated = user.id != null
     },
-    pushChat(state, chat) {
-      state.chats.push(chat)
+    pushChatRoom(state, chatRoom) {
+      const found = state.chatRooms.find(c => c.id === chatRoom.id)
+      if (found != null) {
+        return
+      }
+      state.chatRooms.push(chatRoom)
     },
-    selectChat(state, chat) {
-      state.selectedChat = chat
+    selectChatRoom(state, chat) {
+      state.selectedChatRoom = chat
+    },
+    pushMessage(state, message) {
+      if (state.selectedChatRoom == null || message.from !== state.selectedChatRoom.id) {
+        return
+      }
+      console.log(state.selectedChatRoom)
+      console.log('[Store] push message - ', message)
+      state.selectedChatRoom.messages.push({
+        id: 11,
+        content: message.message
+      })
     }
   },
   actions: {
@@ -35,7 +50,7 @@ export default createStore({
       userService.getMyData()
         .then(res => {
           console.log('[GetMyData]', res.data)
-          emitter.emit('onReceiveWSToken', res.data.sockToken)
+          socketEmitter.emit('onReceiveWSToken', res.data.sockToken)
           commit('setUser', res.data)
         })
         .catch(e => {

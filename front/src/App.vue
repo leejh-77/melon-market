@@ -4,9 +4,9 @@
     <router-view class="router-view"/>
     <MainFooter/>
     <div class="chat-container">
-      <ChatView :chat="getSelectedChat" v-if="getSelectedChat != null"/>
+      <ChatView :chat="getSelectedChatRoom" v-if="getSelectedChatRoom != null"/>
       <div class="buttons">
-        <ChatButton class="chat-button" v-for="chat in getChats" :key="chat.postId" :chat="chat"/>
+        <ChatButton class="chat-button" v-for="chatRoom in getChatRooms" :key="chatRoom.id" :chatRoom="chatRoom"/>
       </div>
     </div>
   </div>
@@ -17,7 +17,7 @@ import MainHeader from './views/MainHeader.vue'
 import MainFooter from '@/views/MainFooter'
 import ChatButton from '@/components/ChatButton'
 import ChatView from '@/views/ChatView'
-import { emitter } from '@/socketjs/SocketClient'
+import { socketEmitter } from '@/socketjs/socketClient'
 
 export default {
   components: {
@@ -27,16 +27,19 @@ export default {
     MainHeader
   },
   computed: {
-    getChats() {
-      return this.$store.state.chats
+    getChatRooms() {
+      return this.$store.state.chatRooms
     },
-    getSelectedChat() {
-      return this.$store.state.selectedChat
+    getSelectedChatRoom() {
+      return this.$store.state.selectedChatRoom
     }
   },
   mounted() {
-    emitter.on('onReceiveWSToken', (token) => {
+    socketEmitter.on('onReceiveWSToken', (token) => {
       console.log('[App] received WSToken', token)
+      this.ws.onMessageReceived = (data) => {
+        this.$store.commit('pushMessage', data)
+      }
       this.ws.setToken(token)
       this.ws.connect()
     })

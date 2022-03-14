@@ -1,8 +1,12 @@
 <template>
   <div class="main">
+    <div class="user-info">
+      <img :src="getUserImage"/>
+      <p class="username">{{ getSelectedChat().name }}</p>
+    </div>
     <div ref="talk-scroll" class="talk-scroll">
       <div class="talk-container">
-        <p v-for="message in messages" :key="message.id">{{ message.content }}</p>
+        <p v-for="message in getMessages" :key="message.id">{{ message.content }}</p>
       </div>
     </div>
     <input @keyup.enter="actionSendMessage" placeholder="메시지를 입력하세요" v-model="inputText"/>
@@ -14,8 +18,19 @@ export default {
   name: 'ChatView',
   data() {
     return {
-      messages: [],
       inputText: ''
+    }
+  },
+  computed: {
+    getUserImage() {
+      if (this.getSelectedChat().imageUrl != null) {
+        return null
+      } else {
+        return require('@/assets/user.png')
+      }
+    },
+    getMessages() {
+      return this.$store.state.selectedChatRoom.messages
     }
   },
   methods: {
@@ -23,22 +38,19 @@ export default {
       if (this.inputText.length === 0) {
         return
       }
-      this.messages.push({
-        id: 1,
+      this.getSelectedChat().messages.push({
         content: this.inputText
       })
+      this.ws.send(this.getSelectedChat().id, this.inputText)
       this.inputText = ''
       const el = this.$refs['talk-scroll']
       el.scrollTop = el.scrollHeight + 10
+    },
+    getSelectedChat() {
+      return this.$store.state.selectedChatRoom
     }
   },
   mounted() {
-    for (let i = 0; i < 10; i++) {
-      this.messages.push({
-        id: i,
-        content: 'hi' + i
-      })
-    }
   }
 }
 </script>
@@ -53,6 +65,24 @@ export default {
   border: 1px solid lightgray;
   display: flex;
   flex-direction: column;
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    padding: 5px 10px;
+    border: 1px solid lightgray;
+
+    img {
+      height: 70%;
+      margin-right: 10px;
+    }
+
+    p {
+      font-size: 14px;
+      font-weight: bold;
+    }
+  }
 
   .talk-scroll {
     overflow: scroll;

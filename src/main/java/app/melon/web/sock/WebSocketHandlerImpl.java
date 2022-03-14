@@ -27,6 +27,8 @@ public class WebSocketHandlerImpl extends TextWebSocketHandler {
         chatSession.send(ChatMessage.authenticated());
 
         logger.info("Received connection : userId - " + chatSession.getUserId());
+
+        ChatHub.subscribe(chatSession);
     }
 
     @Override
@@ -35,14 +37,8 @@ public class WebSocketHandlerImpl extends TextWebSocketHandler {
         ChatMessage.Incoming chat = ChatMessage.parse(message);
 
         switch (chat.getType()) {
-            case Subscribe:
-                ChatHub.subscribe(chat.getTo(), chatSession);
-                break;
-            case Unsubscribe:
-                ChatHub.unsubscribe(chat.getTo(), chatSession);
-                break;
             case Message:
-                ChatHub.send(chatSession, chat.getContent());
+                ChatHub.send(chatSession, chat.getTo(), chat.getContent());
                 break;
         }
     }
@@ -50,6 +46,6 @@ public class WebSocketHandlerImpl extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         ChatSession chatSession = ChatSession.from(session);
-        ChatHub.unsubscribeAll(chatSession);
+        ChatHub.unsubscribe(chatSession);
     }
 }

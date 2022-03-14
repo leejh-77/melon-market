@@ -33,8 +33,8 @@ public class ChatMessage {
         }
     }
 
-    public static TextMessage normal(String message) {
-        return create(Type.Message, message);
+    public static TextMessage message(Long from, String message) {
+        return create(Type.Message, from, message);
     }
 
     public static TextMessage authenticated() {
@@ -42,17 +42,19 @@ public class ChatMessage {
     }
 
     public static TextMessage error(String message) {
-        return create(Type.Error, message);
+        return create(Type.Error, null, message);
     }
 
     private static TextMessage create(Type type) {
-        return create(type, null);
+        return create(type, null, null);
     }
 
-    private static TextMessage create(Type type, String message) {
-        HashMap<String, String> map = new HashMap<>();
+    private static TextMessage create(Type type, Long from, String message) {
+        HashMap<String, Object> map = new HashMap<>();
         map.put("type", type.type);
-
+        if (from != null) {
+            map.put("from", from);
+        }
         if (message != null) {
             map.put("message", message);
         }

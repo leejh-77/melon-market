@@ -131,10 +131,11 @@ export default {
       this.$router.push('/post-edit/' + this.post.id)
     },
     actionChat() {
-      this.$store.commit('pushChat', {
-        userId: this.user.id,
-        postId: this.post.id,
-        title: this.post.title
+      this.$store.commit('pushChatRoom', {
+        id: this.user.id,
+        name: this.user.username,
+        imageUrl: this.user.imageUrl,
+        messages: []
       })
     }
   },
