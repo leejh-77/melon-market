@@ -3,7 +3,7 @@
     <div class="container">
       <ImagePager :images="images"/>
       <div class="user-info">
-        <img :src="getUserImage"/>
+        <img ref="user-image" src="@/assets/user.png"/>
         <p class="name">{{ user.username }}</p>
         <p class="region">{{ post.region }}</p>
       </div>
@@ -29,6 +29,7 @@
 <script>
 import postService from '@/services/postService'
 import ImagePager from '@/components/ImagePager'
+import userService from '@/services/userService'
 
 export default {
   name: 'PostDetailView',
@@ -54,13 +55,6 @@ export default {
     },
     getLikeImageSrc() {
       return this.post.likedByMe ? require('@/assets/like.png') : require('@/assets/not-like.png')
-    },
-    getUserImage() {
-      if (this.user.imageUrl != null) {
-        return null
-      } else {
-        return require('@/assets/user.png')
-      }
     },
     authenticated() {
       return this.$store.state.authenticated
@@ -103,6 +97,15 @@ export default {
           })
       })
     },
+    loadUserImage() {
+      if (this.user.imageUrl == null) {
+        return
+      }
+      userService.getUserImage(this.user.imageUrl)
+        .then(res => {
+          this.$refs['user-image'].src = res
+        })
+    },
     actionToggleLike() {
       postService.changeLike(this.post.id, !this.post.likedByMe)
         .then(res => {
@@ -140,6 +143,8 @@ export default {
     }
   },
   mounted() {
+    window.scrollTo(0, 0)
+
     const postId = this.$route.params.postId
     postService.getPost(postId)
       .then(res => {
@@ -147,6 +152,7 @@ export default {
         this.post = res.data.post
         this.user = res.data.user
         this.loadImages()
+        this.loadUserImage()
       })
       .catch(e => {
         console.log('[GetPostDetail][Error', e)

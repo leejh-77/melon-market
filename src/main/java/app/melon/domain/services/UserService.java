@@ -8,6 +8,7 @@ import app.melon.domain.files.ImageStorage;
 import app.melon.domain.models.user.SimpleUser;
 import app.melon.domain.models.user.User;
 import app.melon.infrastructure.repositories.user.UserRepository;
+import app.melon.web.requests.UpdateUserRequest;
 import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -44,12 +45,9 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
-    public void updateUserImage(UpdateUserCommand command) throws ApiException {
-        Optional<User> opUser = this.repository.findById(command.getUserId());
-        if (opUser.isEmpty()) {
-            throw ApiException.of(Errors.UserNotFound);
-        }
-        User user = opUser.get();
+    public void updateUserImage(UpdateUserCommand command) {
+        User user = command.getUser();
+        user.setUsername(command.getUsername());
         String imagePath = this.imageStorage.saveImage(command.getFile());
         user.setImageUrl(imagePath);
         this.repository.save(user);
@@ -77,4 +75,7 @@ public class UserService implements UserDetailsService {
         return null;
     }
 
+    public byte[] getUserImage(String imageUrl) {
+        return this.imageStorage.loadImage(imageUrl);
+    }
 }

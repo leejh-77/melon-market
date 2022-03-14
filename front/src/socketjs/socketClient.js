@@ -4,6 +4,7 @@ class SocketClient {
   constructor() {
     this.socket = null
     this.token = null
+    this.authenticated = false
     this.onMessageReceived = null
   }
 
@@ -12,9 +13,12 @@ class SocketClient {
   }
 
   connect() {
+    if (this.authenticated) {
+      return
+    }
     this.socket = new SockJS('/chat?token=' + this.token)
     this.socket.onopen = () => {
-
+      this.authenticated = true
     }
     this.socket.onmessage = (event) => {
       const data = JSON.parse(event.data)

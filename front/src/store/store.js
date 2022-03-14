@@ -9,7 +9,7 @@ export default createStore({
     user: {
       id: null,
       username: null,
-      imagePath: null
+      imageUrl: null
     },
     selectedChatRoom: null,
     chatRooms: []
@@ -51,6 +51,7 @@ export default createStore({
             username: data.username,
             imageUrl: data.imageUrl
           })
+          emitter.emit('getMyDataFinished')
         })
         .catch(e => {
           console.log('[GetMyData] error ', e)

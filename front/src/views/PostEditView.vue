@@ -170,6 +170,8 @@ export default {
     }
   },
   mounted() {
+    window.scrollTo(0, 0)
+
     const postId = this.$route.params.postId
     if (postId == null) {
       return // new post

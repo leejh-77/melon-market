@@ -13,10 +13,9 @@ import java.util.List;
 public interface ChatRepository extends JpaRepository<Chat, Long> {
 
     @Query("SELECT c FROM Chat c WHERE (c.to.id = :me AND c.from.id = :target) " +
-            "OR (c.from.id = :me AND c.to.id = :target) AND c.post.id = :post ORDER BY c.createdAt DESC")
+            "OR (c.from.id = :me AND c.to.id = :target) ORDER BY c.createdAt DESC")
     List<Chat> findByMeAndTargetUser(@Param("me") long me,
-                                     @Param("target") long target,
-                                     @Param("post") long post);
+                                     @Param("target") long target);
 
     @Query("SELECT COUNT(DISTINCT c.from.id) FROM Chat c " +
             "WHERE c.post.id = :postId AND c.from.id NOT IN (SELECT p.user.id FROM Post p WHERE p.id = :postId)")

@@ -1,6 +1,7 @@
 <template>
   <div>
-    <MainHeader class="main-header"/>
+    <UserInfoModal ref="user-info-modal"/>
+    <MainHeader class="main-header" @showEditInfoModal="actionShowEditInfoModal"/>
     <router-view class="router-view"/>
     <MainFooter/>
     <div class="chat-container">
@@ -17,9 +18,11 @@ import MainHeader from './views/MainHeader.vue'
 import MainFooter from '@/views/MainFooter'
 import ChatButton from '@/components/ChatButton'
 import ChatView from '@/views/ChatView'
+import UserInfoModal from '@/components/UserInfoModal'
 
 export default {
   components: {
+    UserInfoModal,
     ChatView,
     ChatButton,
     MainFooter,
@@ -31,6 +34,11 @@ export default {
     },
     getSelectedChatRoom() {
       return this.$store.state.selectedChatRoom
+    }
+  },
+  methods: {
+    actionShowEditInfoModal() {
+      this.$refs['user-info-modal'].show()
     }
   },
   mounted() {
@@ -70,7 +78,7 @@ export default {
 .main-header {
   z-index: 1;
   position: sticky;
-  top:0;
+  top: 0;
 }
 
 .chat-container {
@@ -78,8 +86,8 @@ export default {
   display: flex;
   right: 0;
   bottom: 0;
-  margin-right: 20px;
-  margin-bottom: 10px;
+  margin-right: 50px;
+  margin-bottom: 30px;
 
   .buttons {
     display: flex;

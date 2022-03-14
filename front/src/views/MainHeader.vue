@@ -8,32 +8,33 @@
       <div class="upper-items">
         <nav>
           <a @click.prevent="actionGoToPopular">인기 물건</a>
-          <a @click.prevent="actionGoToLogin" v-show="!isAuthenticated">로그인</a>
+          <a @click.prevent="actionGoToLogin" v-if="!isAuthenticated">로그인</a>
         </nav>
-        <img ref="user-image" class="user-image" v-show="isAuthenticated"
-             @click="actionShowSettingModal" src="../assets/user.png"/>
+        <div class="user-activity" v-if="isAuthenticated">
+          <img class="pencil" src="@/assets/pencil.png"
+               @click="actionGoToWritePost">
+          <img ref="user-image" class="user-image"
+               @click="actionShowSettingModal" src="@/assets/user.png"/>
+        </div>
       </div>
       <UserSettingModal ref="user-setting-modal"
-                        v-on:writePost="actionGoToWritePost"
+                        v-on:editUserInfo="actionShowEditModal"
                         v-on:showMine="actionGoToMine"
                         v-on:showLikes="actionGoToLikes"
                         v-on:logout="actionLogout"/>
 
     </div>
-    <UserInfoModal ref="user-info-modal"/>
   </div>
 </template>
 
 <script>
 import SearchBar from '../components/SearchBar.vue'
 import UserSettingModal from '@/components/UserSettingModal'
-import UserInfoModal from '@/components/UserInfoModal'
 import userService from '@/services/userService'
 
 export default {
   name: 'MainHeader',
   components: {
-    UserInfoModal,
     UserSettingModal,
     SearchBar
   },
@@ -47,6 +48,16 @@ export default {
     return {}
   },
   methods: {
+    loadUserImage() {
+      const user = this.$store.state.user
+      if (user.imageUrl == null) {
+        return require('@/assets/user.png')
+      }
+      userService.getUserImage(user.imageUrl)
+        .then(res => {
+          this.$refs['user-image'].src = res
+        })
+    },
     actionGoToHome() {
       this.$router.push('/')
     },
@@ -68,6 +79,9 @@ export default {
     actionGoToMine() {
       this.$router.push('/mine')
     },
+    actionShowEditModal() {
+      this.$emit('showEditInfoModal')
+    },
     actionLogout() {
       userService.logout()
         .then(res => {
@@ -86,6 +100,9 @@ export default {
     if (!this.$store.state.user.authenticated) {
       this.$store.dispatch('getMyData')
     }
+    this.emitter.on('getMyDataFinished', () => {
+      this.loadUserImage()
+    })
   }
 }
 </script>
@@ -93,7 +110,7 @@ export default {
 <style lang="scss" scoped>
 
 .main {
-  padding: 15px 20%;
+  padding: 15px 22%;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -132,10 +149,20 @@ export default {
         }
       }
 
-      .user-image {
-        width: 35px;
-        margin-left: 20px;
-        border-radius: 45px;
+      .user-activity {
+        display: flex;
+        align-items: center;
+
+        .pencil {
+          width: 25px;
+          margin-left: 20px;
+        }
+
+        .user-image {
+          width: 35px;
+          margin-left: 20px;
+          border-radius: 45px;
+        }
       }
 
       :hover {

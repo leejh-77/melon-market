@@ -32,6 +32,6 @@ public class ChatService {
         if (opPost.isEmpty()) {
             throw ApiException.of(Errors.ItemNotFound);
         }
-        return this.chatRepository.findByMeAndTargetUser(user.getId(), opPost.get().getUser().getId(), postId);
+        return this.chatRepository.findByMeAndTargetUser(user.getId(), opPost.get().getUser().getId());
     }
 }

@@ -1,27 +1,20 @@
 <template>
   <div class="main" @click="actionToggleChatView">
     <div class="info">
-      <img class="user-image" :src="getUserImage"/>
+      <img ref="user-image" class="user-image" src="@/assets/user.png"/>
       <p class="username">{{ chatRoom.name }}</p>
     </div>
     <img class="notification" src="@/assets/notification.png" v-if="chatRoom.hasNewMessage">
-    <img class="close-button" src="@/assets/close.png" @click.stop="actionClose" />
+    <img class="close-button" src="@/assets/close.png" @click.stop="actionClose"/>
   </div>
 </template>
 
 <script>
+import userService from '@/services/userService'
+
 export default {
   name: 'ChatButton',
   props: ['chatRoom'],
-  computed: {
-    getUserImage() {
-      if (this.chatRoom.imageUrl != null) {
-        return null
-      } else {
-        return require('@/assets/user.png')
-      }
-    }
-  },
   methods: {
     actionToggleChatView() {
       console.log('[ChatButton] select chat room - ' + this.chatRoom.id)
@@ -35,8 +28,15 @@ export default {
     actionClose() {
       this.$store.commit('removeChatRoom', this.chatRoom.id)
     }
+  },
+  mounted() {
+    if (this.chatRoom.imageUrl != null) {
+      userService.getUserImage(this.chatRoom.imageUrl)
+        .then(res => {
+          this.$refs['user-image'].src = res
+        })
+    }
   }
-
 }
 </script>
 
@@ -47,7 +47,7 @@ export default {
   align-items: center;
   justify-content: space-between;
 
-  border: 1px solid lightgray;
+  border: 1.5px solid lightgray;
   border-radius: 10px;
   height: 40px;
   width: 200px;

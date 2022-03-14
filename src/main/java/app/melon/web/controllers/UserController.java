@@ -13,10 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/api/users")
@@ -39,10 +36,10 @@ public class UserController {
     }
 
     @Secured("ROLE_USER")
-    @PutMapping("/me/images")
+    @PostMapping("/me")
     public ResponseEntity<?> updateImage(UpdateUserRequest request,
                                          @AuthenticationPrincipal SimpleUser user) throws ApiException {
-        this.service.updateUserImage(request.toCommand(user.getUserId()));
+        this.service.updateUserImage(request.toCommand(user.getUser()));
         return ApiResult.ok();
     }
 
@@ -51,5 +48,11 @@ public class UserController {
         User user = this.service.getUser(userId);
         UserResult result = UserResult.from(user);
         return ApiResult.ok(result);
+    }
+
+    @GetMapping("/images/{imageUrl}")
+    public ResponseEntity<byte[]> getUserImage(@PathVariable(name = "imageUrl") String imageUrl) {
+        byte[] image = this.service.getUserImage(imageUrl);
+        return ApiResult.ok(image);
     }
 }
