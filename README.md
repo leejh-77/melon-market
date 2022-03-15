@@ -25,5 +25,7 @@ Etc - git, git action
 * 테스트 - controller, service, repository 단위의 테스트 작성  
 * Github action - push 시 자동으로 빌드 및 테스트를 수행하고 에러 시 메일을 받도록 함
 
+---
+### 페이지 이미지   
 
-* ![](./picture.png)
+![](./picture.png)
