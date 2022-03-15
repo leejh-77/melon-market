@@ -88,7 +88,7 @@ export default createStore({
               id: data.id,
               imageUrl: data.imageUrl,
               name: data.username,
-              postId: data.postId,
+              postId: message.postId,
               hasNewMessage: true,
               messages: []
             })
