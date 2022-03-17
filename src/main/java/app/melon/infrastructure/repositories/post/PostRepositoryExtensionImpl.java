@@ -1,10 +1,17 @@
 package app.melon.infrastructure.repositories.post;
 
 import app.melon.domain.models.post.Post;
+import app.melon.domain.models.post.QPost;
+import app.melon.domain.models.post.QPostLike;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -18,52 +25,52 @@ public class PostRepositoryExtensionImpl implements PostRepositoryExtension {
 
     @Override
     public List<Post> findLikedPosts(int count, long userId, String region) {
-        String q = "SELECT p FROM Post p WHERE p.id IN (SELECT pl.post FROM PostLike pl WHERE pl.user.id = :user_id)";
+        QPost post = QPost.post;
+        QPostLike postLike = QPostLike.postLike;
+        JPAQuery<Post> query = new JPAQueryFactory(this.em)
+                .selectFrom(post);
+
+        BooleanExpression where = post.id.in(
+                JPAExpressions.select(postLike.post.id)
+                        .from(postLike)
+                        .where(postLike.user.id.eq(userId))
+        );
         if (region != null) {
-            q += " AND p.region.code LIKE :region";
+            where.and(post.region.code.like(region + '%'));
         }
-        q += "ORDER BY p.createdTime DESC";
-        TypedQuery<Post> query = this.em.createQuery(q, Post.class);
-        query.setParameter("user_id", userId);
-        if (region != null) {
-            query.setParameter("region", region + '%');
-        }
-        query.setMaxResults(count);
-        return query.getResultList();
+        query.where(where);
+        query.orderBy(post.createdTime.desc());
+        query.limit(count);
+        return query.fetch();
     }
 
     @Override
     public List<Post> findRecentPosts(int count, String queryText, String region) {
-        String q = "SELECT p FROM Post p";
+        QPost post = QPost.post;
+        JPAQuery<Post> query = new JPAQueryFactory(this.em)
+                .selectFrom(post);
+
+        BooleanExpression where = null;
         if (queryText != null) {
-            q += " WHERE p.title LIKE :queryText";
+            where = post.title.like(queryText);
         }
         if (region != null) {
-            if (queryText == null) {
-                q += " WHERE";
-            } else {
-                q += " AND";
-            }
-            q += " p.region.code LIKE :region";
+            BooleanExpression ex = post.region.code.like(region + '%');
+            where = where == null ? ex : where.and(ex);
         }
-        q += " ORDER BY p.createdTime DESC ";
-        TypedQuery<Post> query = this.em.createQuery(q, Post.class);
-        if (queryText != null) {
-            query.setParameter("queryText", '%' + queryText + '%');
-        }
-        if (region != null) {
-            query.setParameter("region", region + '%');
-        }
-        query.setMaxResults(count);
-        return query.getResultList();
+        query.where(where);
+        query.orderBy(post.createdTime.desc());
+        query.limit(count);
+        return query.fetch();
     }
 
     @Override
     public List<Post> findMyPosts(int listQueryCount, long userId) {
-        TypedQuery<Post> query = this.em.createQuery("SELECT p FROM Post p" +
-                " WHERE p.user.id = :userId ORDER BY p.createdTime DESC", Post.class);
-        query.setMaxResults(listQueryCount);
-        query.setParameter("userId", userId);
-        return query.getResultList();
+        JPAQueryFactory query = new JPAQueryFactory(this.em);
+        QPost post = QPost.post;
+        return query.selectFrom(post)
+                .where(post.user.id.eq(userId))
+                .orderBy(post.createdTime.desc())
+                .fetch();
     }
 }

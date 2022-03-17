@@ -103,11 +103,10 @@ public class PostService {
     }
 
     public Post findPostAndManageView(long postId) throws ApiException {
-        Optional<Post> opPost = this.postRepository.findById(postId);
-        if (opPost.isEmpty()) {
+        Post post = this.postRepository.findByIdFetchJoinImages(postId);
+        if (post == null) {
             throw ApiException.of(Errors.ItemNotFound);
         }
-        Post post = opPost.get();
         this.postViewManagement.handle(post);
         return post;
     }
