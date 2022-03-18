@@ -9,13 +9,16 @@ import app.melon.web.requests.UpdateUserRequest;
 import app.melon.web.results.ApiResult;
 import app.melon.web.results.MeResult;
 import app.melon.web.results.UserResult;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
+@Tag(name = "UserController")
 @RequestMapping("/api/users")
 public class UserController {
 
@@ -28,6 +31,7 @@ public class UserController {
         this.jwtManager = jwtManager;
     }
 
+    @Operation(description = "내 정보 조회")
     @Secured("ROLE_USER")
     @GetMapping("/me")
     public ResponseEntity<MeResult> getMe(@AuthenticationPrincipal SimpleUser user) {
